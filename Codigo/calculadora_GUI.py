@@ -1,13 +1,13 @@
 from tkinter import *
 
-from Codigo.opcion_europea_bin import opcion_europea_bin
-from Codigo.opcion_europea_bin_c import opcion_europea_bin_c
-from Codigo.opcion_europea_fd import opcion_europea_fd
-from Codigo.opcion_europea_mc import opcion_europea_mc
-from Codigo.opcion_europea_bs import opcion_europea_bs
+from opcion_europea_bin import opcion_europea_bin
+from opcion_europea_bin_c import opcion_europea_bin_c
+from opcion_europea_fd import opcion_europea_fd
+from opcion_europea_mc import opcion_europea_mc
+from opcion_europea_bs import opcion_europea_bs
 
-from Codigo.opcion_americana_fd import opcion_americana_fd
-from Codigo.opcion_americana_bin import opcion_americana_bin
+from opcion_americana_fd import opcion_americana_fd
+from opcion_americana_bin import opcion_americana_bin
 
 class MyWindow:
     def __init__(self, win):
