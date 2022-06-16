@@ -91,7 +91,7 @@ class MyWindow:
         #self.lblvar_mc.place(x=10, y=475)
         #self.var_mc.place(x=225, y=475)
 
-        self.lbltrademark = Label(win, text='Manu Maurette - 2020')
+        self.lbltrademark = Label(win, text='Manu Maurette - 2022')
 
         self.lbltrademark.place(x=380, y=583)
 
@@ -110,9 +110,9 @@ class MyWindow:
         self.output.delete(0, 'end')
         #inicializo
         if self.tipo_lbl.get() == 1:
-            tipo = "CALL"
+            tipo = "C"
         elif self.tipo_lbl.get() == 2:
-            tipo = "PUT"
+            tipo = "P"
 
         #Inputs
         S=float(self.S_lbl.get())
@@ -170,6 +170,6 @@ class MyWindow:
 
 window=Tk()
 mywin=MyWindow(window)
-window.title('Calculadora Opciones - UTDT FOS 2020')
+window.title('Calculadora Opciones - Exactas 2022')
 window.geometry("500x600+15+15")
 window.mainloop()
