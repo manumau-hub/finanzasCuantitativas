@@ -1,4 +1,6 @@
 import numpy as np
+
+
 from scipy.interpolate import interp1d
 
 """
@@ -18,13 +20,28 @@ Outputs
 """
 
 
-def opcion_europea_fd(tipo, S, K, T, r, sigma, div):
+def opcion_europea_fd(tipo, S, K, T, r, sigma, div, M=150):
+
+
 
     #Hadrcode de la grilla de diferencias finitas
-    M = 160
-    N = 1600
+    #M = 160
+    #N = 1600
+    # PAra que se cumpla N>(TM^2)/(2S^2) 
+    N = int(np.ceil(S*M/(2*T)))
+
+    #print(N)
+
+    
+
+
+
+
     dS = 2 * S / M
     dt = T / N
+
+
+
 
     # Grilla de spots y tiempos
     S_vec = np.linspace(0, 2*S, M+1)

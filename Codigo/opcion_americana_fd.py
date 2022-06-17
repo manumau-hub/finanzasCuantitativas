@@ -17,11 +17,17 @@ Outputs
     - precio_FD: float - Precio del contrato
 """
 
-def opcion_americana_fd(tipo, S, K, T, r, sigma, div):
+def opcion_americana_fd(tipo, S, K, T, r, sigma, div, M=150):
 
     #Hadrcode de la grilla de diferencias finitas
-    M = 160
-    N = 1600
+    #M = 160
+    #N = 1600
+    # PAra que se cumpla N>(TM^2)/(2S^2) 
+    N = int(np.ceil(S*M/(2*T)))
+
+    #print(N)
+
+    
     dS = 2 * S / M
     dt = T / N
 

@@ -1,7 +1,6 @@
 from tkinter import *
 
 from opcion_europea_bin import opcion_europea_bin
-from opcion_europea_bin_c import opcion_europea_bin_c
 from opcion_europea_fd import opcion_europea_fd
 from opcion_europea_mc import opcion_europea_mc
 from opcion_europea_bs import opcion_europea_bs
@@ -84,9 +83,11 @@ class MyWindow:
         r4.place(x=350, y=320)
 
         self.b1 = Button(win, text='Calcular precio opcion', command=self.calculate)
-        self.b1.place(x=175, y=375)
+        self.b1.place(x=175, y=390)
 
-        self.output.place(x=225, y=425)
+        self.lbloutput.place(x=115, y=435)
+
+        self.output.place(x=225, y=435)
 
         #self.lblvar_mc.place(x=10, y=475)
         #self.var_mc.place(x=225, y=475)
@@ -100,10 +101,37 @@ class MyWindow:
 
         self.S_lbl.insert(END, 100.0)
         self.K_lbl.insert(END, 100.0)
-        self.T_lbl.insert(END, 1)
+        self.T_lbl.insert(END, 90)
         self.r_lbl.insert(END, 0.05)
         self.sigma_lbl.insert(END, 0.25)
         self.div_lbl.insert(END, 0.0)
+
+        
+
+        self.lblBIN = Label(win, text='Pasos Bin:')
+        self.lblMC = Label(win, text='Caminos MC:')
+        self.lblFD = Label(win, text='Pasos DF:')
+
+        self.BIN_lbl = Entry()
+        self.MC_lbl = Entry()
+        self.FD_lbl = Entry()
+    
+
+        self.BIN_lbl.place(x=60, y=360)
+        self.lblBIN.place(x=100, y=340)
+
+        self.MC_lbl.place(x=200, y=360)
+        self.lblMC.place(x=220, y=340)
+
+        self.FD_lbl.place(x=340, y=360)
+        self.lblFD.place(x=370, y=340)
+
+        self.BIN_lbl.insert(END, 1000)
+        self.MC_lbl.insert(END, 1000)
+        self.FD_lbl.insert(END, 100)
+
+
+
 
     def calculate(self):
         #borro lo que habia
@@ -122,6 +150,10 @@ class MyWindow:
         sigma = float(self.sigma_lbl.get())
         div = float(self.div_lbl.get())
 
+        bin_pasos = int(self.BIN_lbl.get())
+        mc_caminos = int(self.MC_lbl.get())
+        fd_pasos = int(self.FD_lbl.get())
+
         if self.modelo_lbl.get() == 1:
             if self.ejercicio_lbl.get() ==1:
                 precio = opcion_europea_bs(tipo, S, K, T, r, sigma, div)
@@ -133,17 +165,14 @@ class MyWindow:
         elif self.modelo_lbl.get() == 2 :
 
             if self.ejercicio_lbl.get() == 1:
-                pasos = 1000
-                precio = opcion_europea_bin_c(tipo, S, K, T, r, sigma, div, pasos)
+                precio = opcion_europea_bin(tipo, S, K, T, r, sigma, div, bin_pasos)
             elif self.ejercicio_lbl.get() == 2:
-                pasos = 1500
-                precio = opcion_americana_bin(tipo, S, K, T, r, sigma, div, pasos)
+                precio = opcion_americana_bin(tipo, S, K, T, r, sigma, div, bin_pasos)
             else:
                 precio = 'Error'
         elif self.modelo_lbl.get() == 3 :
-            pasos = 100000
             if self.ejercicio_lbl.get() == 1:
-                precio = opcion_europea_mc(tipo, S, K, T, r, sigma, div, pasos)
+                precio = opcion_europea_mc(tipo, S, K, T, r, sigma, div, mc_caminos)
 
          #       try:
          #           self.var_mc.insert(END, round(var, 4))
@@ -155,10 +184,11 @@ class MyWindow:
             else:
                 precio ='Error'
         elif self.modelo_lbl.get() == 4 :
+                  
             if self.ejercicio_lbl.get() == 1:
-                precio = opcion_europea_fd(tipo, S, K, T, r, sigma, div)
+                precio = opcion_europea_fd(tipo, S, K, T, r, sigma, div, fd_pasos)
             elif self.ejercicio_lbl.get() == 2:
-                precio = opcion_americana_fd(tipo, S, K, T, r, sigma, div)
+                precio = opcion_americana_fd(tipo, S, K, T, r, sigma, div, fd_pasos)
             else:
                 precio = 'Error'
         else:
