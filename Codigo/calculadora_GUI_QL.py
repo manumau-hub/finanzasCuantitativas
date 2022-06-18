@@ -33,10 +33,16 @@ class MyWindow:
         self.lbl5 = Label(win, text='Volatilidad implicita anualizada - sigma: ')
         self.lbl6 = Label(win, text='Tasa de dividendos anualizada -       div: ')
 
-        self.lbloutput = Label(win, text='Precio de la opcion (QL):')
+        self.lbloutput_npv = Label(win, text='Precio de la opcion (QL):')
+        self.lbloutput_delta = Label(win, text='Delta de la opcion (QL):')
+        self.lbloutput_gamma = Label(win, text='Gamma de la opcion (QL):')
+        self.lbloutput_vega = Label(win, text='Vega de la opcion (QL):')
+        self.lbloutput_theta = Label(win, text='Theta de la opcion (QL):')
+        self.lbloutput_rho = Label(win, text='Rho de la opcion (QL):')
+        
         #self.lblvar_mc = Label(win, text='Varianza de MC:')
 
-
+        #intputs
         self.S_lbl = Entry()
         self.K_lbl = Entry()
         self.T_lbl = Entry()
@@ -44,7 +50,14 @@ class MyWindow:
         self.sigma_lbl = Entry()
         self.div_lbl = Entry()
 
-        self.output = Entry()
+        #outputs
+        self.output_npv = Entry()
+        self.output_delta = Entry()
+        self.output_gamma = Entry()
+        self.output_vega = Entry()
+        self.output_theta = Entry()
+        self.output_rho = Entry()
+
         #self.var_mc = Entry()
 
         self.lbl1.place(x=10, y=150)
@@ -65,6 +78,9 @@ class MyWindow:
         self.lbl6.place(x=10, y=275)
         self.div_lbl.place(x=225, y=275)
 
+        self.lbl_modelo = Label(win, text='Modelo: ')
+        self.lbl_modelo.place(x=10, y=300)
+
         self.modelo_lbl = IntVar()
         self.modelo_lbl.set(1)
         r1 = Radiobutton(window, text="Analitico (BS/BAW)", variable=self.modelo_lbl, value=1)
@@ -72,17 +88,35 @@ class MyWindow:
         r3 = Radiobutton(window, text="Montecarlo", variable=self.modelo_lbl, value=3)
         r4 = Radiobutton(window, text="Diferencias Finitas", variable=self.modelo_lbl, value=4)
 
-        r1.place(x=30, y=320)
-        r2.place(x=150, y=320)
-        r3.place(x=250, y=320)
-        r4.place(x=350, y=320)
+        r1.place(x=10, y=320)
+        r2.place(x=170, y=320)
+        r3.place(x=300, y=320)
+        r4.place(x=430, y=320)
 
         self.b1 = Button(win, text='Calcular precio opcion', command=self.calculate)
         self.b1.place(x=175, y=390)
 
-        self.lbloutput.place(x=90, y=435)
+        self.lbloutput_npv.place(x=90, y=435)
+        self.output_npv.place(x=235, y=435)
 
-        self.output.place(x=225, y=435)
+        self.lbloutput_delta.place(x=90, y=460)
+        self.output_delta.place(x=235, y=460)
+        
+        self.lbloutput_gamma.place(x=90, y=485)
+        self.output_gamma.place(x=235, y=485)
+        
+        self.lbloutput_vega.place(x=90, y=510)
+        self.output_vega.place(x=235, y=510)
+        
+        self.lbloutput_theta.place(x=90, y=535)
+        self.output_theta.place(x=235, y=535)
+        
+        self.lbloutput_rho.place(x=90, y=560)
+        self.output_rho.place(x=235, y=560)
+
+
+
+
 
         #self.lblvar_mc.place(x=10, y=475)
         #self.var_mc.place(x=225, y=475)
@@ -103,23 +137,23 @@ class MyWindow:
 
         
 
-        self.lblBIN = Label(win, text='Pasos Bin:')
-        self.lblMC = Label(win, text='Caminos MC:')
-        self.lblFD = Label(win, text='Pasos DF:')
+        self.lblBIN = Label(win, text='Pasos Bin (<25K):')
+        self.lblMC = Label(win, text='Caminos MC (<2.5M):')
+        self.lblFD = Label(win, text='Pasos DF (<2.5K):')
 
         self.BIN_lbl = Entry()
         self.MC_lbl = Entry()
         self.FD_lbl = Entry()
     
 
-        self.BIN_lbl.place(x=60, y=360)
-        self.lblBIN.place(x=100, y=340)
+        self.BIN_lbl.place(x=140, y=360)
+        self.lblBIN.place(x=140, y=340)
 
-        self.MC_lbl.place(x=200, y=360)
-        self.lblMC.place(x=220, y=340)
+        self.MC_lbl.place(x=280, y=360)
+        self.lblMC.place(x=280, y=340)
 
-        self.FD_lbl.place(x=340, y=360)
-        self.lblFD.place(x=370, y=340)
+        self.FD_lbl.place(x=430, y=360)
+        self.lblFD.place(x=430, y=340)
 
         self.BIN_lbl.insert(END, 1000)
         self.MC_lbl.insert(END, 1000)
@@ -130,7 +164,14 @@ class MyWindow:
 
     def calculate(self):
         #borro lo que habia
-        self.output.delete(0, 'end')
+        self.output_npv.delete(0, 'end')
+        self.output_delta.delete(0, 'end')
+        self.output_gamma.delete(0, 'end')
+        self.output_vega.delete(0, 'end')
+        self.output_theta.delete(0, 'end')
+        self.output_rho.delete(0, 'end')
+
+
         #inicializo
 
         #Inputs
@@ -146,15 +187,15 @@ class MyWindow:
         fd_pasos = int(self.FD_lbl.get())  
 
         #Imput del tiempo a madurez
-        T = float(self.T_lbl.get())
+        T = int(self.T_lbl.get())
         fecha_valuacion = ql.Date(6, 8, 2022)
 
         ql.Settings.instance().evaluationDate = fecha_valuacion
-        period = str(T)+"D"
+        
         calendario = ql.UnitedStates()
-        fecha_expiracion = calendario.advance(fecha_valuacion,ql.Period(period))
         day_count = ql.Actual365Fixed()
-
+        fecha_expiracion = fecha_valuacion + T
+        
         if self.tipo_lbl.get() == 1:
             tipo_opcion = ql.Option.Call #Tipo de opcion (CALL o PUT)
         elif self.tipo_lbl.get() == 2:
@@ -191,19 +232,14 @@ class MyWindow:
                                            objeto_volatilidad)
 
         
-
-
-
-
         if self.modelo_lbl.get() == 1:
             if self.ejercicio_lbl.get() ==1:
                 modelo_BS = ql.AnalyticEuropeanEngine(proceso_BSM)
                 opcion.setPricingEngine(modelo_BS)
-                #Griegas?
             elif self.ejercicio_lbl.get() ==2:
                 modelo_BjS = ql.BaroneAdesiWhaleyApproximationEngine(proceso_BSM)
                 opcion.setPricingEngine(modelo_BjS)
-            precio = opcion.NPV()    
+   
 
 
         elif self.modelo_lbl.get() == 2 :
@@ -217,14 +253,6 @@ class MyWindow:
 
             opcion.setPricingEngine(modelo_Bin)
 
-            precio = opcion.NPV()
-
-            #if self.ejercicio_lbl.get() == 1:
-            #    precio = opcion_europea_bin(tipo, S, K, T, r, sigma, div, bin_pasos)
-            #elif self.ejercicio_lbl.get() == 2:
-            #    precio = opcion_americana_bin(tipo, S, K, T, r, sigma, div, bin_pasos)
-            #else:
-            #    precio = 'Error'
         elif self.modelo_lbl.get() == 3 :
             generador_numeros_aleatorios = "PseudoRandom" 
             pasos_tiempo=20
@@ -245,7 +273,6 @@ class MyWindow:
             
             opcion.setPricingEngine(modelo_MC)
 
-            precio = opcion.NPV()
 
         elif self.modelo_lbl.get() == 4 :
 
@@ -260,24 +287,81 @@ class MyWindow:
                                            esquema_df)
 
             opcion.setPricingEngine(modelo_DF)
-            precio = opcion.NPV()
+            #precio = opcion.NPV()
 
 
-            #if self.ejercicio_lbl.get() == 1:
-            #    precio = opcion_europea_fd(tipo, S, K, T, r, sigma, div, fd_pasos)
-            #elif self.ejercicio_lbl.get() == 2:
-            #    precio = opcion_americana_fd(tipo, S, K, T, r, sigma, div, fd_pasos)
-            #else:
-            #    precio = 'Error'
-        else:
-            precio = 'Error'
+
+        
         try:
-            self.output.insert(END, round(precio,4))
+            precio = opcion.NPV()    
         except:
-            self.output.insert(END, precio)
+            precio = 'NA'
+
+        try:
+            delta = opcion.delta()    
+        except:
+            delta = 'NA'
+        
+        try:
+            gamma = opcion.gamma()    
+        except:
+            gamma = 'NA'
+        
+        try:
+            vega = opcion.vega()/100    
+        except:
+            vega = 'NA'
+        
+        try:
+            theta = opcion.theta()/365    
+        except:
+            theta = 'NA'
+
+        try:
+            rho = opcion.rho()/100    
+        except:
+            rho = 'NA'
+
+        #else:
+            
+        try:
+            self.output_npv.insert(END, round(precio,4))
+        except:
+            self.output_npv.insert(END, precio)
+        
+        try:
+            self.output_delta.insert(END, round(delta,4))
+        except:
+            self.output_delta.insert(END, delta)
+        
+        try:
+            self.output_gamma.insert(END, round(gamma,4))
+        except:
+            self.output_gamma.insert(END, gamma)
+
+        try:
+            self.output_vega.insert(END, round(vega,4))
+        except:
+            self.output_vega.insert(END, vega)
+        
+        try:
+            self.output_theta.insert(END, round(theta,4))
+        except:
+            self.output_theta.insert(END, theta)
+        
+        try:
+            self.output_rho.insert(END, round(rho,4))
+        except:
+            self.output_rho.insert(END, rho)
+        
+
+        
+
+
+
 
 window=Tk()
 mywin=MyWindow(window)
 window.title('Calculadora Opciones QL - Exactas 2022')
-window.geometry("500x600+15+15")
+window.geometry("600x700+15+15")
 window.mainloop()
