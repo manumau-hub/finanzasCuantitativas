@@ -1,4 +1,4 @@
-# Analisis Cuantitativo en Finazas 2022
+# Derivados Financieros - QUANt 2022 - UCEMA
 
 
 
