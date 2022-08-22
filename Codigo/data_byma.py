@@ -2,9 +2,15 @@
 from bs4 import BeautifulSoup
 import requests
 import datetime
+
+
 import pandas as pd
 
-from utils_opciones_byma import *
+import sys
+
+sys.path.append('..')
+
+from Codigo.utils_opciones_byma import *
 
 
 def web_scraping_opciones_iol():
@@ -50,42 +56,6 @@ def web_scraping_opciones_iol():
 
     return panel_iol
 
-
-### Deprecada, dado que dejo de funcionar, si alguien al arregla, bienvenido sea.
-def web_scraping_opciones_rava():
-    """ Scraping del panel de Opciones (Rava)"""
-    # url = 'https://www.byma.com.ar/opciones/'
-    url = 'http://www.rava.com/precios/panel.php?m=OPC'
-    page = requests.get(url)
-    soup = BeautifulSoup(page.text, 'lxml')
-    opciones = soup.find('table', {'class': 'tablapanel2'})
-    filas = opciones.find_all('tr')
-
-    l = []
-    tr = filas[0]
-    td = tr.find_all('td')
-    row = [tr.text for tr in td]
-    l.append(row)
-    for tr in filas[1:]:
-        td = tr.find_all('td')
-        row = [tr.text for tr in td]
-
-        #Reemplazo ',' por '.' y paso el string a float
-        for index in [1,2,3,4,5,6,8,9]:
-            row[index] = row[index].replace('.', '')
-            row[index] = row[index].replace(',', '.')
-            try:
-                row[index] = float(row[index])
-            except:
-                #Si no encuentra valor pone -99.99
-                row[index] = -99.99
-
-        l.append(row)
-
-    """ Dataframe con data scrapeada"""
-    panel_rava = pd.DataFrame(l[1:], columns=l[0])
-
-    return panel_rava
 
 
 def obtener_panel_opciones_byma(ticker = 'GGAL', clean_flag = False ):
@@ -221,6 +191,148 @@ def obtener_panel_opciones_byma(ticker = 'GGAL', clean_flag = False ):
         pass
     
     return panel_opciones
+
+
+
+
+def obtener_panel_acciones():
+    l = []
+    #urlG = 'http://www.rava.com/precios/panel.php?m=GEN'
+    urlG = 'https://iol.invertironline.com/mercado/cotizaciones/argentina/acciones'
+
+    page = requests.get(urlG)
+    soup = BeautifulSoup(page.text, 'lxml')
+    #precios = soup.find('table', {'class': 'tablapanel'})
+    precios = soup.find('table', {'id': 'cotizaciones'})
+    filas = precios.find_all('tr')
+
+
+
+    tr = filas[2]
+    td = tr.find_all('td')
+    row = [tr.text for tr in td]
+    l.append(row)
+    for tr in filas[3:]:
+        td = tr.find_all('td')
+        row = [tr.text for tr in td]
+        l.append(row)
+
+    #urlL = 'http://www.rava.com/precios/panel.php?m=LID'
+    urlL = 'https://iol.invertironline.com/mercado/cotizaciones/argentina/acciones/panel-l%C3%ADderes'
+    page = requests.get(urlL)
+    soup = BeautifulSoup(page.text, 'lxml')
+    precios = soup.find('table', {'class': 'tablapanel'})
+    filas = precios.find_all('tr')
+
+    for tr in filas[3:]:
+        td = tr.find_all('td')
+        row = [tr.text for tr in td]
+        l.append(row)
+
+    #Agrego CEDEARS
+    #urlC = 'http://www.rava.com/precios/panel.php?m=CED'
+    urlC = 'https://iol.invertironline.com/mercado/cotizaciones/argentina/cedears/todos'
+    page = requests.get(urlL)
+    soup = BeautifulSoup(page.text, 'lxml')
+    precios = soup.find('table', {'class': 'tablapanel'})
+    filas = precios.find_all('tr')
+
+    for tr in filas[3:]:
+        td = tr.find_all('td')
+        row = [tr.text for tr in td]
+        l.append(row)
+
+
+
+
+    panel_acciones = pd.DataFrame(l[1:], columns=l[0])
+
+    return panel_acciones
+
+
+def obtener_curva(curva_nombre = 'badlar', tasa_badlar=0.405):
+    """
+    Curva de descuento:
+    'badlar' contante
+     o
+    'caucion'
+    """
+    if curva_nombre == 'caucion':
+        # Curva con valores de caucion
+        l = []
+        url = 'https://www.invertironline.com/mercado/cotizaciones/argentina/cauciones'
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, 'lxml')
+        cauciones = soup.find('table', {'class': 'table'})
+
+        filas = cauciones.find_all('tr')
+
+        tr = filas[0]
+        td = tr.find_all('td')
+        row = [tr.text for tr in td]
+        row = row + ['Tasa']
+        l.append(row)
+        for tr in filas[1:]:
+            td = tr.find_all('td')
+            row = [tr.text for tr in td]
+
+            row[0] = int(row[0])
+
+            tasa = row[5].replace('%', '')
+            tasa = tasa.replace(' ', '')
+            tasa = float(tasa.replace(',', '.')) / 100.0
+            row = row + [tasa]
+            l.append(row)
+
+        panel_cauciones = pd.DataFrame(l[1:], columns=l[0])
+
+        panel_cauciones_final = panel_cauciones[panel_cauciones.Moneda == 'PESOS']
+
+        panel_cauciones_final = panel_cauciones_final.rename(columns={'Plazo': 'Days', 'Tasa': 'Rate'}, inplace=False)
+
+        panel_cauciones_final = panel_cauciones_final[['Days', 'Rate']]
+        # remove missing values
+        panel_cauciones_final = panel_cauciones_final[panel_cauciones_final['Rate'] > 0.001]
+
+        curva = panel_cauciones_final
+
+    elif curva_nombre == 'badlar':
+        #Curva constante tasa badlar (puede ser curva tamabien)
+        data = [[5, tasa_badlar], [360, tasa_badlar]]
+
+        # Create the pandas DataFrame
+        curva = pd.DataFrame(data, columns=['Days', 'Rate'])
+    else:
+        pass
+
+    return curva
+
+
+def obtener_spot_ticker(panel_acciones, ticker):
+    """Obtiene el precio spot de ticker """
+    ticker_list = list(panel_acciones['Especie'].values)
+
+    try:
+        index = ticker_list.index(ticker)
+        spot = panel_acciones['Último'].values[index]
+        spot = spot.replace('.', '')
+        spot = float(spot.replace(',', '.'))
+    except:
+        try:
+            index = ticker_list.index('CEDEAR'+ticker)
+            spot = panel_acciones['Último'].values[index]
+            spot = spot.replace('.', '')
+            spot = float(spot.replace(',', '.'))
+        except:
+            spot = -99.99
+
+    return spot
+
+
+    ##############
+##### LEGACY #########
+    ##############
+
 
 
 
@@ -367,128 +479,39 @@ def obtener_panel_opciones_byma_rava(ticker = 'GGAL', clean_flag = False ):
 Desacople de scraping y toqueteo
 """
 
-def obtener_panel_acciones():
-    l = []
-    urlG = 'http://www.rava.com/precios/panel.php?m=GEN'
-    page = requests.get(urlG)
-    soup = BeautifulSoup(page.text, 'lxml')
-    precios = soup.find('table', {'class': 'tablapanel'})
-    filas = precios.find_all('tr')
 
-    tr = filas[2]
+### Deprecada, dado que dejo de funcionar, si alguien al arregla, bienvenido sea.
+def web_scraping_opciones_rava():
+    """ Scraping del panel de Opciones (Rava)"""
+    # url = 'https://www.byma.com.ar/opciones/'
+    url = 'http://www.rava.com/precios/panel.php?m=OPC'
+    page = requests.get(url)
+    soup = BeautifulSoup(page.text, 'lxml')
+    opciones = soup.find('table', {'class': 'tablapanel2'})
+    filas = opciones.find_all('tr')
+
+    l = []
+    tr = filas[0]
     td = tr.find_all('td')
     row = [tr.text for tr in td]
     l.append(row)
-    for tr in filas[3:]:
+    for tr in filas[1:]:
         td = tr.find_all('td')
         row = [tr.text for tr in td]
+
+        #Reemplazo ',' por '.' y paso el string a float
+        for index in [1,2,3,4,5,6,8,9]:
+            row[index] = row[index].replace('.', '')
+            row[index] = row[index].replace(',', '.')
+            try:
+                row[index] = float(row[index])
+            except:
+                #Si no encuentra valor pone -99.99
+                row[index] = -99.99
+
         l.append(row)
 
-    urlL = 'http://www.rava.com/precios/panel.php?m=LID'
-    page = requests.get(urlL)
-    soup = BeautifulSoup(page.text, 'lxml')
-    precios = soup.find('table', {'class': 'tablapanel'})
-    filas = precios.find_all('tr')
+    """ Dataframe con data scrapeada"""
+    panel_rava = pd.DataFrame(l[1:], columns=l[0])
 
-    for tr in filas[3:]:
-        td = tr.find_all('td')
-        row = [tr.text for tr in td]
-        l.append(row)
-
-    #Agrego CEDEARS
-    urlL = 'http://www.rava.com/precios/panel.php?m=CED'
-    page = requests.get(urlL)
-    soup = BeautifulSoup(page.text, 'lxml')
-    precios = soup.find('table', {'class': 'tablapanel'})
-    filas = precios.find_all('tr')
-
-    for tr in filas[3:]:
-        td = tr.find_all('td')
-        row = [tr.text for tr in td]
-        l.append(row)
-
-
-
-
-    panel_acciones = pd.DataFrame(l[1:], columns=l[0])
-
-    return panel_acciones
-
-
-def obtener_curva(curva_nombre = 'badlar', tasa_badlar=0.405):
-    """
-    Curva de descuento:
-    'badlar' contante
-     o
-    'caucion'
-    """
-    if curva_nombre == 'caucion':
-        # Curva con valores de caucion
-        l = []
-        url = 'https://www.invertironline.com/mercado/cotizaciones/argentina/cauciones'
-        page = requests.get(url)
-        soup = BeautifulSoup(page.text, 'lxml')
-        cauciones = soup.find('table', {'class': 'table'})
-
-        filas = cauciones.find_all('tr')
-
-        tr = filas[0]
-        td = tr.find_all('td')
-        row = [tr.text for tr in td]
-        row = row + ['Tasa']
-        l.append(row)
-        for tr in filas[1:]:
-            td = tr.find_all('td')
-            row = [tr.text for tr in td]
-
-            row[0] = int(row[0])
-
-            tasa = row[5].replace('%', '')
-            tasa = tasa.replace(' ', '')
-            tasa = float(tasa.replace(',', '.')) / 100.0
-            row = row + [tasa]
-            l.append(row)
-
-        panel_cauciones = pd.DataFrame(l[1:], columns=l[0])
-
-        panel_cauciones_final = panel_cauciones[panel_cauciones.Moneda == 'PESOS']
-
-        panel_cauciones_final = panel_cauciones_final.rename(columns={'Plazo': 'Days', 'Tasa': 'Rate'}, inplace=False)
-
-        panel_cauciones_final = panel_cauciones_final[['Days', 'Rate']]
-        # remove missing values
-        panel_cauciones_final = panel_cauciones_final[panel_cauciones_final['Rate'] > 0.001]
-
-        curva = panel_cauciones_final
-
-    elif curva_nombre == 'badlar':
-        #Curva constante tasa badlar (puede ser curva tamabien)
-        data = [[5, tasa_badlar], [360, tasa_badlar]]
-
-        # Create the pandas DataFrame
-        curva = pd.DataFrame(data, columns=['Days', 'Rate'])
-    else:
-        pass
-
-    return curva
-
-
-def obtener_spot_ticker(panel_acciones, ticker):
-    """Obtiene el precio spot de ticker """
-    ticker_list = list(panel_acciones['Especie'].values)
-
-    try:
-        index = ticker_list.index(ticker)
-        spot = panel_acciones['Último'].values[index]
-        spot = spot.replace('.', '')
-        spot = float(spot.replace(',', '.'))
-    except:
-        try:
-            index = ticker_list.index('CEDEAR'+ticker)
-            spot = panel_acciones['Último'].values[index]
-            spot = spot.replace('.', '')
-            spot = float(spot.replace(',', '.'))
-        except:
-            spot = -99.99
-
-    return spot
+    return panel_rava
