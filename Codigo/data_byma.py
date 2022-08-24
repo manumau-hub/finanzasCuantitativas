@@ -45,7 +45,8 @@ def web_scraping_opciones_iol():
     """ Dataframe con data scrapeada"""
     panel_iol = pd.DataFrame(l[1:], columns=l[0])
     panel_iol = panel_iol.replace(r'\r+|\n+|\t+','', regex=True)
-    
+    panel_iol = panel_iol.replace(' ','', regex=True)
+
     #Me quedo con los operados
     panel_iol = panel_iol[panel_iol.ÚltimoOperado>0] 
     #Saco las columnas con informacion irrelevante 
@@ -58,15 +59,68 @@ def web_scraping_opciones_iol():
 
 
 
+
+def web_scraping_acciones_iol():
+
+    l = []
+
+
+    urlG = 'https://iol.invertironline.com/mercado/cotizaciones/argentina/acciones'
+
+    page = requests.get(urlG)
+    soup = BeautifulSoup(page.text, 'lxml')
+    #precios = soup.find('table', {'class': 'tablapanel'})
+    precios = soup.find('table', {'id': 'cotizaciones'})
+    
+    filas = precios.find_all('tr')
+
+    l = []
+    tr = filas[0]
+    td = tr.find_all('td')
+    row = [tr.text for tr in td]
+    l.append(row)
+    for tr in filas[1:]:
+        td = tr.find_all('td')
+        row = [tr.text for tr in td]
+
+        #Reemplazo ',' por '.' y paso el string a float
+        for index in [1,2,3,4,5,6,7,8,9,10,11,12]:
+            row[index] = row[index].replace('.', '')
+            row[index] = row[index].replace(',', '.')
+            try:
+                row[index] = float(row[index])
+            except:
+                #Si no encuentra valor pone -99.99
+                row[index] = -99.99
+
+        l.append(row)
+
+
+    panel_acciones = pd.DataFrame(l[1:], columns=l[0])
+    
+    panel_acciones = panel_acciones.replace(r'\r+|\n+|\t+','', regex=True)
+    panel_acciones = panel_acciones.replace(' ','', regex=True)
+
+    return panel_acciones
+
+
+
+
+
 def obtener_panel_opciones_byma(ticker = 'GGAL', clean_flag = False ):
-    #Obtengo el panel crudo de Rava
-    panel_rava = web_scraping_opciones_iol()
+    #Obtengo el panel crudo de IOL
+    panel_iol = web_scraping_opciones_iol()
+
+
+
     #Obtengo el panel crudo de acciones (para el spot)
-    panel_acciones = obtener_panel_acciones()
+    panel_acciones = obtener_panel_acciones_iol()
 
     #Genero el nuevo panel
-    panel_opciones = panel_rava.copy()
-
+    panel_opciones = panel_iol.copy()
+    #Renombro algunas columnas
+    panel_opciones.rename(columns={'Símbolo': 'Especie', 'ÚltimoCierre': 'Last', 'ÚltimoOperado': 'Last'}) 
+    
     #Le agrego las nuevas columnas (ojo con los tipos string, float, int, datetime)
     panel_opciones['Ticker_Opcion'] = ''
     panel_opciones['Ticker_Stock'] = ''
@@ -83,12 +137,11 @@ def obtener_panel_opciones_byma(ticker = 'GGAL', clean_flag = False ):
  
     for fila in range(len(panel_opciones.Especie.values)):
 
-        panel_opciones.Ticker_Opcion.values[fila] = panel_opciones.Especie.values[fila][0:3]
+        panel_opciones.at[fila,'Ticker_Opcion']  = panel_opciones.Especie.values[fila][0:3]
+        panel_opciones.at[fila,'Ticker_Stock'] = conversor_ticker(panel_opciones.Ticker_Opcion.values[fila])
+        panel_opciones.at[fila,'Tipo'] = panel_opciones.Especie.values[fila][3:4]
+        panel_opciones.at[fila,'Tipo']  = panel_opciones.Tipo.values[fila].replace('V', 'P')
 
-        panel_opciones.Ticker_Stock.values[fila] = conversor_ticker(panel_opciones.Ticker_Opcion.values[fila])
-
-        panel_opciones.Tipo.values[fila] = panel_opciones.Especie.values[fila][3:4]
-        panel_opciones.Tipo.values[fila] = panel_opciones.Tipo.values[fila].replace('V', 'P')
 
         #ENCHASTRE PARA CORREGIR STRIKES POST DIVIDENDO inicio
         if panel_opciones.Ticker_Opcion.values[fila]=='GFG':
@@ -191,63 +244,6 @@ def obtener_panel_opciones_byma(ticker = 'GGAL', clean_flag = False ):
         pass
     
     return panel_opciones
-
-
-
-
-def obtener_panel_acciones():
-    l = []
-    #urlG = 'http://www.rava.com/precios/panel.php?m=GEN'
-    urlG = 'https://iol.invertironline.com/mercado/cotizaciones/argentina/acciones'
-
-    page = requests.get(urlG)
-    soup = BeautifulSoup(page.text, 'lxml')
-    #precios = soup.find('table', {'class': 'tablapanel'})
-    precios = soup.find('table', {'id': 'cotizaciones'})
-    filas = precios.find_all('tr')
-
-
-
-    tr = filas[2]
-    td = tr.find_all('td')
-    row = [tr.text for tr in td]
-    l.append(row)
-    for tr in filas[3:]:
-        td = tr.find_all('td')
-        row = [tr.text for tr in td]
-        l.append(row)
-
-    #urlL = 'http://www.rava.com/precios/panel.php?m=LID'
-    urlL = 'https://iol.invertironline.com/mercado/cotizaciones/argentina/acciones/panel-l%C3%ADderes'
-    page = requests.get(urlL)
-    soup = BeautifulSoup(page.text, 'lxml')
-    precios = soup.find('table', {'class': 'tablapanel'})
-    filas = precios.find_all('tr')
-
-    for tr in filas[3:]:
-        td = tr.find_all('td')
-        row = [tr.text for tr in td]
-        l.append(row)
-
-    #Agrego CEDEARS
-    #urlC = 'http://www.rava.com/precios/panel.php?m=CED'
-    urlC = 'https://iol.invertironline.com/mercado/cotizaciones/argentina/cedears/todos'
-    page = requests.get(urlL)
-    soup = BeautifulSoup(page.text, 'lxml')
-    precios = soup.find('table', {'class': 'tablapanel'})
-    filas = precios.find_all('tr')
-
-    for tr in filas[3:]:
-        td = tr.find_all('td')
-        row = [tr.text for tr in td]
-        l.append(row)
-
-
-
-
-    panel_acciones = pd.DataFrame(l[1:], columns=l[0])
-
-    return panel_acciones
 
 
 def obtener_curva(curva_nombre = 'badlar', tasa_badlar=0.405):
@@ -515,3 +511,4 @@ def web_scraping_opciones_rava():
     panel_rava = pd.DataFrame(l[1:], columns=l[0])
 
     return panel_rava
+
