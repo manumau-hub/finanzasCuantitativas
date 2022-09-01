@@ -54,3 +54,24 @@ def impvolfunc_bin(tipo, S, K, T, r, precio_mercado, div, pasos = 1000):
     return impvol
 
 
+def print_res(tipo, impvol_bin, impvol_bs):
+    print(f'Vol Imp Opcion tipo {tipo} '
+          f'Modelo Bin {round(impvol_bin, 4)} '
+          f'Modelo BS {round(impvol_bs, 4)}')
+
+
+def main():
+    tipo = 'C'
+    impvol_c_bin = impvolfunc_bin(tipo, 100, 200, 1, 0.03, 50, 0.01, pasos=100)
+    impvol_c_bs = impvolfunc_bs(tipo, 100, 200, 1, 0.03, 50, 0.01)
+
+    print_res(tipo, impvol_bin=impvol_c_bin, impvol_bs=impvol_c_bs)
+
+    tipo = 'P'
+    impvol_p_bin = impvolfunc_bin(tipo, 100, 80, 1, 0.03, 50, 0.01, pasos=100)
+    impvol_p_bs = impvolfunc_bs(tipo, 100, 80, 1, 0.03, 50, 0.01)
+
+    print_res(tipo, impvol_bin=impvol_p_bin, impvol_bs=impvol_p_bs)
+    
+if __name__ == '__main__':
+    main()
