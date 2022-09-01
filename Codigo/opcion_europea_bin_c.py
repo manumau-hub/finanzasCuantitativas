@@ -67,4 +67,4 @@ if __name__ == '__main__':
     tipo = 'C'
     c_c_bin = opcion_europea_bin_c(tipo, 200, 200, 1, 0.03, .1, 0.01, pasos=1000)
 
-    print(c_c_bin)
+    print(f'Price opcion europea model bin {c_c_bin}')
