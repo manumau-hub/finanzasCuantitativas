@@ -22,15 +22,20 @@ import operator as op
 from functools import reduce
 
 def ncr(n, r):
-    r = min(r, n-r)
-    numer = reduce(op.mul, range(n, n-r, -1), 1)
-    denom = reduce(op.mul, range(1, r+1), 1)
-    return numer // denom  # or / in Python 2
+    try:
+        return math.comb( n, r)
+    except Exception as e:
+        print(f'Error {e}')
+        r = min(r, n-r)
+        numer = reduce(op.mul, range(n, n-r, -1), 1)
+        denom = reduce(op.mul, range(1, r+1), 1)
+        return numer // denom  # or / in Python 2
 
 
 def nCr(n, r):
     f = math.factorial
     return f(n) / f(r) / f(n - r)
+
 
 def opcion_europea_bin_c(tipo, S, K, T, r, sigma, div, pasos):
 
@@ -58,3 +63,8 @@ def opcion_europea_bin_c(tipo, S, K, T, r, sigma, div, pasos):
     return precio_BIN_c
 
 
+if __name__ == '__main__':
+    tipo = 'C'
+    c_c_bin = opcion_europea_bin_c(tipo, 200, 200, 1, 0.03, .1, 0.01, pasos=1000)
+
+    print(c_c_bin)
