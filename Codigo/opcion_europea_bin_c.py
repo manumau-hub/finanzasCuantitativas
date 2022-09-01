@@ -62,8 +62,7 @@ def opcion_europea_bin_c(tipo, S, K, T, r, sigma, div, pasos):
     precio_BIN_c = math.exp(-r*T)*temp
     return precio_BIN_c
 
-
-if __name__ == '__main__':
+def main():
     tipo = 'C'
     S1 = 200
     c_c_bin1 = opcion_europea_bin_c(tipo, S1, 200, 1, 0.03, .1, 0.01, pasos=1000)
@@ -83,3 +82,6 @@ if __name__ == '__main__':
     c_c_bin3 = opcion_europea_bin_c(tipo, S1, 200, 1, 0.03, .11, 0.01, pasos=1000)
 
     print(f'Vega = {c_c_bin3 - c_c_bin1}')
+
+if __name__ == '__main__':
+    main()
