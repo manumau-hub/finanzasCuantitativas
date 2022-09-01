@@ -80,6 +80,6 @@ if __name__ == '__main__':
     
     print(f'Delta model bin {Delta}')
 
-    c_c_bin3 = opcion_europea_bin_c(tipo, S1, 200, 1, 0.03, .09, 0.01, pasos=1000)
+    c_c_bin3 = opcion_europea_bin_c(tipo, S1, 200, 1, 0.03, .11, 0.01, pasos=1000)
 
-    print(f'Vega = {c_c_bin1 - c_c_bin3}')
+    print(f'Vega = {c_c_bin3 - c_c_bin1}')
