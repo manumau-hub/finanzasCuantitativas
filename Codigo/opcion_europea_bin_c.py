@@ -65,6 +65,21 @@ def opcion_europea_bin_c(tipo, S, K, T, r, sigma, div, pasos):
 
 if __name__ == '__main__':
     tipo = 'C'
-    c_c_bin = opcion_europea_bin_c(tipo, 200, 200, 1, 0.03, .1, 0.01, pasos=1000)
+    S1 = 200
+    c_c_bin1 = opcion_europea_bin_c(tipo, S1, 200, 1, 0.03, .1, 0.01, pasos=1000)
 
-    print(f'Price opcion europea model bin {c_c_bin}')
+    print(f'Price opcion europea model bin {c_c_bin1}')
+
+    S2 = S1 + 1
+    c_c_bin2 = opcion_europea_bin_c(tipo, S2, 200, 1, 0.03, .1, 0.01, pasos=1000)
+
+
+    print(f'Price opcion europea model bin {c_c_bin2}')
+
+    Delta = c_c_bin2 - c_c_bin1
+    
+    print(f'Delta model bin {Delta}')
+
+    c_c_bin3 = opcion_europea_bin_c(tipo, S1, 200, 1, 0.03, .09, 0.01, pasos=1000)
+
+    print(f'Vega = {c_c_bin1 - c_c_bin3}')
