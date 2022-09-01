@@ -54,7 +54,11 @@ def opcion_europea_bin_c(tipo, S, K, T, r, sigma, div, pasos):
             payoff = max(0, K - S * math.pow(u, k) * math.pow(d, pasos - k))
         temp = temp +ncr(pasos, k) * math.pow(q_prob,k) * math.pow((1-q_prob),pasos-k) * payoff
 
+
+
     precio_BIN_c = math.exp(-r*T)*temp
+
     return precio_BIN_c
+
 
 
