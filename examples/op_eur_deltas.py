@@ -16,11 +16,12 @@ if __name__ == '__main__':
 
     Delta = np.diff(c_s)
     Delta2 = np.diff(Delta)
-    max_delta = Delta2.max()
+    
 
     plt.plot(SS[1:], Delta)
-    plt.plot(SS[2:], Delta2/max_delta)
+    plt.plot(SS[2:], Delta2/Delta2.max())
     plt.show()
 
-    print(max_delta, Delta[np.argmax(Delta2)])
+    max_index = np.argmax(Delta2)
+    print(Delta2[max_index], Delta[max_index], SS[max_index])
 
