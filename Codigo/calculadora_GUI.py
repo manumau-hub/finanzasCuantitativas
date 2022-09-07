@@ -200,6 +200,6 @@ class MyWindow:
 
 window=Tk()
 mywin=MyWindow(window)
-window.title('Calculadora Opciones - Exactas 2022')
+window.title('Calculadora Opciones - UCEMA QUANt 2022')
 window.geometry("500x600+15+15")
 window.mainloop()
