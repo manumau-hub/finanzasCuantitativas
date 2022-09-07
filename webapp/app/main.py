@@ -15,7 +15,7 @@ class Model(str, Enum):
     MC = 'MC'
 
 class OptionParameters(BaseModel):
-    tipo: str = 'C'
+    type: str = 'C'
     S: float = 100.0
     K: float = 100.0
     T: float = 1.0
@@ -24,11 +24,15 @@ class OptionParameters(BaseModel):
     div: Optional[float] = 0.0
     model: Model = Model.BS
 
-@app.get("/price/options/bs")
+class Result(BaseModel):
+    price:float
+    model: Model
+
+@app.get("/price/options/european")
 async def root(params: OptionParameters = Depends()):
 
     if params.model == Model.BS:
-        price = opcion_europea_bs(tipo=params.tipo,
+        price = opcion_europea_bs(tipo=params.type,
                                   S=params.S,
                                   K=params.K,
                                   T=params.T,
@@ -36,7 +40,7 @@ async def root(params: OptionParameters = Depends()):
                                   sigma=params.sigma,
                                   div=params.div)
     elif params.model == Model.BIN:
-         price = opcion_europea_bin(tipo=params.tipo,
+         price = opcion_europea_bin(tipo=params.type,
                                   S=params.S,
                                   K=params.K,
                                   T=params.T,
@@ -45,7 +49,7 @@ async def root(params: OptionParameters = Depends()):
                                   div=params.div,
                                   pasos=1000)
     elif params.model == Model.MC:
-         price = opcion_europea_mc(tipo=params.tipo,
+         price = opcion_europea_mc(tipo=params.type,
                                   S=params.S,
                                   K=params.K,
                                   T=params.T,
@@ -54,4 +58,4 @@ async def root(params: OptionParameters = Depends()):
                                   div=params.div,
                                   pasos=1000000)
 
-    return {'price': price, 'modelo': params.model}
+    return Result(price=price, model=params.model)
