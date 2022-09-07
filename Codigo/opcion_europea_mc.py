@@ -28,7 +28,7 @@ def opcion_europea_mc(tipo, S, K, T, r, sigma, div, pasos):
         elif tipo == "P":
             payoff = max(0, K - S * math.exp((r-div - 0.5 * math.pow(sigma, 2)) * T + sigma * math.sqrt(T) * z[i]) )
 
-        opcion[i] = math.exp(-r * T) * payoff #C_i
+        opcion[i] = math.exp(-r * T) * payoff
 
     precio_MC = np.mean(opcion)
 
