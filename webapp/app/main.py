@@ -28,7 +28,7 @@ class Result(BaseModel):
     price:float
     model: Model
 
-@app.get("/price/options/european")
+@app.get("/price/options/european", tags=['Europeans'])
 async def root(params: OptionParameters = Depends()):
 
     if params.model == Model.BS:
