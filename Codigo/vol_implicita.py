@@ -54,8 +54,3 @@ def impvolfunc_bin(tipo, S, K, T, r, precio_mercado, div, pasos = 1000):
     return impvol
 
 
-def print_res(tipo, impvol_bin, impvol_bs):
-    print(f'Vol Imp Opcion tipo {tipo} '
-          f'Modelo Bin {round(impvol_bin, 4)} '
-          f'Modelo BS {round(impvol_bs, 4)}')
-
