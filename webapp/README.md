@@ -1,5 +1,21 @@
 # Para correr la aplicacion
 
+## Windows
+
+### instalar python
+
+[python for windows](https://www.python.org/downloads/windows/)
+
+[using python on windows](https://docs.python.org/3/using/windows.html)
+
+instalar version 3.9
+
+Añadir Python 3.9 a PATH
+
+
+
+# Linux
+
 ## crear un entorno virtual
 
 cd webapp
@@ -27,4 +43,3 @@ $>./runserver.sh
 ### luego en un tab del browser poner
 
 localhost:8000/docs
-
