@@ -1,17 +1,37 @@
 # Para correr la aplicacion
 
+## Linux
 
-## Docker
+## instalar python
 
-- install docker
+## crear un entorno virtual
 
-[Docker](https://docs.docker.com/get-docker/)
+$ cd webapp
 
-$ docker-compose build
 
-$ docker-compose up -d
+$ python3 -m venv ./webappenv
 
-$ docker-compose down --remove-orphans
+## activar el entorno virtual creado
+
+$ source ./webappenv/bin/activate
+
+## instalar las dependencias
+
+$ pip install -r requirements.txt
+
+## poner en modo ejecutable el server
+
+$ chmod +x runserver.sh
+
+## correr el server
+
+$ ./runserver.sh
+
+## ejecutar la aplicación
+
+### luego en un tab del browser poner
+
+localhost:8000/docs
 
 
 ## Windows
@@ -64,35 +84,21 @@ localhost:8000/docs
 
 
 
-## Linux
+## Docker
 
-## instalar python
+- install docker
 
-## crear un entorno virtual
+(puede no ser trivial)
+
+[Docker](https://docs.docker.com/get-docker/)
+
+[install docker](https://docs.docker.com/desktop/install/windows-install/)
 
 $ cd webapp
 
+$ docker-compose build
 
-$ python3 -m venv ./webappenv
+$ docker-compose up -d
 
-## activar el entorno virtual creado
+$ docker-compose down --remove-orphans
 
-$ source ./webappenv/bin/activate
-
-## instalar las dependencias
-
-$ pip install -r requirements.txt
-
-## poner en modo ejecutable el server
-
-$ chmod +x runserver.sh
-
-## correr el server
-
-$ ./runserver.sh
-
-## ejecutar la aplicación
-
-### luego en un tab del browser poner
-
-localhost:8000/docs
