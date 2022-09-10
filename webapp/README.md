@@ -1,5 +1,19 @@
 # Para correr la aplicacion
 
+
+## Docker
+
+- install docker
+
+[Docker](https://docs.docker.com/get-docker/)
+
+$ docker-compose build
+
+$ docker-compose up -d
+
+$ docker-compose down --remove-orphans
+
+
 ## Windows
 
 ### instalar python
@@ -13,8 +27,9 @@ instalar version 3.9
 Añadir Python 3.9 a PATH
 
 
+## Linux
 
-# Linux
+## instalar python
 
 ## crear un entorno virtual
 
