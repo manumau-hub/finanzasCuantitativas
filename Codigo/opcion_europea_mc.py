@@ -38,7 +38,12 @@ def opcion_europea_mc(tipo, S, K, T, r, sigma, div, pasos):
 
 
 def opcion_europea_mc_fv(tipo, S, K, T, r, sigma, div, pasos):
-    """ Reducci'on de varianza y aceleración"""
+    """ 
+        Reducci'on de varianza
+                   https://en.wikipedia.org/wiki/Antithetic_variates
+
+        y aceleración
+    """
 
     z = np.random.normal(0,1,pasos)
     opcion = np.zeros(pasos)
