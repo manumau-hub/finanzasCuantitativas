@@ -32,7 +32,9 @@ def opcion_europea_mc(tipo, S, K, T, r, sigma, div, pasos):
 
     precio_MC = np.mean(opcion)
 
-    # var= np.var(opcion)
+    var= np.var(opcion)
+
+    print('var ', var)
 
     return precio_MC
 
@@ -46,6 +48,7 @@ def opcion_europea_mc_fv(tipo, S, K, T, r, sigma, div, pasos):
     """
 
     z = np.random.normal(0,1,pasos)
+
     opcion = np.zeros(pasos)
     B = sigma * math.sqrt(T)
     A = (r-div - 0.5 * math.pow(sigma,2)) * T
@@ -62,6 +65,8 @@ def opcion_europea_mc_fv(tipo, S, K, T, r, sigma, div, pasos):
 
     precio_MC = np.mean(opcion)
 
-    # var= np.var(opcion)
+    var= np.var(opcion)
+
+    print('var ', var)
 
     return precio_MC

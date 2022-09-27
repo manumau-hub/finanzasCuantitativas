@@ -11,8 +11,8 @@ c3 = opcion_europea_mc('P', 100, 100, 1, 0.02, 0.3, 0.01, pasos)
 print(f"time {time.time() - t1}")
 
 t1 = time.time()
-c4 = opcion_europea_mc_fv('P', 100, 100, 1, 0.02, 0.3, 0.01, pasos)
 c2 = opcion_europea_mc_fv('C', 100, 100, 1, 0.02, 0.3, 0.01, pasos)
+c4 = opcion_europea_mc_fv('P', 100, 100, 1, 0.02, 0.3, 0.01, pasos)
 print(f"time {time.time() - t1}")
 
 
