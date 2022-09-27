@@ -48,14 +48,14 @@ def opcion_europea_mc_fv(tipo, S, K, T, r, sigma, div, pasos):
     z = np.random.normal(0,1,pasos)
     opcion = np.zeros(pasos)
     B = sigma * math.sqrt(T)
-    A = (r-div - 0.5 * math.pow(sigma,2))
+    A = (r-div - 0.5 * math.pow(sigma,2)) * T
     B_z = B * z
     if tipo == "C":
-        payoff1 = np.maximum( 0 , S * np.exp( A * T + B_z) - K)
-        payoff2 = np.maximum( 0 , S * np.exp(A * T - B_z) - K)
+        payoff1 = np.maximum( 0 , S * np.exp( A + B_z) - K)
+        payoff2 = np.maximum( 0 , S * np.exp(A - B_z) - K)
     elif tipo == "P":
-        payoff1 = np.maximum(0, K - S * np.exp(A * T + B_z) )
-        payoff2 = np.maximum(0, K - S * np.exp(A * T - B_z) )
+        payoff1 = np.maximum(0, K - S * np.exp(A + B_z) )
+        payoff2 = np.maximum(0, K - S * np.exp(A - B_z) )
     payoff = .5 * (payoff1+ payoff2)
 
     opcion = math.exp(-r * T) * payoff
