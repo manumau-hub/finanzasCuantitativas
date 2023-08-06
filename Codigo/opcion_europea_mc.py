@@ -34,7 +34,7 @@ def opcion_europea_mc(tipo, S, K, T, r, sigma, div, pasos):
 
     var= np.var(opcion)
 
-    print('var ', var)
+    #print('var ', var)
 
     return precio_MC
 
