@@ -114,12 +114,12 @@ def obtener_panel_opciones_byma(ticker = 'GGAL', clean_flag = False ):
 
 
     #Obtengo el panel crudo de acciones (para el spot)
-    panel_acciones = obtener_panel_acciones_iol()
+    panel_acciones = web_scraping_acciones_iol()
 
     #Genero el nuevo panel
     panel_opciones = panel_iol.copy()
     #Renombro algunas columnas
-    panel_opciones.rename(columns={'Símbolo': 'Especie', 'ÚltimoCierre': 'Last', 'ÚltimoOperado': 'Last'}) 
+    panel_opciones.rename(columns={'Símbolo': 'Símbolo', 'ÚltimoCierre': 'Last', 'ÚltimoOperado': 'Last'}) 
     
     #Le agrego las nuevas columnas (ojo con los tipos string, float, int, datetime)
     panel_opciones['Ticker_Opcion'] = ''
@@ -135,24 +135,24 @@ def obtener_panel_opciones_byma(ticker = 'GGAL', clean_flag = False ):
 
     # Recorro el dataframe (opcion por opcion y completo cada una de las nuevas columnas)
  
-    for fila in range(len(panel_opciones.Especie.values)):
+    for fila in range(len(panel_opciones.Símbolo.values)):
 
-        panel_opciones.at[fila,'Ticker_Opcion']  = panel_opciones.Especie.values[fila][0:3]
+        panel_opciones.at[fila,'Ticker_Opcion']  = panel_opciones.Símbolo.values[fila][0:3]
         panel_opciones.at[fila,'Ticker_Stock'] = conversor_ticker(panel_opciones.Ticker_Opcion.values[fila])
-        panel_opciones.at[fila,'Tipo'] = panel_opciones.Especie.values[fila][3:4]
+        panel_opciones.at[fila,'Tipo'] = panel_opciones.Símbolo.values[fila][3:4]
         panel_opciones.at[fila,'Tipo']  = panel_opciones.Tipo.values[fila].replace('V', 'P')
 
 
         #ENCHASTRE PARA CORREGIR STRIKES POST DIVIDENDO inicio
         if panel_opciones.Ticker_Opcion.values[fila]=='GFG':
             try:
-                int(panel_opciones.Especie.values[fila][4:9])
-                panel_opciones.Strike.values[fila] = int(panel_opciones.Especie.values[fila][4:9])/100.0
+                int(panel_opciones.Símbolo.values[fila][4:9])
+                panel_opciones.Strike.values[fila] = int(panel_opciones.Símbolo.values[fila][4:9])/100.0
                 
                 if panel_opciones.Strike.values[fila]>500:
                     panel_opciones.Strike.values[fila]=panel_opciones.Strike.values[fila]/10
                 
-                panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Especie.values[fila][9:10]
+                panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Símbolo.values[fila][9:10]
                 try:
                     panel_opciones.ExpiryMonthNumber.values[fila] = mes_nombre_a_numero(panel_opciones.ExpiryMonthName.values[fila])
                 except:
@@ -160,9 +160,9 @@ def obtener_panel_opciones_byma(ticker = 'GGAL', clean_flag = False ):
 
             except:
             #HORRIBLE!    
-                panel_opciones.Strike.values[fila] = panel_opciones.Especie.values[fila][4:8]
+                panel_opciones.Strike.values[fila] = panel_opciones.Símbolo.values[fila][4:8]
 
-                panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Especie.values[fila][8:10]
+                panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Símbolo.values[fila][8:10]
 
                 try:
                     int(panel_opciones.ExpiryMonthName.values[fila][0])
@@ -182,9 +182,9 @@ def obtener_panel_opciones_byma(ticker = 'GGAL', clean_flag = False ):
         #ENCHASTRE PARA CORREGIR STRIKES POST DIVIDENDO fin    
         else:
         ###    
-            panel_opciones.Strike.values[fila] = panel_opciones.Especie.values[fila][4:8]
+            panel_opciones.Strike.values[fila] = panel_opciones.Símbolo.values[fila][4:8]
 
-            panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Especie.values[fila][8:10]
+            panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Símbolo.values[fila][8:10]
 
             try:
                 int(panel_opciones.ExpiryMonthName.values[fila][0])
@@ -219,13 +219,13 @@ def obtener_panel_opciones_byma(ticker = 'GGAL', clean_flag = False ):
     # Panel limpio: cambio de nombre, reordenamiento y limpieza minima del panel
     if clean_flag == True:
         # Sacar opciones sobre bonos
-        panel_opciones = panel_opciones[~panel_opciones.Especie.str.contains('A24')]
+        panel_opciones = panel_opciones[~panel_opciones.Símbolo.str.contains('A24')]
 
         panel_opciones = panel_opciones[
-            ['Especie', 'Ticker_Stock', 'Spot', 'Tipo', 'Strike', 'TTM', 'Último', 'Anterior','Moneyness']]
+            ['Símbolo', 'Ticker_Stock', 'Spot', 'Tipo', 'Strike', 'TTM', 'ÚltimoOperado', 'ÚltimoCierre','Moneyness']]
 
         panel_opciones = panel_opciones.rename(
-            columns={'Ticker_Stock': 'Ticker', 'Tipo': 'CallPut', 'Último': 'Last','Anterior':'Close'}, inplace=False)
+            columns={'Ticker_Stock': 'Ticker', 'Tipo': 'CallPut', 'ÚltimoOperado': 'Last','ÚltimoCierre':'Close'}, inplace=False)
 
         panel_opciones = panel_opciones.sort_values(['TTM', 'Ticker', 'Strike', 'CallPut'])
 
@@ -306,7 +306,7 @@ def obtener_curva(curva_nombre = 'badlar', tasa_badlar=0.405):
 
 def obtener_spot_ticker(panel_acciones, ticker):
     """Obtiene el precio spot de ticker """
-    ticker_list = list(panel_acciones['Especie'].values)
+    ticker_list = list(panel_acciones['Símbolo'].values)
 
     try:
         index = ticker_list.index(ticker)
@@ -358,25 +358,25 @@ def obtener_panel_opciones_byma_rava(ticker = 'GGAL', clean_flag = False ):
 
     # Recorro el dataframe (opcion por opcion y completo cada una de las nuevas columnas)
  
-    for fila in range(len(panel_opciones.Especie.values)):
+    for fila in range(len(panel_opciones.Símbolo.values)):
 
-        panel_opciones.Ticker_Opcion.values[fila] = panel_opciones.Especie.values[fila][0:3]
+        panel_opciones.Ticker_Opcion.values[fila] = panel_opciones.Símbolo.values[fila][0:3]
 
         panel_opciones.Ticker_Stock.values[fila] = conversor_ticker(panel_opciones.Ticker_Opcion.values[fila])
 
-        panel_opciones.Tipo.values[fila] = panel_opciones.Especie.values[fila][3:4]
+        panel_opciones.Tipo.values[fila] = panel_opciones.Símbolo.values[fila][3:4]
         panel_opciones.Tipo.values[fila] = panel_opciones.Tipo.values[fila].replace('V', 'P')
 
         #ENCHASTRE PARA CORREGIR STRIKES POST DIVIDENDO inicio
         if panel_opciones.Ticker_Opcion.values[fila]=='GFG':
             try:
-                int(panel_opciones.Especie.values[fila][4:9])
-                panel_opciones.Strike.values[fila] = int(panel_opciones.Especie.values[fila][4:9])/100.0
+                int(panel_opciones.Símbolo.values[fila][4:9])
+                panel_opciones.Strike.values[fila] = int(panel_opciones.Símbolo.values[fila][4:9])/100.0
                 
                 if panel_opciones.Strike.values[fila]>500:
                     panel_opciones.Strike.values[fila]=panel_opciones.Strike.values[fila]/10
                 
-                panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Especie.values[fila][9:10]
+                panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Símbolo.values[fila][9:10]
                 try:
                     panel_opciones.ExpiryMonthNumber.values[fila] = mes_nombre_a_numero(panel_opciones.ExpiryMonthName.values[fila])
                 except:
@@ -384,9 +384,9 @@ def obtener_panel_opciones_byma_rava(ticker = 'GGAL', clean_flag = False ):
 
             except:
             #HORRIBLE!    
-                panel_opciones.Strike.values[fila] = panel_opciones.Especie.values[fila][4:8]
+                panel_opciones.Strike.values[fila] = panel_opciones.Símbolo.values[fila][4:8]
 
-                panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Especie.values[fila][8:10]
+                panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Símbolo.values[fila][8:10]
 
                 try:
                     int(panel_opciones.ExpiryMonthName.values[fila][0])
@@ -406,9 +406,9 @@ def obtener_panel_opciones_byma_rava(ticker = 'GGAL', clean_flag = False ):
         #ENCHASTRE PARA CORREGIR STRIKES POST DIVIDENDO fin    
         else:
         ###    
-            panel_opciones.Strike.values[fila] = panel_opciones.Especie.values[fila][4:8]
+            panel_opciones.Strike.values[fila] = panel_opciones.Símbolo.values[fila][4:8]
 
-            panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Especie.values[fila][8:10]
+            panel_opciones.ExpiryMonthName.values[fila] = panel_opciones.Símbolo.values[fila][8:10]
 
             try:
                 int(panel_opciones.ExpiryMonthName.values[fila][0])
@@ -443,10 +443,10 @@ def obtener_panel_opciones_byma_rava(ticker = 'GGAL', clean_flag = False ):
     # Panel limpio: cambio de nombre, reordenamiento y limpieza minima del panel
     if clean_flag == True:
         # Sacar opciones sobre bonos
-        panel_opciones = panel_opciones[~panel_opciones.Especie.str.contains('A24')]
+        panel_opciones = panel_opciones[~panel_opciones.Símbolo.str.contains('A24')]
 
         panel_opciones = panel_opciones[
-            ['Especie', 'Ticker_Stock', 'Spot', 'Tipo', 'Strike', 'TTM', 'Último', 'Anterior','Moneyness']]
+            ['Símbolo', 'Ticker_Stock', 'Spot', 'Tipo', 'Strike', 'TTM', 'Último', 'Anterior','Moneyness']]
 
         panel_opciones = panel_opciones.rename(
             columns={'Ticker_Stock': 'Ticker', 'Tipo': 'CallPut', 'Último': 'Last','Anterior':'Close'}, inplace=False)
@@ -511,4 +511,5 @@ def web_scraping_opciones_rava():
     panel_rava = pd.DataFrame(l[1:], columns=l[0])
 
     return panel_rava
+
 
