@@ -92,7 +92,7 @@ class MyWindow:
         #self.lblvar_mc.place(x=10, y=475)
         #self.var_mc.place(x=225, y=475)
 
-        self.lbltrademark = Label(win, text='Manu Maurette - 2022')
+        self.lbltrademark = Label(win, text='Manu Maurette - 2023')
 
         self.lbltrademark.place(x=380, y=583)
 
@@ -200,6 +200,6 @@ class MyWindow:
 
 window=Tk()
 mywin=MyWindow(window)
-window.title('Calculadora Opciones - UCEMA QUANt 2022')
+window.title('Calculadora Opciones - UCEMA QUANt 2023')
 window.geometry("500x600+15+15")
 window.mainloop()

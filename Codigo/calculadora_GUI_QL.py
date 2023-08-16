@@ -121,7 +121,7 @@ class MyWindow:
         #self.lblvar_mc.place(x=10, y=475)
         #self.var_mc.place(x=225, y=475)
 
-        self.lbltrademark = Label(win, text='Manu Maurette - 2022')
+        self.lbltrademark = Label(win, text='Manu Maurette - 2023')
 
         self.lbltrademark.place(x=380, y=583)
 
@@ -192,7 +192,7 @@ class MyWindow:
 
         ql.Settings.instance().evaluationDate = fecha_valuacion
         
-        calendario = ql.UnitedStates()
+        calendario = ql.UnitedStates(ql.UnitedStates.NYSE)
         day_count = ql.Actual365Fixed()
         fecha_expiracion = fecha_valuacion + T
         
@@ -362,6 +362,6 @@ class MyWindow:
 
 window=Tk()
 mywin=MyWindow(window)
-window.title('Calculadora Opciones QL - Exactas 2022')
+window.title('Calculadora Opciones QL - UCEMA QUANt23')
 window.geometry("600x700+15+15")
 window.mainloop()
