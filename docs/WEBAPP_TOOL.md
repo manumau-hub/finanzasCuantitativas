@@ -1,26 +1,27 @@
-# Finanzas Cuantitativas app — Documentación técnica completa
+# UCEMA QUANT — Documentación técnica
 
-Documento de referencia para agentes y desarrolladores. Describe la webapp UCEMA: Propiedades de opciones, Modelos y Estrategias, Griegas, Market Data, Market Data + Pricing de estrategias, y módulos de backend.
+Documento de referencia para la webapp UCEMA QUANT: Propiedades de opciones, Payoffs y Estrategias, Market Data, Griegas, Market Data Pricing, Notebooks, y módulos de backend.
 
 ---
 
 ## 1. Resumen general
 
-**Finanzas Cuantitativas app** es una webapp Streamlit para pricing de opciones y derivados financieros (curso QUANt UCEMA). Incluye:
+**UCEMA QUANT** es una webapp Streamlit para pricing de opciones y derivados financieros (curso QUANt UCEMA). Incluye:
 
 | Página | Descripción |
 |--------|-------------|
-| **Propiedades de opciones** | Sensibilidad del precio ante variación de S, K, T, r, sigma o div (BS, Binomial, MC, FD) |
-| **Modelos y Estrategias** | Precios vanilla y estrategias; Payoff Explorer (vanilla, estrategias, digitales, Asian, barrier) |
-| **Griegas** | Delta, Gamma, Vega, Rho, Theta, DividendRho, StrikeSensitivity, Elasticity vs Spot; definiciones howto |
-| **Market Data** | Ticker, precio spot, variación 1d, options chain (NYSE) |
-| **Market Data + Pricing de estrategias** | Construir estrategias con precios de mercado; escenarios S×T; r, sigma, div desde mercado |
+| **Propiedades de opciones** | Clase 1 y 2 — Sensibilidad del precio ante variación de S, K, T, r, sigma o div (BS, Binomial, MC, FD) |
+| **Payoffs y Estrategias** | Clase 1 y 2 — Precios vanilla y estrategias; Payoff Explorer (vanilla, estrategias, digitales, Asian, barrier) |
+| **Market Data** | Clase 1 y 2 — Ticker, precio spot, variación 1d, options chain (NYSE) |
+| **Griegas** | Clases 3 y 4 — Delta, Gamma, Vega, Rho, Theta, DividendRho, StrikeSensitivity, Elasticity vs Spot; definiciones howto |
+| **Market Data Pricing** | Clases 3 y 4 — Construir estrategias con precios de mercado; escenarios S×T; r, sigma, div desde mercado |
+| **Notebooks** | Acceso a JupyterLab para notebooks del curso |
 
 **Arranque:**
 
 ```bash
 pip install -r webapp/requirements.txt
-python -m streamlit run webapp/app.py
+python -m streamlit run webapp/UCEMA_QUANT.py
 ```
 
 ---
@@ -30,22 +31,23 @@ python -m streamlit run webapp/app.py
 ```
 finanzasCuantitativas/
 ├── webapp/
-│   ├── app.py                 # Entry point Streamlit (Home + Documentación)
-│   ├── _fetch_r.py            # Script subprocess para ^IRX
+│   ├── UCEMA_QUANT.py                   # Entry point (Home + Documentación)
+│   ├── _fetch_r.py                      # Script subprocess para ^IRX
 │   ├── jupyter_server_config.py
 │   ├── requirements.txt
 │   └── pages/
-│       ├── 0_Propiedades_Opciones.py         # Sensibilidad precio vs parámetros
-│       ├── 1_Modelos_y_Estrategias.py       # Modelos y Estrategias + Payoff Explorer
-│       ├── 2_Griegas.py                     # Griegas vs Spot (BS europeas)
-│       ├── 2_Market_Data.py                 # Market Data (ticker, spot, chain)
-│       └── 3_Market_Data_Pricing_de_estrategias.py  # Estrategias con precios de mercado
+│       ├── 0_Propiedades_Opciones.py
+│       ├── 1_Payoffs_y_Estrategias.py
+│       ├── 2_Market_Data.py
+│       ├── 3_Griegas.py
+│       ├── 4_Market_Data_Pricing.py
+│       └── 5_Notebooks.py
 ├── Codigo/
-│   ├── pricing/              # Modelos de pricing
+│   ├── pricing/
 │   ├── analytics/            # Vol implícita, payoffs, gregas_bs
 │   ├── data/                 # market_data, nyse, byma, homebroker
-│   ├── utils/                # plots, opciones_byma
-│   └── calculadoras/         # GUIs legacy
+│   ├── utils/
+│   └── calculadoras/
 ├── docs/                     # Sphinx, WEBAPP_TOOL.md
 └── Notebooks/                # Jupyter del curso
 ```
@@ -54,7 +56,7 @@ finanzasCuantitativas/
 
 ## 3. Páginas webapp (detalle)
 
-### 3.1 Propiedades de opciones (`0_Propiedades_Opciones.py`)
+### 3.1 Propiedades de opciones (`0_Propiedades_Opciones.py`) — Clase 1 y 2
 
 **Sensibilidad del precio** ante variación de un parámetro (S, K, T, r, sigma, div). Solo opciones europeas vanilla.
 
@@ -68,7 +70,7 @@ finanzasCuantitativas/
 
 ---
 
-### 3.2 Modelos y Estrategias (`1_Modelos_y_Estrategias.py`)
+### 3.2 Payoffs y Estrategias (`1_Payoffs_y_Estrategias.py`) — Clase 1 y 2
 
 **Parámetros** (una línea): S, K, T, r, sigma, div, Tipo (C/P), Ejercicio (Europea/Americana)
 
@@ -85,19 +87,7 @@ finanzasCuantitativas/
 
 ---
 
-### 3.3 Griegas (`2_Griegas.py`)
-
-**Griegas vs Spot** para opciones europeas vanilla (Black-Scholes analítico).
-
-**Griegas:** Delta, Gamma, Vega, Rho, Theta, DividendRho, StrikeSensitivity, Elasticity.
-
-**Parámetros:** S, K, T, r, sigma, div, Tipo (C/P). Gráfico de cada griega vs Spot (rango configurable).
-
-**Definiciones:** Expander con fórmulas y explicación de cada griega.
-
----
-
-### 3.4 Market Data (`2_Market_Data.py`)
+### 3.3 Market Data (`2_Market_Data.py`) — Clase 1 y 2
 
 - Input: ticker + botón **Cargar**
 - Muestra: precio spot, variación 1d, fuente (stockprices.dev, yahooquery, etc.)
@@ -111,7 +101,19 @@ finanzasCuantitativas/
 
 ---
 
-### 3.5 Market Data + Pricing de estrategias (`3_Market_Data_Pricing_de_estrategias.py`)
+### 3.4 Griegas (`3_Griegas.py`) — Clases 3 y 4
+
+**Griegas vs Spot** para opciones europeas vanilla (Black-Scholes analítico).
+
+**Griegas:** Delta, Gamma, Vega, Rho, Theta, DividendRho, StrikeSensitivity, Elasticity.
+
+**Parámetros:** S, K, T, r, sigma, div, Tipo (C/P). Gráfico de cada griega vs Spot (rango configurable).
+
+**Definiciones:** Expander con fórmulas y explicación de cada griega.
+
+---
+
+### 3.5 Market Data Pricing (`4_Market_Data_Pricing.py`) — Clases 3 y 4
 
 **Módulo independiente** (no asume datos de Market Data).
 
@@ -133,6 +135,12 @@ finanzasCuantitativas/
    - **Matriz**: Valor estrategia y P&L con columnas en **fechas** (hoy → expiry). Degradado rojo/verde: más negativo = más rojo, más positivo = más verde.
 
 **r:** subprocess `_fetch_r.py` → ^IRX (Yahoo Chart API). **IV:** `impvolfunc_bs` por leg (precio mid/last). **div:** `get_dividend_yield`.
+
+---
+
+### 3.6 Notebooks (`5_Notebooks.py`)
+
+Abre o lanza JupyterLab (puerto 8888) para notebooks del curso. Requiere `jupyterlab` instalado.
 
 ---
 
@@ -266,12 +274,13 @@ En `american_fd.py` se limita N a 5000 para evitar que la grilla cuelgue con T m
 
 | Archivo | Rol |
 |---------|-----|
-| `webapp/app.py` | Entry point |
+| `webapp/UCEMA_QUANT.py` | Entry point (Home) |
 | `webapp/pages/0_Propiedades_Opciones.py` | Sensibilidad precio vs parámetros |
-| `webapp/pages/1_Modelos_y_Estrategias.py` | Modelos y Estrategias + Payoff Explorer |
-| `webapp/pages/2_Griegas.py` | Griegas vs Spot (BS europeas) |
+| `webapp/pages/1_Payoffs_y_Estrategias.py` | Payoffs y Estrategias + Payoff Explorer |
 | `webapp/pages/2_Market_Data.py` | Market Data |
-| `webapp/pages/3_Market_Data_Pricing_de_estrategias.py` | Market Data + Pricing de estrategias |
+| `webapp/pages/3_Griegas.py` | Griegas vs Spot (BS europeas) |
+| `webapp/pages/4_Market_Data_Pricing.py` | Market Data Pricing |
+| `webapp/pages/5_Notebooks.py` | JupyterLab |
 | `webapp/_fetch_r.py` | Subprocess para r |
 | `Codigo/pricing/` | Modelos de pricing |
 | `Codigo/analytics/vol_implicita.py` | impvolfunc_bs |

@@ -7,9 +7,9 @@ Pueden forkear y armar sus librerias. Es un ambiente para jugar un poco y trabaj
 
 ```
 finanzasCuantitativas/
-├── webapp/           # Aplicación Streamlit (UCEMA)
-│   ├── app.py        # Home + Documentación
-│   ├── pages/        # Propiedades, Modelos, Griegas, Market Data, Pricing
+├── webapp/           # Aplicación Streamlit (UCEMA QUANT)
+│   ├── UCEMA_QUANT.py  # Home + Documentación
+│   ├── pages/        # Propiedades, Payoffs, Market Data, Griegas, Pricing, Notebooks
 │   └── requirements.txt
 ├── Codigo/           # Módulos Python
 │   ├── data/         # Extractores (market_data, byma, nyse, homebroker)
@@ -18,33 +18,44 @@ finanzasCuantitativas/
 │   ├── analytics/    # Vol implicita, payoffs, gregas_bs
 │   └── calculadoras/ # GUIs legacy
 ├── docs/             # Documentación (WEBAPP_TOOL.md, Sphinx)
-├── Notebooks/        # Jupyter notebooks del curso
-└── legacy/           # Scripts históricos
+└── Notebooks/
+    └── ejes/         # Notebooks del curso por eje temático
 ```
 
 ## Uso
 
 Para ejecutar los notebooks, ejecutar Jupyter desde la raíz del proyecto para que los imports `from Codigo.xxx` funcionen correctamente.
 
-## WebApp
+## Cómo levantar la app (UCEMA QUANT)
 
-Aplicación Streamlit con:
+Desde la **raíz del repo** (`finanzasCuantitativas/`):
 
-- **Propiedades de opciones** — Sensibilidad precio vs S, K, T, r, sigma, div
-- **Modelos y Estrategias** — Vanilla, estrategias, payoffs (digitales, Asian, barrier)
-- **Griegas** — Delta, Gamma, Vega, Rho, Theta, etc. vs Spot
-- **Market Data** — Ticker, spot, options chain (NYSE)
-- **Market Data + Pricing** — Estrategias con precios de mercado, escenarios S×T
-
-Branch **`main`**: versión pública UCEMA. Features privadas (Superficie IV, IBKR) viven solo en branch local **`mia`** — no mergear `mia` → `main`.
-
-**Arranque:**
+**1. Dependencias** (una vez):
 ```bash
 pip install -r webapp/requirements.txt
-python -m streamlit run webapp/app.py
 ```
 
-Abre http://localhost:8501
+**2. Arrancar Streamlit:**
+```bash
+python -m streamlit run webapp/UCEMA_QUANT.py
+```
+
+**Windows (alternativa):** doble clic o ejecutar `webapp\run_webapp.bat`.
+
+**3. Abrir en el navegador:** [http://localhost:8501](http://localhost:8501)
+
+El menú lateral tiene las páginas del curso (Propiedades, Payoffs, Market Data, Griegas, Market Data Pricing, Notebooks).
+
+## WebApp — páginas
+
+- **Propiedades de opciones** — Clase 1 y 2 — Sensibilidad precio vs S, K, T, r, sigma, div
+- **Payoffs y Estrategias** — Clase 1 y 2 — Vanilla, estrategias, payoffs (digitales, Asian, barrier)
+- **Market Data** — Clase 1 y 2 — Ticker, spot, options chain (NYSE)
+- **Griegas** — Clases 3 y 4 — Delta, Gamma, Vega, Rho, Theta, etc. vs Spot
+- **Market Data Pricing** — Clases 3 y 4 — Estrategias con precios de mercado, escenarios S×T
+- **Notebooks** — JupyterLab para el curso
+
+Branch **`main`**: versión pública UCEMA. Features privadas (Superficie IV, IBKR) viven solo en branch local **`mia`** — no mergear `mia` → `main`.
 
 ## Documentación API
 

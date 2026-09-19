@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """Market Data - Precios de activos y opciones NYSE."""
 import io
 import os
@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
 
-from i18n import _, render_language_selector
+from i18n import _
 from ui_format import fmt_expiries, fmt_expiry, norm_strike
 
 st.markdown("""
@@ -28,8 +28,6 @@ st.markdown("""
     div[class*="block-container"], div[class*="BlockContainer"] { max-width: none !important; }
 </style>
 """, unsafe_allow_html=True)
-
-render_language_selector()
 
 st.title(_("md.title"))
 

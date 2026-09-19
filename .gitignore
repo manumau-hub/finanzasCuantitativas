@@ -1,3 +1,4 @@
+# Python
 __pycache__/
 .pycache/
 *.pyc
@@ -5,7 +6,15 @@ __pycache__/
 pytest-cache-files-*/
 .ipynb_checkpoints/
 .env
+
+# Cursor / agent tooling (local only — no publicar)
 .cursor/
-legacy/webapp/webappenv/
+.agents/
+
+# Legacy (local only — no publicar en UCEMA)
+legacy/
+Notebooks/legacy/
+
+# Runtime / local
 _launch_jupyter.bat
 webapp/ibkr_positions.json

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Propiedades de opciones — Sensibilidad del precio ante variación de parámetros.
 
@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
 
-from i18n import _, render_language_selector
+from i18n import _
 from Codigo.pricing import (
     opcion_europea_bs,
     opcion_europea_bin,
@@ -34,8 +34,6 @@ st.markdown("""
     div[class*="block-container"], div[class*="BlockContainer"] { max-width: none !important; }
 </style>
 """, unsafe_allow_html=True)
-
-render_language_selector()
 
 st.title(_("prop.title"))
 
