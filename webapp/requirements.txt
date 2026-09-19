@@ -7,8 +7,5 @@ openpyxl
 yfinance
 yahooquery
 requests
-plotly
 jupyter
 jupyterlab
-easyocr
-pillow

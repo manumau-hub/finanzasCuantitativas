@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Finanzas Cuantitativas app - WebApp
+Finanzas Cuantitativas app - WebApp (UCEMA)
 
 Modelos, estrategias, payoffs y market data.
 """
@@ -33,9 +33,7 @@ st.markdown(f"""
 - **{_('home.nav.modelos')}** — {_('home.nav.modelos.desc')}
 - **{_('home.nav.griegas')}** — {_('home.nav.griegas.desc')}
 - **{_('home.nav.market_data')}** — {_('home.nav.market_data.desc')}
-- **{_('home.nav.superficie')}** — {_('home.nav.superficie.desc')}
 - **{_('home.nav.pricing')}** — {_('home.nav.pricing.desc')}
-- **{_('home.nav.private_prefix')} {_('home.nav.ibkr')}** — {_('home.nav.ibkr.desc')}
 """)
 
 st.divider()

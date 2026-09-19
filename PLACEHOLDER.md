@@ -4,16 +4,23 @@
 
 ---
 
-## Estado actual (webapp)
+## Branches
 
-- Smoke OK: imports, `get_spot`/`get_expirations` (AAPL), pricing BS, **88 tests** passed.
-- Páginas **ocultas** (prefix `_`): Notebooks, Estrategias IBKR. Ver `webapp/README.md`.
-- `requirements.txt` incluye `yahooquery`, `requests`, `plotly`; pin `numpy<2` relajado (entorno actual usa numpy 2.x).
+- **`main`**: webapp UCEMA / pública (sin Superficie IV ni IBKR).
+- **`mia`**: privada local — Superficie, IBKR, `VolSurface/`, `vol_surface.py`. No pushear / no mergear a `main`.
 
 ---
 
-## Hecho
+## Estado actual (webapp pública)
 
-- Engine vol_surface migrado desde VolSurface
-- Tests: pricing, strategy_pricer, payoffs, vol_surface (suite completa OK en smoke reciente)
-- UX market data: formato estable de expiry/strike (`webapp/ui_format.py`)
+- Páginas: Propiedades, Modelos, Griegas, Market Data, Market Data + Pricing.
+- Smoke previo: imports, market data AAPL, pricing BS, suite de tests core.
+- UX market data: `webapp/ui_format.py` (expiry/strike).
+
+---
+
+## Hecho (core)
+
+- Engine pricing / strategy_pricer / payoffs
+- Market data multi-provider
+- Webapp Streamlit UCEMA

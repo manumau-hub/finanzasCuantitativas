@@ -1,6 +1,6 @@
 # Finanzas Cuantitativas app — Documentación técnica completa
 
-Documento de referencia para agentes y desarrolladores. Describe la webapp completa: Propiedades de opciones, Modelos y Estrategias, Griegas, Market Data, Market Data + Pricing de estrategias, Estrategias IBKR, Notebooks, y todos los módulos de backend.
+Documento de referencia para agentes y desarrolladores. Describe la webapp UCEMA: Propiedades de opciones, Modelos y Estrategias, Griegas, Market Data, Market Data + Pricing de estrategias, y módulos de backend.
 
 ---
 
@@ -14,20 +14,13 @@ Documento de referencia para agentes y desarrolladores. Describe la webapp compl
 | **Modelos y Estrategias** | Precios vanilla y estrategias; Payoff Explorer (vanilla, estrategias, digitales, Asian, barrier) |
 | **Griegas** | Delta, Gamma, Vega, Rho, Theta, DividendRho, StrikeSensitivity, Elasticity vs Spot; definiciones howto |
 | **Market Data** | Ticker, precio spot, variación 1d, options chain (NYSE) |
-| **Superficie de volatilidad** | IV vs Delta × TTM (suavizado desde Yahoo) |
 | **Market Data + Pricing de estrategias** | Construir estrategias con precios de mercado; escenarios S×T; r, sigma, div desde mercado |
-| **Estrategias IBKR (privado)** | Sube captura IBKR → OCR → extrae estrategia → valuá; guardar/cargar posiciones |
-| **Notebooks** | JupyterLab embebido en iframe |
 
 **Arranque:**
 
 ```bash
-# Terminal 1 - Streamlit
 pip install -r webapp/requirements.txt
 python -m streamlit run webapp/app.py
-
-# Terminal 2 - JupyterLab (para pestaña Notebooks)
-python -m jupyter lab --config=webapp/jupyter_server_config.py
 ```
 
 ---
@@ -46,10 +39,7 @@ finanzasCuantitativas/
 │       ├── 1_Modelos_y_Estrategias.py       # Modelos y Estrategias + Payoff Explorer
 │       ├── 2_Griegas.py                     # Griegas vs Spot (BS europeas)
 │       ├── 2_Market_Data.py                 # Market Data (ticker, spot, chain)
-│       ├── 3_Market_Data_Pricing_de_estrategias.py  # Estrategias con precios de mercado
-│       ├── 4_Superficie_Volatilidad.py      # IV vs Delta × TTM
-│       ├── 5_Notebooks.py                   # JupyterLab embebido
-│       └── 6_Estrategias_IBKR_privado.py    # OCR IBKR → extrae estrategia
+│       └── 3_Market_Data_Pricing_de_estrategias.py  # Estrategias con precios de mercado
 ├── Codigo/
 │   ├── pricing/              # Modelos de pricing
 │   ├── analytics/            # Vol implícita, payoffs, gregas_bs
@@ -146,38 +136,6 @@ finanzasCuantitativas/
 
 ---
 
-### 3.6 Superficie de volatilidad (`4_Superficie_Volatilidad.py`)
-
-**IV vs Delta × TTM** (Time to Maturity). Datos desde Yahoo Finance, suavizado con `gaussian_smooth`.
-
-**Input:** Ticker + Cargar. Muestra superficie 3D o heatmap de volatilidad implícita.
-
----
-
-### 3.7 Estrategias IBKR (privado) (`6_Estrategias_IBKR_privado.py`)
-
-**Sube una captura de la app IBKR** y extrae la estrategia para valuarla.
-
-1. **Tipo de captura:** Vanilla (1 opción) o Estrategia (2-4 legs). Layout distinto según tipo.
-2. **Upload**: Sube captura (PNG, JPG) de la app IBKR.
-3. **OCR local** (EasyOCR): Extrae texto sin APIs externas. Idiomas: en, es.
-4. **Parser**: Extrae ticker, expiry, strike, tipo (call/put), cantidad, precio pagado (columna Último), Posición, Market value, Precio medio.
-5. **Cargar datos de mercado**: Trae spot, chain, r, div. Resumen y Escenarios sin cambiar de pestaña.
-6. **Guardar posición**: Guarda ticker y estrategia (strike, expiry, posición, cantidad, precio compra) en `ibkr_positions.json`.
-7. **Cargar posición guardada**: Expander para cargar posiciones guardadas sin subir la foto de nuevo.
-
-**Requisito:** `pip install easyocr pillow` (incluido en requirements).
-
-**Formatos soportados:** Vista "Tramos de estrategia" (multi-leg) o "Cotización" (opción única).
-
----
-
-### 3.8 Notebooks (`5_Notebooks.py`)
-
-Iframe a `http://localhost:8888` (JupyterLab). Requiere JupyterLab corriendo con `jupyter_server_config.py` (permite frame-ancestors desde localhost:8501).
-
----
-
 ## 4. Módulos backend
 
 ### 4.1 `Codigo/pricing/`
@@ -262,7 +220,7 @@ Iframe a `http://localhost:8888` (JupyterLab). Requiere JupyterLab corriendo con
 
 **Solución:** `pip install --upgrade numpy pandas`. Si persiste: `pip uninstall numpy pandas -y` y luego `pip install numpy pandas`.
 
-**Nota:** Algunas páginas (Propiedades, Modelos, Griegas) evitan importar pandas al cargar para que la app arranque; Market Data y Superficie de volatilidad requieren pandas.
+**Nota:** Algunas páginas (Propiedades, Modelos, Griegas) evitan importar pandas al cargar para que la app arranque; Market Data requiere pandas.
 
 ### 6.2 `[Errno 22] Invalid argument` (Windows/OneDrive)
 
@@ -314,8 +272,6 @@ En `american_fd.py` se limita N a 5000 para evitar que la grilla cuelgue con T m
 | `webapp/pages/2_Griegas.py` | Griegas vs Spot (BS europeas) |
 | `webapp/pages/2_Market_Data.py` | Market Data |
 | `webapp/pages/3_Market_Data_Pricing_de_estrategias.py` | Market Data + Pricing de estrategias |
-| `webapp/pages/4_Superficie_Volatilidad.py` | Superficie IV vs Delta × TTM |
-| `webapp/pages/6_Estrategias_IBKR_privado.py` | IBKR OCR → extrae estrategia → valuá; guardar/cargar posiciones |
 | `webapp/_fetch_r.py` | Subprocess para r |
 | `Codigo/pricing/` | Modelos de pricing |
 | `Codigo/analytics/vol_implicita.py` | impvolfunc_bs |
