@@ -1,0 +1,80 @@
+{
+  "_meta": {
+    "description": "Organismos publicadores cuyos datos estan integrados en la API series-tiempo-ar. El campo `dataset.source` del response identifica el publicador real de cada serie.",
+    "campo_meta": "meta[1].dataset.source"
+  },
+  "sources": {
+    "INDEC": {
+      "nombre_completo": "Instituto Nacional de Estadistica y Censos",
+      "url": "https://www.indec.gob.ar",
+      "datasets_principales": [
+        "Indice de Precios al Consumidor Nacional (IPC). Base diciembre 2016.",
+        "Estimador Mensual de Actividad Economica (EMAE). Base 2004.",
+        "Indicador Sintetico de la Actividad de la Construccion (ISAC). Base 2004.",
+        "Indice de Produccion Industrial Manufacturero (IPI).",
+        "Encuesta Permanente de Hogares (EPH).",
+        "Canasta basica alimentaria y total, linea de indigencia y linea de pobreza.",
+        "Exportaciones e importaciones por rubro.",
+        "Cuentas Nacionales (PIB)."
+      ],
+      "frecuencias_tipicas": ["mensual", "trimestral", "anual"]
+    },
+    "BCRA": {
+      "nombre_completo": "Banco Central de la Republica Argentina",
+      "url": "https://www.bcra.gob.ar",
+      "datasets_principales": [
+        "Series historicas de estadisticas monetarias.",
+        "Reservas internacionales y pasivos del BCRA.",
+        "Balance Cambiario.",
+        "Activos y pasivos del BCRA.",
+        "Relevamiento de Expectativas de Mercado (REM).",
+        "Tipo de cambio $-USD y futuro dolar."
+      ],
+      "frecuencias_tipicas": ["diaria", "mensual"],
+      "nota": "El skill bcra-macro del repo accede directamente a la API del BCRA con catalogo mas completo (638 series). Esta API agrega solo un subset."
+    },
+    "Ministerio de Economia": {
+      "nombre_completo": "Ministerio de Economia de la Nacion",
+      "url": "https://www.argentina.gob.ar/economia",
+      "subsecretarias": [
+        "Subsecretaria de Programacion Macroeconomica",
+        "Secretaria de Programacion Economica",
+        "Secretaria de Politica Economica"
+      ],
+      "datasets_principales": [
+        "Producto Interno Bruto (PIB) Cuentas Nacionales.",
+        "Deuda publica.",
+        "Recursos tributarios."
+      ]
+    },
+    "Secretaria de Trabajo, Empleo y Seguridad Social": {
+      "nombre_completo": "Secretaria de Trabajo, Empleo y Seguridad Social (MTEySS)",
+      "url": "https://www.argentina.gob.ar/trabajo",
+      "datasets_principales": [
+        "Remuneracion Imponible Promedio de los Trabajadores Estables (RIPTE).",
+        "Salario minimo, vital y movil.",
+        "Haber minimo jubilatorio."
+      ],
+      "frecuencias_tipicas": ["mensual"]
+    },
+    "Subsecretaria de Programacion Macroeconomica": {
+      "nombre_completo": "Subsecretaria de Programacion Macroeconomica (Ministerio de Economia)",
+      "datasets_principales": [
+        "IPC GBA y IPC resto (catalogo programacion macro).",
+        "PIB en USD.",
+        "Producto Interno Bruto en dolares, per capita y poblacion."
+      ]
+    },
+    "GCBA - DGEYC": {
+      "nombre_completo": "Direccion General de Estadistica y Censos del Gobierno de la Ciudad de Buenos Aires",
+      "url": "https://www.estadisticaciudad.gob.ar/",
+      "datasets_principales": [
+        "Indice de Precios al Consumidor de la Ciudad de Buenos Aires."
+      ]
+    }
+  },
+  "como_identificar_source": {
+    "descripcion": "Para saber quien publica una serie, consultar el campo meta[1].dataset.source del response.",
+    "ejemplo_codigo": "response = requests.get(f'{BASE}/series', params={'ids': series_id, 'metadata': 'simple'}).json(); source = response['meta'][1]['dataset']['source']"
+  }
+}

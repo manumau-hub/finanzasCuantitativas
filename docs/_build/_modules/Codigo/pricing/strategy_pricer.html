@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Codigo.pricing.strategy_pricer &mdash; finanzasCuantitativas 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            finanzasCuantitativas
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/pricing.html">Módulo Pricing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/analytics.html">Módulo Analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Módulo Utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">finanzasCuantitativas</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">Codigo.pricing.strategy_pricer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Codigo.pricing.strategy_pricer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Pricing de estrategias por composición de opciones vanilla.</span>
+
+<span class="sd">Cada estrategia se descompone en piernas (tipo, K, coef). El precio total</span>
+<span class="sd">es la suma de coef * precio_vanilla(tipo, K) para cada pierna.</span>
+
+<span class="sd">Las piernas se definen en ESTRATEGIA_PIERNAS; el pricer vanilla es inyectable</span>
+<span class="sd">(BS, binomial, MC, FD) para máxima flexibilidad.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.european_bs</span> <span class="kn">import</span> <span class="n">opcion_europea_bs</span>
+<span class="kn">from</span> <span class="nn">.american_binomial</span> <span class="kn">import</span> <span class="n">opcion_americana_bin</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_bull_call_spread</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call(K1) - Call(K2). K1 &lt; K2.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_bear_call_spread</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call(K2) - Call(K1). K1 &lt; K2.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_bull_put_spread</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Put(K1) - Put(K2). K1 &lt; K2.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_bear_put_spread</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Put(K2) - Put(K1). K1 &lt; K2.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_straddle</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call(K) + Put(K).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_strangle</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call(K1) + Put(K2). Típico OTM: K1 &gt; K2.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_combo</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call(K2) - Put(K1). Risk reversal. K1 &lt; K2.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_call_butterfly</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="n">K3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call(K1) - 2*Call(K2) + Call(K3). K1 &lt; K2 &lt; K3.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_put_butterfly</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="n">K3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Put(K1) - 2*Put(K2) + Put(K3). K1 &lt; K2 &lt; K3.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_iron_condor</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="n">K3</span><span class="p">,</span> <span class="n">K4</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Put(K1) - Put(K2) - Call(K3) + Call(K4). K1 &lt; K2 &lt; K3 &lt; K4.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_iron_butterfly</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="n">K3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Put(K1) - Put(K2) + Call(K3) - Call(K2). K1 &lt; K2 &lt; K3.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_condor</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="n">K3</span><span class="p">,</span> <span class="n">K4</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call(K1) - Call(K2) - Call(K3) + Call(K4). K1 &lt; K2 &lt; K3 &lt; K4.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_short_straddle</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;-(Call(K) + Put(K)).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_short_strangle</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;-(Call(K1) + Put(K2)).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_ratio_spread</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="n">n1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;n1*Call(K1) - n2*Call(K2). K1 &lt; K2.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="n">n1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="n">n2</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_box</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call(K1) - Put(K1) - Call(K2) + Put(K2). K1 &lt; K2. Payoff constante K2-K1.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_covered_call</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;S - Call(K). Incluye subyacente; aquí solo -Call(K) para la parte opcional.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_protective_put</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;S + Put(K). Solo pierna opcional.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">_piernas_collar</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;S + Put(K1) - Call(K2). K1 &lt; K2. Solo piernas opcionales.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">K1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">K2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+
+
+<span class="c1"># Registro: nombre -&gt; función que retorna lista de (tipo, K, coef)</span>
+<span class="n">ESTRATEGIA_PIERNAS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;bull_call_spread&quot;</span><span class="p">:</span> <span class="n">_piernas_bull_call_spread</span><span class="p">,</span>
+    <span class="s2">&quot;bear_call_spread&quot;</span><span class="p">:</span> <span class="n">_piernas_bear_call_spread</span><span class="p">,</span>
+    <span class="s2">&quot;bull_put_spread&quot;</span><span class="p">:</span> <span class="n">_piernas_bull_put_spread</span><span class="p">,</span>
+    <span class="s2">&quot;bear_put_spread&quot;</span><span class="p">:</span> <span class="n">_piernas_bear_put_spread</span><span class="p">,</span>
+    <span class="s2">&quot;straddle&quot;</span><span class="p">:</span> <span class="n">_piernas_straddle</span><span class="p">,</span>
+    <span class="s2">&quot;strangle&quot;</span><span class="p">:</span> <span class="n">_piernas_strangle</span><span class="p">,</span>
+    <span class="s2">&quot;combo&quot;</span><span class="p">:</span> <span class="n">_piernas_combo</span><span class="p">,</span>
+    <span class="s2">&quot;call_butterfly&quot;</span><span class="p">:</span> <span class="n">_piernas_call_butterfly</span><span class="p">,</span>
+    <span class="s2">&quot;put_butterfly&quot;</span><span class="p">:</span> <span class="n">_piernas_put_butterfly</span><span class="p">,</span>
+    <span class="s2">&quot;iron_condor&quot;</span><span class="p">:</span> <span class="n">_piernas_iron_condor</span><span class="p">,</span>
+    <span class="s2">&quot;iron_butterfly&quot;</span><span class="p">:</span> <span class="n">_piernas_iron_butterfly</span><span class="p">,</span>
+    <span class="s2">&quot;condor&quot;</span><span class="p">:</span> <span class="n">_piernas_condor</span><span class="p">,</span>
+    <span class="s2">&quot;short_straddle&quot;</span><span class="p">:</span> <span class="n">_piernas_short_straddle</span><span class="p">,</span>
+    <span class="s2">&quot;short_strangle&quot;</span><span class="p">:</span> <span class="n">_piernas_short_strangle</span><span class="p">,</span>
+    <span class="s2">&quot;ratio_spread&quot;</span><span class="p">:</span> <span class="n">_piernas_ratio_spread</span><span class="p">,</span>
+    <span class="s2">&quot;box&quot;</span><span class="p">:</span> <span class="n">_piernas_box</span><span class="p">,</span>
+    <span class="s2">&quot;covered_call&quot;</span><span class="p">:</span> <span class="n">_piernas_covered_call</span><span class="p">,</span>
+    <span class="s2">&quot;protective_put&quot;</span><span class="p">:</span> <span class="n">_piernas_protective_put</span><span class="p">,</span>
+    <span class="s2">&quot;collar&quot;</span><span class="p">:</span> <span class="n">_piernas_collar</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="precio_estrategia">
+<a class="viewcode-back" href="../../../api/pricing.html#Codigo.pricing.strategy_pricer.precio_estrategia">[docs]</a>
+<span class="k">def</span> <span class="nf">precio_estrategia</span><span class="p">(</span>
+    <span class="n">piernas</span><span class="p">,</span>
+    <span class="n">S</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">,</span>
+    <span class="n">r</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="p">,</span>
+    <span class="n">div</span><span class="p">,</span>
+    <span class="n">pricer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">pricer_kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precio de una estrategia por composición de opciones vanilla.</span>
+
+<span class="sd">    Parámetros</span>
+<span class="sd">    ----------</span>
+<span class="sd">    piernas : list</span>
+<span class="sd">        Lista de (tipo, K, coef). tipo in (&quot;C&quot;,&quot;P&quot;), K strike, coef multiplicador.</span>
+<span class="sd">    S, T, r, sigma, div : float</span>
+<span class="sd">        Parámetros estándar del modelo.</span>
+<span class="sd">    pricer : callable, optional</span>
+<span class="sd">        Función (tipo, S, K, T, r, sigma, div, ...) -&gt; precio. Default: opcion_europea_bs.</span>
+<span class="sd">    pricer_kwargs</span>
+<span class="sd">        Argumentos extra para el pricer (ej. pasos para binomial/MC).</span>
+
+<span class="sd">    Retorna</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Precio total de la estrategia.</span>
+
+<span class="sd">    Ejemplo</span>
+<span class="sd">    -------</span>
+<span class="sd">    piernas = [(&quot;C&quot;, 90, 1), (&quot;C&quot;, 110, -1)]  # Bull Call Spread</span>
+<span class="sd">    precio = precio_estrategia(piernas, 100, 1, 0.05, 0.25, 0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pricer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pricer</span> <span class="o">=</span> <span class="n">opcion_europea_bs</span>
+
+    <span class="n">total</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">tipo</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="n">piernas</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">pricer</span><span class="p">(</span><span class="n">tipo</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="o">**</span><span class="n">pricer_kwargs</span><span class="p">)</span>
+        <span class="n">total</span> <span class="o">+=</span> <span class="n">coef</span> <span class="o">*</span> <span class="n">p</span>
+    <span class="k">return</span> <span class="n">total</span></div>
+
+
+
+<span class="c1"># Kwargs que van al pricer, no a la definición de piernas</span>
+<span class="n">_PRICER_KWARGS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pasos&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="s2">&quot;n_steps&quot;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="precio_estrategia_nombre">
+<a class="viewcode-back" href="../../../api/pricing.html#Codigo.pricing.strategy_pricer.precio_estrategia_nombre">[docs]</a>
+<span class="k">def</span> <span class="nf">precio_estrategia_nombre</span><span class="p">(</span>
+    <span class="n">nombre</span><span class="p">,</span>
+    <span class="n">S</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">,</span>
+    <span class="n">r</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="p">,</span>
+    <span class="n">div</span><span class="p">,</span>
+    <span class="n">pricer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precio de una estrategia por nombre y parámetros.</span>
+
+<span class="sd">    Parámetros</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nombre : str</span>
+<span class="sd">        Clave de ESTRATEGIA_PIERNAS (ej. &quot;bull_call_spread&quot;, &quot;straddle&quot;).</span>
+<span class="sd">    S, T, r, sigma, div : float</span>
+<span class="sd">        Parámetros estándar.</span>
+<span class="sd">    pricer : callable, optional</span>
+<span class="sd">        Función vanilla (default opcion_europea_bs).</span>
+<span class="sd">    kwargs</span>
+<span class="sd">        Argumentos para la estrategia (K, K1, K2, K3, K4, n1, n2)</span>
+<span class="sd">        y para el pricer (pasos, M, n_steps).</span>
+
+<span class="sd">    Retorna</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Precio de la estrategia.</span>
+
+<span class="sd">    Ejemplo</span>
+<span class="sd">    -------</span>
+<span class="sd">    precio_estrategia_nombre(&quot;bull_call_spread&quot;, 100, 1, 0.05, 0.25, 0, K1=90, K2=110)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">nombre</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ESTRATEGIA_PIERNAS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Estrategia &#39;</span><span class="si">{</span><span class="n">nombre</span><span class="si">}</span><span class="s2">&#39; no reconocida. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Disponibles: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">ESTRATEGIA_PIERNAS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">estrategia_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_PRICER_KWARGS</span><span class="p">}</span>
+    <span class="n">pricer_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">_PRICER_KWARGS</span><span class="p">}</span>
+
+    <span class="n">piernas</span> <span class="o">=</span> <span class="n">ESTRATEGIA_PIERNAS</span><span class="p">[</span><span class="n">nombre</span><span class="p">](</span><span class="o">**</span><span class="n">estrategia_kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">precio_estrategia</span><span class="p">(</span>
+        <span class="n">piernas</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">div</span><span class="p">,</span> <span class="n">pricer</span><span class="o">=</span><span class="n">pricer</span><span class="p">,</span> <span class="o">**</span><span class="n">pricer_kwargs</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, QUANt UCEMA.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

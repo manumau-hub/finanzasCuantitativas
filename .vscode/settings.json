@@ -1,0 +1,12 @@
+{
+  "python.envFile": "${workspaceFolder}/.env",
+  "terminal.integrated.env.windows": {
+    "PYTHONPYCACHEPREFIX": ".pycache"
+  },
+  "terminal.integrated.env.osx": {
+    "PYTHONPYCACHEPREFIX": ".pycache"
+  },
+  "terminal.integrated.env.linux": {
+    "PYTHONPYCACHEPREFIX": ".pycache"
+  }
+}

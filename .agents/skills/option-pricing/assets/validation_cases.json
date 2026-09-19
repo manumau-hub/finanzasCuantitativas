@@ -1,0 +1,99 @@
+{
+  "_comment": "Casos de validacion. Los 'ref' fueron verificados con la propia implementacion (validada contra Hull 9th ed Examples 15.6 y 21.1). Tolerancias: 1e-3 para closed-form, 5e-3 para tree con N>=500, 0.05 para LSM con paths>=50k.",
+
+  "black_scholes_european": [
+    {
+      "name": "Hull 9th ed Example 15.6 (ATM call, ~ITM)",
+      "S": 42, "K": 40, "T": 0.5, "r": 0.10, "q": 0.0, "sigma": 0.20, "type": "call", "style": "european",
+      "ref_price": 4.7594
+    },
+    {
+      "name": "Hull 9th ed Example 15.6 (ATM put counterpart)",
+      "S": 42, "K": 40, "T": 0.5, "r": 0.10, "q": 0.0, "sigma": 0.20, "type": "put", "style": "european",
+      "ref_price": 0.8086
+    },
+    {
+      "name": "Deep ITM call (K=50, S=100)",
+      "S": 100, "K": 50, "T": 0.25, "r": 0.05, "q": 0.0, "sigma": 0.30, "type": "call", "style": "european",
+      "ref_price": 50.6211
+    },
+    {
+      "name": "Deep ITM put (K=200, S=100)",
+      "S": 100, "K": 200, "T": 0.5, "r": 0.05, "q": 0.0, "sigma": 0.40, "type": "put", "style": "european",
+      "ref_price": 95.1813
+    },
+    {
+      "name": "Dividend-paying stock (q=0.04)",
+      "S": 100, "K": 100, "T": 0.5, "r": 0.05, "q": 0.04, "sigma": 0.25, "type": "call", "style": "european",
+      "ref_price": 7.1337
+    }
+  ],
+
+  "american_options_reference": [
+    {
+      "name": "Hull 9th ed Example 21.1 (American put, $4.28 with N=500)",
+      "S": 50, "K": 50, "T": 0.4167, "r": 0.10, "q": 0.0, "sigma": 0.40, "type": "put", "style": "american",
+      "ref_price_binomial_2000": 4.2841,
+      "ref_price_european_bs": 4.0761,
+      "_note": "American > European porque el put ITM captura valor temporal via early exercise"
+    },
+    {
+      "name": "American call sin dividendos (debe = European call, Merton 1973)",
+      "S": 100, "K": 100, "T": 0.5, "r": 0.05, "q": 0.0, "sigma": 0.30, "type": "call", "style": "american",
+      "ref_price_binomial_2000": 9.6338,
+      "ref_price_european_bs": 9.6349,
+      "_note": "Sin dividendos, nunca se ejerce temprano el call"
+    },
+    {
+      "name": "American call con dividendos bajos (q<r, BAW aplicable)",
+      "S": 100, "K": 100, "T": 0.5, "r": 0.05, "q": 0.04, "sigma": 0.25, "type": "call", "style": "american",
+      "ref_price_binomial_2000": 7.1375,
+      "ref_price_european_bs": 7.1337,
+      "_note": "Early exercise premium pequeno cuando q<r"
+    },
+    {
+      "name": "American call con dividendos altos (q>r, BAW fallback)",
+      "S": 100, "K": 100, "T": 1.0, "r": 0.05, "q": 0.08, "sigma": 0.30, "type": "call", "style": "american",
+      "ref_price_binomial_2000": 10.2735,
+      "ref_price_european_bs": 9.8242,
+      "_note": "Cuando q>r, BAW no aplica; el script usa binomial internamente"
+    }
+  ],
+
+  "put_call_parity": {
+    "_comment": "Verifica C - P = S*exp(-qT) - K*exp(-rT). BS la cumple exacto.",
+    "S": 100, "K": 100, "T": 1.0, "r": 0.05, "q": 0.0, "sigma": 0.20,
+    "formula": "C(S,K,T,r,q,sigma) - P(S,K,T,r,q,sigma) = S*exp(-q*T) - K*exp(-r*T)",
+    "tolerance": 1e-10
+  },
+
+  "prob_itm": [
+    {
+      "_comment": "P(ITM) bajo Q = N(d2) para call, N(-d2) para put. Verificable analiticamente.",
+      "name": "ATM call T=1y (d2=0.05, P=0.5199)",
+      "S": 100, "K": 100, "T": 1.0, "r": 0.05, "q": 0.0, "sigma": 0.20, "type": "call",
+      "ref_p_itm": 0.5596
+    },
+    {
+      "name": "ATM put T=1y (P(S_T<K)=N(-d2)=0.4801)",
+      "S": 100, "K": 100, "T": 1.0, "r": 0.05, "q": 0.0, "sigma": 0.20, "type": "put",
+      "ref_p_itm": 0.4404
+    },
+    {
+      "name": "Deep ITM call (S=100, K=50, P~1)",
+      "S": 100, "K": 50, "T": 1.0, "r": 0.05, "q": 0.0, "sigma": 0.20, "type": "call",
+      "ref_p_itm": 0.9999
+    },
+    {
+      "name": "Deep OTM call (S=100, K=200, P~0)",
+      "S": 100, "K": 200, "T": 1.0, "r": 0.05, "q": 0.0, "sigma": 0.20, "type": "call",
+      "ref_p_itm": 0.0005
+    },
+    {
+      "name": "Prob Profit ATM call con prima $4.62 (P(S_T > 104.62))",
+      "S": 100, "K": 100, "T": 1.0, "r": 0.05, "q": 0.0, "sigma": 0.20, "type": "call",
+      "premium": 4.62,
+      "ref_p_profit": 0.4698
+    }
+  ]
+}

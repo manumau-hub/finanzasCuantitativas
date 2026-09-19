@@ -1,0 +1,193 @@
+{
+  "_meta": {
+    "source": "https://historyofmarket.com/_manifest.json",
+    "description": "Snapshot completo de todos los endpoints de historyofmarket.com",
+    "total_datasets": 88,
+    "license": "CC BY 4.0",
+    "updated": "2026-06-13",
+    "base_url": "https://historyofmarket.com",
+    "cache_policy": "max-age=300, stale-while-revalidate=3600, ETag supported",
+    "notes": [
+      "Todos los datasets son JSON estaticos pre-generados (sin parametros)",
+      "No hay endpoints parametrizables tipo ?symbol=QQQ",
+      "ETF holdings solo disponibles para XLK, XLF, SMH",
+      "No hay Russell 2000 ni otros indices fuera de los listados",
+      "Para reconstruir constituyentes historicos: aplicar changes.json en reversa desde constituents.json"
+    ]
+  },
+  "entry_points": {
+    "description": "Utilidades del sitio",
+    "endpoints": [
+      { "path": "/api/_manifest.json", "description": "Catalogo completo de todos los datasets con tamano y timestamp" },
+      { "path": "/api/profile.json", "description": "Perfil del sitio para AI agents (proposito, preguntas, licencia)" },
+      { "path": "/api/tools.json", "description": "Lista machine-callable de 68 tools (MCP-style)" },
+      { "path": "/llms.txt", "description": "Resumen LLM-friendly del sitio" },
+      { "path": "/llms-full.txt", "description": "Version extendida de llms.txt" },
+      { "path": "/.well-known/llms.txt", "description": "Well-known location estandar" },
+      { "path": "/ai.txt", "description": "AI agent instructions" },
+      { "path": "/sitemap.xml", "description": "Sitemap completo (60+ panels x 6 locales)" },
+      { "path": "/robots.txt", "description": "Robots.txt" }
+    ]
+  },
+  "sp500": {
+    "description": "S&P 500 — 18 datasets",
+    "group_prices_returns": {
+      "description": "Precios y retornos",
+      "endpoints": [
+        { "path": "/api/sp500/century.json", "description": "S&P 500 daily closes desde 1928" },
+        { "path": "/api/sp500/price.json", "description": "S&P 500 daily price (version pesada, ~1.5MB)" },
+        { "path": "/api/sp500/annual-returns.json", "description": "Retornos anuales S&P 500, 1928→ (73 positivos, 26 negativos)" },
+        { "path": "/api/sp500/annual-tr.json", "description": "Retorno total anual (para matriz buy/sell y rolling windows)" },
+        { "path": "/api/sp500/daily-distribution.json", "description": "Distribucion de retornos diarios" },
+        { "path": "/api/sp500/daily-extremes.json", "description": "Extremos diarios historicos" }
+      ]
+    },
+    "group_drawdowns_volatility": {
+      "description": "Drawdowns y volatilidad",
+      "endpoints": [
+        { "path": "/api/sp500/drawdowns.json", "description": "Registro completo de drawdowns desde 1929 con causa y dias de recuperacion" },
+        { "path": "/api/sp500/intrayear-dd.json", "description": "Intrayear drawdown vs year-end return (promedio ~ -14%)" },
+        { "path": "/api/sp500/volatility.json", "description": "Volatilidad realizada 20d/60d (mediana ~15%)" },
+        { "path": "/api/sp500/vix.json", "description": "VIX daily desde 1990" },
+        { "path": "/api/sp500/monthly.json", "description": "Heatmap mensual con probabilidades de ganancia" }
+      ]
+    },
+    "group_valuation": {
+      "description": "Valuacion",
+      "endpoints": [
+        { "path": "/api/sp500/pe.json", "description": "Shiller CAPE (PE10) desde 1871 (~148KB)" },
+        { "path": "/api/sp500/forward-pe.json", "description": "Trailing PE diario + Forward PE Bloomberg desde 1990" },
+        { "path": "/api/sp500/eps.json", "description": "GAAP TTM EPS desde 1871" },
+        { "path": "/api/sp500/roe.json", "description": "Return on equity (estable ~15% ultimas 2 decadas)" },
+        { "path": "/api/sp500/driver-decomp.json", "description": "Descomposicion anual: (1+r) = (1+r_PE)*(1+r_EPS), 1928→" },
+        { "path": "/api/sp500/return-details.json", "description": "Descomposicion total return: price + dividend + buyback" }
+      ]
+    },
+    "group_constituents": {
+      "description": "Constituyentes y estructura",
+      "endpoints": [
+        { "path": "/api/sp500/constituents.json", "description": "Lista actual de los 500 miembros con sector, industria, market cap, weight, 1y return" },
+        { "path": "/api/sp500/changes.json", "description": "Historial de adds/removes con fecha, razon y source (desde ~2022)" },
+        { "path": "/api/sp500/sectors.json", "description": "Pesos por sector GICS" },
+        { "path": "/api/sp500/rules.json", "description": "Metodologia: eligibility, market cap >= $22.7B, earnings test" }
+      ]
+    }
+  },
+  "nasdaq": {
+    "description": "Nasdaq — 19 datasets",
+    "composite": {
+      "description": "Nasdaq Composite",
+      "endpoints": [
+        { "path": "/api/nasdaq/composite.json", "description": "Nasdaq Composite daily desde 1971 (inception 100→16000+)" }
+      ]
+    },
+    "ndx": {
+      "description": "Nasdaq 100 (NDX)",
+      "endpoints": [
+        { "path": "/api/nasdaq/100.json", "description": "100 constituyentes actuales con sector, weight, returns 1w/1m/ytd/1y" },
+        { "path": "/api/ndx/daily.json", "description": "Nasdaq 100 daily closes desde 1985" },
+        { "path": "/api/ndx/price.json", "description": "Nasdaq 100 daily price (version completa, ~639KB)" },
+        { "path": "/api/ndx/annual-returns.json", "description": "Retornos anuales Nasdaq 100" },
+        { "path": "/api/ndx/annual-tr.json", "description": "Retorno total anual NDX" },
+        { "path": "/api/ndx/daily-distribution.json", "description": "Distribucion de retornos diarios NDX" },
+        { "path": "/api/ndx/daily-extremes.json", "description": "Extremos diarios NDX" },
+        { "path": "/api/ndx/drawdowns.json", "description": "59 drawdowns historicos (dotcom -83%)" },
+        { "path": "/api/ndx/intrayear-dd.json", "description": "Intrayear drop vs year-end NDX" },
+        { "path": "/api/ndx/volatility.json", "description": "Volatilidad realizada NDX (mediana ~22%)" },
+        { "path": "/api/ndx/vxn.json", "description": "VXN — CBOE Nasdaq 100 Volatility Index, 2001→" },
+        { "path": "/api/ndx/monthly.json", "description": "Heatmap mensual NDX" },
+        { "path": "/api/ndx/forward-pe.json", "description": "Bloomberg forward PE Nasdaq 100, 2001→" },
+        { "path": "/api/ndx/driver-decomp.json", "description": "Descomposicion anual: rerating x revision, 2002→" },
+        { "path": "/api/ndx/rolling5y.json", "description": "5-year rolling annualized return NDX" },
+        { "path": "/api/ndx/changes.json", "description": "Historial de cambios en constituyentes Nasdaq 100" }
+      ]
+    },
+    "qqq": {
+      "description": "QQQ ETF",
+      "endpoints": [
+        { "path": "/api/qqq/return-details.json", "description": "Descomposicion total return QQQ (price + dividend + buyback)" }
+      ]
+    }
+  },
+  "dow": {
+    "description": "Dow Jones — 1 dataset",
+    "endpoints": [
+      { "path": "/api/dow/century.json", "description": "Dow Jones Industrial Average daily desde 1914" }
+    ]
+  },
+  "sox": {
+    "description": "Philadelphia Semiconductor Index (SOX) — 13 datasets",
+    "endpoints": [
+      { "path": "/api/semi/price.json", "description": "SOX daily closes desde 1994 (~500KB)" },
+      { "path": "/api/semi/annual-returns.json", "description": "Retornos anuales SOX" },
+      { "path": "/api/semi/annual-tr.json", "description": "Retorno total anual SOX" },
+      { "path": "/api/semi/drawdowns.json", "description": "Drawdowns SOX" },
+      { "path": "/api/semi/intrayear-dd.json", "description": "Intrayear drop SOX (~ -20% promedio)" },
+      { "path": "/api/semi/volatility.json", "description": "Volatilidad realizada SOX" },
+      { "path": "/api/semi/monthly.json", "description": "Heatmap mensual SOX" },
+      { "path": "/api/semi/rolling5y.json", "description": "5-year rolling SOX" },
+      { "path": "/api/semi/composition.json", "description": "30 constituyentes SOX por sub-industria (fabless, foundry, memory, etc.)" },
+      { "path": "/api/semi/smh.json", "description": "Holdings SMH ETF (VanEck Semiconductor)" },
+      { "path": "/api/semi/memory-valuation.json", "description": "MU/NVDA TTM PE vs 1999 dotcom peaks" },
+      { "path": "/api/semi/ratios.json", "description": "SOX/SPX, SOX/XLK, XLK/SPX rebased ratios" },
+      { "path": "/api/semi/etf-compare.json", "description": "Comparacion ETFs de semis (SOXX, SMH, etc.)" },
+      { "path": "/api/semi/soxx.json", "description": "Datos SOXX ETF (iShares PHLX Semiconductor)" }
+    ]
+  },
+  "sector_etfs": {
+    "description": "Sector ETFs — 19 datasets",
+    "xlk": {
+      "description": "XLK — Technology Select Sector",
+      "endpoints": [
+        { "path": "/api/xlk/price.json", "description": "XLK daily desde 1998" },
+        { "path": "/api/xlk/annual-returns.json", "description": "Retornos anuales XLK (1999: +75%, 2008: -42%)" },
+        { "path": "/api/xlk/annual-tr.json", "description": "Retorno total anual XLK" },
+        { "path": "/api/xlk/drawdowns.json", "description": "Drawdowns XLK" },
+        { "path": "/api/xlk/intrayear-dd.json", "description": "Intrayear drop XLK (~ -16% promedio)" },
+        { "path": "/api/xlk/volatility.json", "description": "Volatilidad realizada XLK" },
+        { "path": "/api/xlk/monthly.json", "description": "Heatmap mensual XLK" },
+        { "path": "/api/xlk/rolling5y.json", "description": "5-year rolling XLK" },
+        { "path": "/api/xlk/holdings.json", "description": "Top 10 holdings XLK con weights (AAPL+MSFT+NVDA > 50%)" },
+        { "path": "/api/xlk/reclass-2018.json", "description": "GICS 2018 reclasificacion (GOOGL, META, NFLX salen de XLK)" }
+      ]
+    },
+    "xlf": {
+      "description": "XLF — Financials Select Sector",
+      "endpoints": [
+        { "path": "/api/fin/price.json", "description": "XLF daily desde 1998 (-84% en 2008)" },
+        { "path": "/api/fin/annual-returns.json", "description": "Retornos anuales XLF" },
+        { "path": "/api/fin/annual-tr.json", "description": "Retorno total anual XLF" },
+        { "path": "/api/fin/drawdowns.json", "description": "Drawdowns XLF" },
+        { "path": "/api/fin/intrayear-dd.json", "description": "Intrayear drop XLF" },
+        { "path": "/api/fin/volatility.json", "description": "Volatilidad realizada XLF" },
+        { "path": "/api/fin/monthly.json", "description": "Heatmap mensual XLF" },
+        { "path": "/api/fin/rolling5y.json", "description": "5-year rolling XLF" },
+        { "path": "/api/fin/holdings.json", "description": "Top holdings XLF (BRK.B + JPM ~23%)" },
+        { "path": "/api/fin/crisis-2008.json", "description": "2008: 5 vanished (Bear, Lehman, WaMu, Wachovia, AIG) vs 5 survived" },
+        { "path": "/api/fin/rates.json", "description": "2y-10y yield curve x XLF 12-month return" },
+        { "path": "/api/fin/reclass-2023.json", "description": "GICS 2023: V, MA, PYPL, FIS, Fiserv movidos a Financials" }
+      ]
+    }
+  },
+  "magnificent7": {
+    "description": "Magnificent 7 — 8 datasets",
+    "endpoints": [
+      { "path": "/api/m7/index.json", "description": "Mag 7 equal-weighted composite (base 2022-01-03=100)" },
+      { "path": "/api/mag7/concentration.json", "description": "M7 % of S&P 500 cap (13% en 2018 → 33%+ en 2024)" },
+      { "path": "/api/mag7/drawdown.json", "description": "Per-member peak-to-date drawdown (~948KB)" },
+      { "path": "/api/mag7/correlation.json", "description": "60-day rolling pairwise correlation matrix" },
+      { "path": "/api/mag7/ai-valuation.json", "description": "NVDA/MSFT/META/GOOGL TTM PE vs 1999 dotcom bands" },
+      { "path": "/api/mag7/ai-capex.json", "description": "AI capex de las Mag 7" },
+      { "path": "/api/mag7/predecessors.json", "description": "Linaje: Nifty Fifty → FANG → Mag 7" }
+    ]
+  },
+  "macro": {
+    "description": "Macroeconomia — 4 datasets",
+    "endpoints": [
+      { "path": "/api/aiae.json", "description": "Aggregate Investor Allocation to Equities (predictor > CAPE)" },
+      { "path": "/api/recessions.json", "description": "Fechas de recesion NBER" },
+      { "path": "/api/yield-curve.json", "description": "2y-10y yield curve data (~866KB)" },
+      { "path": "/api/sectors/forward-pe.json", "description": "Forward PE por sector GICS" }
+    ]
+  }
+}

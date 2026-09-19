@@ -1,0 +1,132 @@
+{
+  "_meta": {
+    "description": "Catalogo de RPC IDs de Google Finance descubiertos via reverse engineering del HTML. Cada RPC se invoca via POST /finance/beta/_/FinHubUi/data/batchexecute?rpcids={RPC_ID}.",
+    "endpoint": "https://www.google.com/finance/beta/_/FinHubUi/data/batchexecute",
+    "verified_at": "2026-06",
+    "warning": "Estos RPC IDs son INTERNOS de Google y pueden cambiar sin aviso. Si una llamada empieza a fallar con 400/500, re-derivar el mapping desde el HTML (ver references/LIMITATIONS_TROUBLESHOOTING.md)."
+  },
+  "hgueg": {
+    "description": "Indices globales: Dow, S&P 500, Nasdaq Composite, Russell 2000, VIX, DAX, FTSE 100, Nikkei 225, Hang Seng, IBEX 35, CAC 40, etc",
+    "args_template": [1],
+    "args_explanation": "[1] = market region preset. Otros valores no testeados.",
+    "needs_symbol": false,
+    "output_shape": "Array de regiones, cada una con array de indices: [['/m/0cqyw', ['.DJI', 'INDEXDJX'], 'Dow Jones Industrial Average', ...quote_array..., ...]]"
+  },
+  "vNewwe": {
+    "description": "Sectors equity heatmap (Health Care, Energy, Tech, etc) con performance %",
+    "args_template": [null, [null, 1]],
+    "needs_symbol": false,
+    "output_shape": "Array de sectors, cada uno con id, name, change_pct, top performers/laggards"
+  },
+  "gCvqoe": {
+    "description": "Quote basico: precio, change, prev_close, currency, market hours, timezone, color del logo",
+    "args_template": [[[null, ["{TKR}", "{EX}"]]], 1],
+    "args_explanation": "[[[null, [TICKER, EXCHANGE]]], 1] — el 1 final es algun flag de version. Acepta multiples simbolos en el array interior.",
+    "needs_symbol": true,
+    "output_shape": "[[[/m/ID, [TKR, EX], 'Company Name', 0, 'USD', [price, change, change_pct, ...], null, prev_close, color_hex, country_code, ...]]]"
+  },
+  "JL8oKc": {
+    "description": "Descripcion empresa + datos profundos: address, employees, market cap, open/high/low, volume, 52w range, P/E, EPS, dividend yield, website URL, wikipedia URL",
+    "args_template": [[[null, ["{TKR}", "{EX}"]]]],
+    "needs_symbol": true,
+    "output_shape": "[[[/m/ID, 'Company Name', 'Description text...', [city, region, country, country_code, address], [founded_year], null, employees, market_cap, prev_close, open, high, low, ...]]]"
+  },
+  "SICF5d": {
+    "description": "Peers / related stocks. El segundo arg controla cuantos peers retornar.",
+    "args_template": [[null, ["{TKR}", "{EX}"]], 4],
+    "args_explanation": "[[null, [TKR, EX]], N] — N es cantidad de peers (probado: 4, mayor valor retorna mas).",
+    "needs_symbol": true,
+    "output_shape": "[[[peer1_quote_array], [peer2_quote_array], ...]]"
+  },
+  "YTM9q": {
+    "description": "Analyst recommendations: summary agregado (Buy/Hold/Sell counts + avg price target) + lista detallada por analista con firma, rating, fecha, target",
+    "args_template": [[null, ["{TKR}", "{EX}"]]],
+    "needs_symbol": true,
+    "output_shape": "[['Company', 'USD', avg_target, target_high, target_low, ..., 'Buy', buy_count, hold_count, sell_count, ...], [[analyst_id, 'Name', 'Firm', 'Hold', 'date', 'url', 'logo', target, prev_target, ...], ...]]"
+  },
+  "XxQsbd": {
+    "description": "Earnings history multi-periodo (años + trimestres) con valores reportados + EPS",
+    "args_template": [[[null, ["{TKR}", "{EX}"]]], 1],
+    "needs_symbol": true,
+    "output_shape": "Array de earnings rows: [['/m/ID', [TKR, EX], 'Company', YEAR, QUARTER, ..., [null, null, ..., EPS, revenue, ...], 'CCY', [period_end_date]], ...]"
+  },
+  "dlNq8b": {
+    "description": "Quote full enriquecido con industry y mini-cards de simbolos relacionados",
+    "args_template": [[[null, ["{TKR}", "{EX}"]]], 1, 1, 1],
+    "needs_symbol": true,
+    "output_shape": "Similar a gCvqoe pero con campos extra: industry, market_cap_decimal, volume, peer cards"
+  },
+  "c2u4wc:1min": {
+    "rpc_id": "c2u4wc",
+    "description": "OHLC INTRADAY 1-min del dia actual de mercado",
+    "args_template": [[[null, ["{TKR}", "{EX}"]]], 1],
+    "needs_symbol": true,
+    "output_shape": "Array de bars: [[[YYYY,MM,DD,HH,MM,...], [close, change, change_pct, ...], volume], ...]",
+    "tipico_size_kb": 30
+  },
+  "c2u4wc:5min": {
+    "rpc_id": "c2u4wc",
+    "description": "OHLC INTRADAY 5-min con formato OHLC explicito + timestamp ISO",
+    "args_template": [[[null, ["{TKR}", "{EX}"]]], 1, null, null, null, null, null, 1],
+    "needs_symbol": true,
+    "output_shape": "Array de bars: [[open, close, high, low, ISO_timestamp, volume], ...]",
+    "tipico_size_kb": 5
+  },
+  "c2u4wc:daily": {
+    "rpc_id": "c2u4wc",
+    "description": "OHLC DIARIO ultimo mes (~22 dias habiles)",
+    "args_template": [[[null, ["{TKR}", "{EX}"]]], 3],
+    "needs_symbol": true,
+    "output_shape": "Array de bars: [[[YYYY,MM,DD,...], [close, change, change_pct, ...], volume], ...]",
+    "tipico_size_kb": 2.5
+  },
+  "c2u4wc:6months": {
+    "rpc_id": "c2u4wc",
+    "description": "OHLC DIARIO ultimos ~6 meses (~130 dias habiles)",
+    "args_template": [[[null, ["{TKR}", "{EX}"]]], 4],
+    "needs_symbol": true,
+    "output_shape": "Array de bars: igual que daily, mas datos",
+    "tipico_size_kb": 13
+  },
+  "gXxkFd": {
+    "description": "Ratings tecnicos del simbolo (analogo a Recommend.* de TradingView)",
+    "args_template": [["{TKR}", "{EX}"]],
+    "needs_symbol": true,
+    "output_shape": "[null, null, [[TKR, EX], unknown_flags..., bull_score, bear_score, neutral_score, rsi_value, ..., volume_score]]"
+  },
+  "Pr8h2e": {
+    "description": "Financials MASIVOS multi-period: income statement, balance sheet, cash flow. ~22-42KB de data",
+    "args_template": [[[null, ["{TKR}", "{EX}"]]]],
+    "needs_symbol": true,
+    "output_shape": "Array anidado: [periods][financial_lines] con valores en raw currency units",
+    "tipico_size_kb": 22
+  },
+  "kA4MVd:global": {
+    "rpc_id": "kA4MVd",
+    "description": "News globales del mercado (no especificas del simbolo)",
+    "args_template": [2, 12, [[null, ["{TKR}", "{EX}"]]]],
+    "args_explanation": "[2, 12, ...] — primer arg = tipo de feed (2 = global), segundo = limit (12)",
+    "needs_symbol": true,
+    "output_shape": "Array de news items: [[url, title, source, thumbnail_url, timestamp, ...], ...]"
+  },
+  "kA4MVd:symbol": {
+    "rpc_id": "kA4MVd",
+    "description": "News especificas del simbolo",
+    "args_template": [5, 12, [[null, ["{TKR}", "{EX}"]]]],
+    "args_explanation": "[5, 12, ...] — primer arg = tipo de feed (5 = symbol-specific), segundo = limit",
+    "needs_symbol": true,
+    "output_shape": "Array de news items"
+  },
+  "RiQiSd": {
+    "description": "(DESCONOCIDO) RPC que retorna vacio con args vacios. Probable que requiera args especificos no descubiertos.",
+    "args_template": [],
+    "needs_symbol": false,
+    "status": "UNKNOWN — devuelve [] con args vacios. Reverse-engineer mas si se necesita."
+  },
+  "X12h2b": {
+    "description": "(DESCONOCIDO) Mismo caso que RiQiSd",
+    "args_template": [],
+    "needs_symbol": false,
+    "status": "UNKNOWN"
+  }
+}

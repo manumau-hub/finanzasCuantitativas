@@ -1,0 +1,106 @@
+{
+  "_meta": {
+    "description": "Bundles de columnas pre-armados para casos de uso comunes. El script fetch_tradingview.py carga estos arrays como defaults cuando el usuario invoca modo `quote`/`technicals`/`financials`/etc sin pasar --columns explicitos."
+  },
+  "quote_minimal": [
+    "name", "close", "change", "volume"
+  ],
+  "quote_basic": [
+    "name", "description", "close", "change", "change_abs", "volume",
+    "market_cap_basic", "sector", "industry", "country", "exchange", "type", "currency", "logoid"
+  ],
+  "quote_extended": [
+    "name", "description", "logoid", "close", "change", "change_abs",
+    "open", "high", "low", "volume", "vwap",
+    "market_cap_basic", "price_earnings_ttm", "earnings_per_share_basic_ttm",
+    "dividend_yield_recent", "Recommend.All", "Recommend.MA", "Recommend.Other",
+    "RSI", "MACD.macd", "ADX", "ATR",
+    "price_52_week_high", "price_52_week_low", "beta_1_year",
+    "sector", "industry", "country", "exchange", "type", "currency"
+  ],
+  "technicals": [
+    "name", "close",
+    "Recommend.All", "Recommend.MA", "Recommend.Other",
+    "RSI", "Stoch.K", "Stoch.D", "MACD.macd", "MACD.signal",
+    "ADX", "ADX+DI", "ADX-DI", "ATR", "CCI20", "BBPower", "UO", "Mom", "AO", "W.R",
+    "EMA10", "EMA20", "EMA30", "EMA50", "EMA100", "EMA200",
+    "SMA10", "SMA20", "SMA30", "SMA50", "SMA100", "SMA200",
+    "VWMA", "HullMA9", "Ichimoku.BLine"
+  ],
+  "pivots": [
+    "name", "close",
+    "Pivot.M.Classic.Middle",
+    "Pivot.M.Classic.S1", "Pivot.M.Classic.S2", "Pivot.M.Classic.S3",
+    "Pivot.M.Classic.R1", "Pivot.M.Classic.R2", "Pivot.M.Classic.R3",
+    "Pivot.M.Fibonacci.S1", "Pivot.M.Fibonacci.R1",
+    "Pivot.M.Camarilla.S1", "Pivot.M.Camarilla.R1",
+    "Pivot.M.Woodie.S1", "Pivot.M.Woodie.R1",
+    "Pivot.M.DM.S1", "Pivot.M.DM.R1"
+  ],
+  "financials": [
+    "name",
+    "total_assets", "total_current_assets", "cash_n_short_term_invest",
+    "total_debt", "long_term_debt", "total_liabilities_fq",
+    "total_current_liabilities", "total_equity",
+    "total_revenue", "gross_profit", "operating_income", "net_income", "ebitda",
+    "operating_margin", "gross_margin", "net_margin", "ebitda_margin",
+    "free_cash_flow", "cash_f_operating_activities",
+    "cash_f_investing_activities", "cash_f_financing_activities",
+    "current_ratio", "quick_ratio", "debt_to_equity",
+    "return_on_equity", "return_on_assets", "return_on_invested_capital",
+    "earnings_per_share_basic_ttm", "book_value_per_share_fq",
+    "price_book", "price_sales", "price_revenue_ttm",
+    "enterprise_value_ebitda_ttm",
+    "revenue_yoy_growth", "earnings_per_share_diluted_yoy_growth"
+  ],
+  "earnings": [
+    "name", "close",
+    "earnings_release_date", "earnings_release_next_date",
+    "earnings_per_share_basic_ttm", "earnings_per_share_diluted_ttm",
+    "earnings_per_share_fq", "revenue_fq",
+    "earnings_per_share_forecast_fq", "revenue_forecast_fq",
+    "earnings_per_share_forecast_next_fq", "revenue_forecast_next_fq"
+  ],
+  "targets": [
+    "name", "close",
+    "price_target_average", "price_target_high", "price_target_low", "price_target_median",
+    "number_of_analyst_opinions",
+    "recommendation_total", "recommendation_buy", "recommendation_hold", "recommendation_sell"
+  ],
+  "performance": [
+    "name", "close",
+    "Perf.W", "Perf.1M", "Perf.3M", "Perf.6M", "Perf.Y", "Perf.YTD", "Perf.5Y", "Perf.All",
+    "Volatility.D", "Volatility.W", "Volatility.M",
+    "beta_1_year", "beta_3_year", "beta_5_year",
+    "price_52_week_high", "price_52_week_low", "High.All", "Low.All"
+  ],
+  "dividends": [
+    "name", "close",
+    "dividend_yield_recent", "dividends_yield", "dividends_paid",
+    "dps_common_stock_prim_issue_fy", "payout_ratio_fy",
+    "continuous_dividend_payout", "continuous_dividend_growth"
+  ],
+  "ownership": [
+    "name", "close", "market_cap_basic",
+    "float_shares_outstanding", "total_shares_outstanding_fundamental",
+    "shares_owned_institutions", "shares_owned_insiders",
+    "short_interest", "short_interest_percent", "days_to_cover_short_interest"
+  ],
+  "all_in_one": [
+    "name", "description", "logoid",
+    "close", "change", "change_abs", "open", "high", "low", "volume", "vwap",
+    "market_cap_basic", "price_earnings_ttm", "earnings_per_share_basic_ttm",
+    "dividend_yield_recent",
+    "Recommend.All", "Recommend.MA", "Recommend.Other",
+    "RSI", "MACD.macd", "ADX", "ATR",
+    "EMA20", "EMA50", "EMA200", "SMA20", "SMA50", "SMA200",
+    "Pivot.M.Classic.S1", "Pivot.M.Classic.R1", "Pivot.M.Classic.Middle",
+    "price_52_week_high", "price_52_week_low", "beta_1_year",
+    "total_revenue", "net_income", "ebitda", "free_cash_flow",
+    "total_debt", "total_equity", "return_on_equity", "debt_to_equity",
+    "earnings_release_next_date",
+    "earnings_per_share_forecast_next_fq", "revenue_forecast_next_fq",
+    "price_target_average", "number_of_analyst_opinions",
+    "sector", "industry", "country", "exchange", "type", "currency"
+  ]
+}

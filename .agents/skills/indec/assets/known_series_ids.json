@@ -1,0 +1,164 @@
+{
+  "_meta": {
+    "description": "Catalogo CURADO de series IDs mas importantes y verificadas del INDEC + BCRA + otros organismos en la API series-tiempo-ar (apis.datos.gob.ar/series). Cada entrada esta verificada empiricamente en 2026-06.",
+    "endpoint": "https://apis.datos.gob.ar/series/api/series?ids={ID}",
+    "verified_at": "2026-06",
+    "warning": "Hay ~4250 series totales. Esta es una curacion de las MAS IMPORTANTES para uso comun. Para descubrir otras series, usar el endpoint /search.",
+    "patron_id": "Los IDs tienen formato {dataset_id}.{distribution_id}_{slug}_{base}_{freq}_{field_index}. No son human-friendly — usar este catalogo para los principales o /search para el resto."
+  },
+
+  "ipc_nacional": {
+    "descripcion": "Indice de Precios al Consumidor (IPC) Nacional. Base diciembre 2016. Publicado por INDEC.",
+    "base": "diciembre 2016 = 100",
+    "frecuencia": "mensual",
+    "publicacion": "Aprox dia 15 del mes siguiente",
+    "series": {
+      "nivel_general_variacion_mensual": "145.3_INGNACUAL_DICI_M_38",
+      "nucleo_nacional": "148.3_INUCLEONAL_DICI_M_19",
+      "regulados_nacional": "148.3_IREGULANAL_DICI_M_22",
+      "transporte_nacional": "146.3_ITRANSPNAL_DICI_M_23",
+      "educacion_nacional_mensual": "146.3_IEDUCACNAL_DICI_M_22",
+      "bienes_nacional_mensual": "147.3_IBIENESNAL_DICI_T_19",
+      "servicios_nacional_mensual": "147.3_ISERVICNAL_DICI_T_22",
+      "estacionales_nacional_trimestral": "148.1_IPC_ESTACINAL_DICI_T_25"
+    }
+  },
+
+  "ipc_gba_historico": {
+    "descripcion": "IPC GBA Base diciembre 2016. Indice de precios para items especificos del Gran Buenos Aires.",
+    "base": "diciembre 2016 = 100",
+    "frecuencia": "mensual",
+    "series": {
+      "nivel_general_gba": "103.1_I2N_2016_M_19",
+      "lavandina_gba": "105.1_I2L_2016_M_18",
+      "nalga_gba_pesos": "105.1_I2N_2016_M_14"
+    }
+  },
+
+  "emae": {
+    "descripcion": "Estimador Mensual de Actividad Economica (EMAE). Base 2004=100. Publicado por INDEC.",
+    "base": "2004 = 100",
+    "frecuencia": "mensual",
+    "publicacion": "Aprox dia 20 del mes siguiente",
+    "series": {
+      "serie_original_nivel_general": "143.3_NO_PR_2004_A_21",
+      "desestacionalizado_nivel_general": "143.3_NO_PR_2004_A_31",
+      "sectorial_construccion": "11.3_VMATC_2004_M_12",
+      "sectorial_pesca": "11.3_VIPAA_2004_M_5"
+    }
+  },
+
+  "ipi_manufacturero": {
+    "descripcion": "Indice de Produccion Industrial Manufacturero (IPI). Base 2004=100. Publicado por INDEC.",
+    "base": "2004 = 100",
+    "frecuencia": "mensual",
+    "series": {
+      "nivel_general_serie_original": "453.1_SERIE_ORIGNAL_0_0_14_46"
+    }
+  },
+
+  "isac_construccion": {
+    "descripcion": "Indicador Sintetico de la Actividad de la Construccion (ISAC). Base 2004=100. Publicado por INDEC.",
+    "base": "2004 = 100",
+    "frecuencia": "mensual",
+    "series": {
+      "nivel_general": "33.2_ISAC_NIVELRAL_0_M_18_63",
+      "nivel_general_variacion_interanual": "33.2_I_2004_M_4",
+      "insumos_asfalto": "33.5_ISAC_ASFALLTO_0_0_12_33",
+      "insumos_hierro_redondo": "33.5_ISAC_HIERRION_0_0_49_83"
+    }
+  },
+
+  "salarios": {
+    "descripcion": "Indicadores salariales del Ministerio de Trabajo + INDEC.",
+    "series": {
+      "ripte_mensual_pesos": {
+        "id": "158.1_REPTE_0_0_5",
+        "descripcion": "Remuneracion Imponible Promedio de los Trabajadores Estables. Pesos corrientes.",
+        "frecuencia": "mensual",
+        "source": "Secretaria de Trabajo, Empleo y Seguridad Social"
+      },
+      "salario_minimo_vital_movil_mensual": {
+        "id": "57.1_SMVMM_0_M_34",
+        "descripcion": "Salario minimo vital y movil mensual. Pesos corrientes desde 1988.",
+        "frecuencia": "mensual"
+      },
+      "salario_minimo_vital_movil_diario": {
+        "id": "57.1_SMVMD_0_M_33",
+        "descripcion": "Salario minimo vital y movil diario.",
+        "frecuencia": "mensual"
+      },
+      "salario_minimo_vital_movil_horario": {
+        "id": "57.1_SMVMH_0_M_31",
+        "descripcion": "Salario minimo vital y movil horario.",
+        "frecuencia": "mensual"
+      },
+      "haber_minimo_jubilatorio_pesos": {
+        "id": "58.1_MP_0_M_13",
+        "descripcion": "Haber minimo jubilatorio en pesos corrientes desde 1971.",
+        "frecuencia": "mensual"
+      }
+    }
+  },
+
+  "empleo_eph": {
+    "descripcion": "Encuesta Permanente de Hogares (EPH). Indicadores de empleo y ocupacion. INDEC.",
+    "frecuencia_principal": "trimestral",
+    "series": {
+      "tasa_desocupacion_eph_continua_trimestral": "42.3_EPH_PUNTUATAL_0_M_30",
+      "tasa_desocupacion_eph_semestral_historico": "42.2_EPDT_0_M_30",
+      "tasa_desempleo_formosa_anual": "45.1_ECTDTF_0_A_41",
+      "tasa_desempleo_patagonia_anual": "45.1_ECTDTP_0_A_43",
+      "tasa_desempleo_posadas_anual": "45.1_ECTDTP_0_A_41"
+    }
+  },
+
+  "pobreza_indigencia": {
+    "descripcion": "Linea de pobreza, indigencia y canasta basica. INDEC.",
+    "series": {
+      "linea_pobreza_pesos_corrientes_desde_2016": "150.1_LA_POBREZA_0_D_13",
+      "linea_pobreza_pesos_corrientes_1992_2000": "59.3_LA_POBREZA_0_0_13",
+      "linea_pobreza_trimestral_2000_2006": "59.2_LP_0_D_13",
+      "poblacion_debajo_linea_pobreza_pct_1988_2003": "60.1_PP_0_0_15"
+    }
+  },
+
+  "comercio_exterior": {
+    "descripcion": "Exportaciones e importaciones por rubro. INDEC.",
+    "frecuencia": "mensual y anual",
+    "series": {
+      "exportaciones_total_mensual_millones_usd_fob": "75.3_IETG_0_M_31",
+      "exportaciones_total_trimestral_millones_usd_fob": "75.2_IETG_0_T_31",
+      "exportaciones_total_anual_millones_usd_fob": "75.1_IETG_0_A_31",
+      "exportaciones_totales_millones_usd_mensual": "74.3_IET_0_M_16"
+    }
+  },
+
+  "tipo_cambio_bcra": {
+    "descripcion": "Tipo de cambio publicado por BCRA. Mismo origen que el skill bcra-macro pero accesible desde aqui.",
+    "series": {
+      "tipo_cambio_bna_vendedor_diario": "168.1_T_CAMBIOR_D_0_0_26"
+    }
+  },
+
+  "reservas_bcra": {
+    "descripcion": "Reservas internacionales del Banco Central. Mismo origen que skill bcra-macro.",
+    "series": {
+      "reservas_internacionales_saldos_mensual": "174.1_RRVAS_IDOS_0_0_36",
+      "reservas_internacionales_promedio_saldos_diarios": "174.1_RRVAS_IIOS_0_0_60",
+      "reservas_millones_usd_mensual": "92.1_RID_0_0_32",
+      "variacion_contable_reservas_mensual": "182.1_VARIACION_LES_0_M_43",
+      "apertura_activo_reservas_internacionales": "300.1_AP_ACT_RESTER_0_M_21"
+    }
+  },
+
+  "rem_expectativas": {
+    "descripcion": "Relevamiento de Expectativas de Mercado (REM) del BCRA. Encuesta a analistas privados sobre expectativas macro futuras.",
+    "frecuencia": "mensual",
+    "series": {
+      "mediana_tcn_var_mensual_t5": "430.1_MEDIANA_IPT_5_M_0_0_31_0",
+      "mediana_tcn_var_ia_t12": "430.1_MEDIANA_IP_12_M_0_0_27_59",
+      "mediana_tcn_var_ia_2025": "430.1_REM_TCN_VA025_M_0_0_19_9"
+    }
+  }
+}

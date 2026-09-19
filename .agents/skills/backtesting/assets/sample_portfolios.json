@@ -1,0 +1,75 @@
+{
+  "warren_buffett": {
+    "display_name": "Warren Buffett (Berkshire Hathaway)",
+    "strategy": "value_concentrated",
+    "tickers": {
+      "AAPL": 0.48,
+      "BAC": 0.10,
+      "AXP": 0.08,
+      "KO": 0.07,
+      "CVX": 0.06,
+      "OXY": 0.05,
+      "AON": 0.03
+    },
+    "others_label": "13 other positions (~13%)",
+    "rebalance": "annual",
+    "source": "SEC 13-F Berkshire Hathaway (latest filing)",
+    "description": "Concentrated value portfolio, long-term buy-and-hold philosophy. Use as benchmark for value investing in forward simulations and stress tests."
+  },
+  "ray_dalio_allweather": {
+    "display_name": "Ray Dalio All-Weather",
+    "strategy": "risk_parity_multi_asset",
+    "tickers": {
+      "SPY": 0.30,
+      "TLT": 0.40,
+      "IEI": 0.15,
+      "GLD": 0.075,
+      "DBC": 0.075
+    },
+    "others_label": null,
+    "rebalance": "quarterly",
+    "source": "Ray Dalio 'Principles for Navigating Big Debt Crises' + Bridgewater All-Weather strategy documentation",
+    "description": "Risk parity portfolio, multi-asset. Use to compare risk-return profile against concentrated equity portfolios and to demonstrate real-world diversification."
+  },
+  "bill_ackman": {
+    "display_name": "Bill Ackman (Pershing Square)",
+    "strategy": "activist_concentrated",
+    "tickers": {
+      "CMG": 0.20,
+      "HLT": 0.18,
+      "LOW": 0.15,
+      "QSR": 0.12,
+      "SGF": 0.10,
+      "GOOG": 0.08,
+      "LSTR": 0.07
+    },
+    "others_label": "10 other positions (~10%)",
+    "rebalance": "annual",
+    "source": "SEC 13-F Pershing Square Capital Management (latest filing)",
+    "description": "Concentrated activist portfolio, catalyst-driven. Use to contrast against value (Buffett) and to analyze tracking error and concentration risk."
+  },
+  "traditional_60_40": {
+    "display_name": "Traditional 60/40",
+    "strategy": "classic_asset_allocation",
+    "tickers": {
+      "SPY": 0.60,
+      "BND": 0.40
+    },
+    "others_label": null,
+    "rebalance": "quarterly",
+    "source": "Industry standard allocation",
+    "description": "Classic 60/40 stocks-bonds benchmark. Use as the universal baseline for multi-asset portfolio comparisons."
+  },
+  "momentum_vs_contrarian": {
+    "display_name": "Momentum + Contrarian Combo",
+    "strategy": "combined_strategies",
+    "tickers": {
+      "_momentum_sma50_200": 0.50,
+      "_contrarian_bbands": 0.50
+    },
+    "others_label": null,
+    "rebalance": "monthly",
+    "source": "Built from assets/momentum_sma50_200_returns.csv and assets/contrarian_bbands_returns.csv (course material slide 26-27)",
+    "description": "Combined trend-following + contrarian strategy portfolio. Demonstrates the course's combined Growth+Momentum+Diversification philosophy. Strategies have negative correlation in different regimes, reducing overall volatility."
+  }
+}

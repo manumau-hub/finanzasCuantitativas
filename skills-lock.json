@@ -1,0 +1,197 @@
+{
+  "version": 1,
+  "skills": {
+    "alpaca-data": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/alpaca-data/SKILL.md",
+      "computedHash": "1d99ce881b42017b2fa1542308a0d56590b98352787c5de4bac030efacdae897"
+    },
+    "alpaca-trading": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/alpaca-trading/SKILL.md",
+      "computedHash": "84ba24f23f8ef6af8218aad11f108d89b21f6bbce4d4bd24bb89cb4a6c92ffee"
+    },
+    "alpha-vantage": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/alpha-vantage/SKILL.md",
+      "computedHash": "d488a95284cb67671c478a53635849ac62e94b2fe4235875f0bcd9dc6fe4aa52"
+    },
+    "backtesting": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/backtesting/SKILL.md",
+      "computedHash": "ace796c4339eff695a1eed3732936da3123c84604339ba531c8e06d5f47dd317"
+    },
+    "barchart": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/barchart/SKILL.md",
+      "computedHash": "f5e216ac125f83e310113c6e2647e8b2c3223d448843e55cbcb5c0a573847651"
+    },
+    "bcra-macro": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/bcra-macro/SKILL.md",
+      "computedHash": "519738d5b2b768d62c3713442447d1d4ac536f584a5e81a347e760954d761c6a"
+    },
+    "byma": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/byma/SKILL.md",
+      "computedHash": "1e066299fa090d58a11c44c05b171ede6d20f5ad47e28e544ffe2074f4219996"
+    },
+    "cafci": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/cafci/SKILL.md",
+      "computedHash": "8b3c46e92daa5de47ba4586c48cced52da0270abcb82c89fd46a047ff1678896"
+    },
+    "cboe-data": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/cboe-data/SKILL.md",
+      "computedHash": "808772c970c0b9e68e8d54b1da8a42c258e78945c88d79977ba203be77210cfa"
+    },
+    "companiesmarketcap": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/companiesmarketcap/SKILL.md",
+      "computedHash": "961f055db7357c7a7e6227cb6fff7dcbbd18d17b8bdbb8e6a57373d674caab59"
+    },
+    "data912": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/data912/SKILL.md",
+      "computedHash": "348399f4cfe453c87b64d7c27ae8b94f60c96ffedbcbac239aeb35c6bdf0911e"
+    },
+    "earningswhispers": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/earningswhispers/SKILL.md",
+      "computedHash": "19ca9479ba578620a4a4f1f217edd1f2ef3251eb6f0449d5861b776e726197d8"
+    },
+    "finnhub": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/finnhub/SKILL.md",
+      "computedHash": "04d7a11e550cd5de8c93b1d82a8732fca13e8272e6a55b1786b26a5380d07337"
+    },
+    "finviz": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/finviz/SKILL.md",
+      "computedHash": "357c9063ec8e628523b0422fc475aa094f746f876d38696badcb415a29065ae3"
+    },
+    "fred-macro": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/fred-macro/SKILL.md",
+      "computedHash": "c65ad1179a662f7a4ba3a457ea6c8fd194d633fe46dbd2d5883334b0928bf3e9"
+    },
+    "google-finance": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/google-finance/SKILL.md",
+      "computedHash": "d9d6f0eb2e710a6bc56f93d17ab92eb5c6bad341a82b5fad8c8a20d8ff04f5f1"
+    },
+    "historyofmarket": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/historyofmarket/SKILL.md",
+      "computedHash": "a584365b390536052ac4e7b2047d73cb054332711d82264168cde4dcb5266167"
+    },
+    "indec": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/indec/SKILL.md",
+      "computedHash": "800f450be3307fcaab597fd41ca2ac22478d76b590d4d23005827f2029fd0b0c"
+    },
+    "investing": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/investing/SKILL.md",
+      "computedHash": "253f4ec119f3de113b4698a4e71dd675daf2434877648776c258bf9bdb1f8752"
+    },
+    "macrotrends": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/macrotrends/SKILL.md",
+      "computedHash": "533b3f2801413058bd1c475826e00cd95712573c5b44bed276f87298551b9a14"
+    },
+    "mae": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/mae/SKILL.md",
+      "computedHash": "c1b1c4078dfbf0f419ddf344990ace96a951979295859909925e0f718b3b65c1"
+    },
+    "marketscreener": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/marketscreener/SKILL.md",
+      "computedHash": "3946f9c740f0622ab335bc11d145930eb2774494b4794114299f7a997a279b0b"
+    },
+    "marketwatch": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/marketwatch/SKILL.md",
+      "computedHash": "59d131bbed1256860521f4f8c9712d1a218a4d5e689a6f6a5ca9328fd9ae6bb7"
+    },
+    "morningstar": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/morningstar/SKILL.md",
+      "computedHash": "8f3e7e284331f266e1dddf880e35648749424c15d3978cbd55caf74c92cab933"
+    },
+    "nasdaq-data": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/nasdaq-data/SKILL.md",
+      "computedHash": "f96f6e8bec0eaf0000dd8f64f4c246f421fbedb85c2f74bd71bdfb32342450b1"
+    },
+    "option-pricing": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/option-pricing/SKILL.md",
+      "computedHash": "2634db01350f39d20d6f2c1cbac1e01f8174174a852ae149ac27312b6fa69245"
+    },
+    "portfolio": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/portfolio/SKILL.md",
+      "computedHash": "25060417f9d2d3ba1d5ba2e50e0732330269b7e46a449247b6a8bd4f3d30bbdf"
+    },
+    "primary": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/primary/SKILL.md",
+      "computedHash": "58d33b5d6eb48e26c671c08129a1050f307ddba1eeb10abed8e2c43fdacb5a99"
+    },
+    "sec-data": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/sec-data/SKILL.md",
+      "computedHash": "eebd91e09982a290c568afc7fad10fcf113fe5e98017d2167a4ffd2c5ab455c7"
+    },
+    "simplywallst": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/simplywallst/SKILL.md",
+      "computedHash": "d755e4aa617d3b73de44a98b804ef0a9345b353db02ab35c854fdcdfc08eb57f"
+    },
+    "tradingview": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/tradingview/SKILL.md",
+      "computedHash": "e51086d92b85129c81013df2f59b089b50596ee6e1255329974e00a87e354aae"
+    },
+    "yahoo-finance": {
+      "source": "gauss314/skills",
+      "sourceType": "github",
+      "skillPath": "skills/yahoo-finance/SKILL.md",
+      "computedHash": "aad3d4891e59d3c9f9beeb9fa298e7aa6849bd4a9be8262d8de603e5f1f59bf1"
+    }
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "_meta": {
+    "description": "Layouts de los arrays anidados que devuelve cada RPC. Como el response es columnar (posicional, sin keys), aca documentamos que campo va en que indice.",
+    "warning": "Estos indices pueden cambiar con cualquier redeploy de Google. Si un campo aparece null cuando deberia tener valor, probablemente cambio el layout — re-validar empiricamente."
+  },
+  "quote_array": {
+    "description": "El 'quote array' es el formato comun que aparece dentro de gCvqoe, dlNq8b, SICF5d, hgueg, etc. Cada quote es un array tipo: ['/m/...', [TKR, EX], 'Name', 0, CCY, [price_array], null, prev_close, color, country, ...]",
+    "fields": {
+      "0": "freebase_id — ID interno Google (/m/...)",
+      "1": "ticker_pair — [TICKER, EXCHANGE]",
+      "2": "company_name — Nombre completo",
+      "3": "unknown_flag — siempre 0",
+      "4": "currency_code — USD, ARS, EUR, etc.",
+      "5": "price_data — [current_price, change_abs, change_pct, prec1, prec2, prec3]",
+      "6": "unknown_field — siempre null",
+      "7": "previous_close",
+      "8": "color_hex — color del logo (con # prefix)",
+      "9": "country_code — US, AR, BR, etc.",
+      "10": "industry_freebase_id — /m/... para la industria",
+      "11": "last_update_timestamp — [unix_seconds]",
+      "12": "timezone_name — 'America/New_York', 'America/Argentina/Buenos_Aires', etc.",
+      "13": "timezone_offset_seconds — offset en segundos (-14400 = UTC-4)",
+      "14": "freebase_id_repeated — mismo que [0]",
+      "15": "unknown",
+      "16": "after_hours_price_data — [price, change, pct, ...] o null",
+      "17": "market_open_timestamp — [unix_seconds] del primer trade del dia",
+      "18": "market_close_timestamp — [unix_seconds]",
+      "19": "market_session — [[type, [open_y,m,d,h,m,...], [close_y,m,d,h,m,...]]]",
+      "20": "unknown — null",
+      "21": "ticker_pair_string — 'GGAL:NASDAQ'",
+      "22": "unknown_flag",
+      "23": "unknown",
+      "24": "unknown",
+      "25": "unknown",
+      "26": "is_extended_hours — false generalmente"
+    }
+  },
+  "JL8oKc_company_profile": {
+    "description": "Layout del response de JL8oKc (descripcion empresa profundo)",
+    "fields": {
+      "0": "freebase_id",
+      "1": "company_short_name — 'Galicia Financial Group'",
+      "2": "description_text — Texto largo en ingles tipico",
+      "3": "address_array — [city, region, country_full, country_code, street_address]",
+      "4": "founded_year — [year]",
+      "5": "unknown — null",
+      "6": "employees_count — int",
+      "7": "market_cap — float (raw currency)",
+      "8": "previous_close — float",
+      "9": "open_price — float",
+      "10": "day_high — float",
+      "11": "day_low — float",
+      "12": "year_high — float",
+      "13": "year_low — float",
+      "14": "volume — int",
+      "15": "currency_code",
+      "16": "avg_volume_or_pe — float",
+      "17": "earnings_growth_or_other — float",
+      "18": "shares_outstanding — int",
+      "19": "dividend_yield_pct — float",
+      "20": "pe_ratio_or_eps — float",
+      "21": "shares_or_volume — int",
+      "22": "website_url — string",
+      "23": "currency_code_2",
+      "30": "wikipedia_url — string (en posicion variable, suele ir cerca del final)"
+    },
+    "nota": "Los indices 16-21 pueden estar en orden distinto segun el tipo de empresa. Validar empiricamente para cada caso."
+  },
+  "OHLC_intraday_1min": {
+    "description": "Cada bar del OHLC 1-min (c2u4wc:1min). Output: data[0][3][0][2] es el array de bars",
+    "bar_fields": {
+      "0": "timestamp — [YYYY, MM, DD, HH, MM, null, null, [offset_seconds]]",
+      "1": "ohlc_change — [close, change_abs, change_pct, prec1, prec2, prec3]",
+      "2": "volume — int"
+    },
+    "nota": "Solo expone close + change, NO open/high/low por minuto. Para OHLC verdadero usar OHLC_5min."
+  },
+  "OHLC_5min": {
+    "description": "Cada bar del OHLC 5-min (c2u4wc con arg 1, ..., 1). Output: data[0][3][0][2] es array de bars",
+    "bar_fields": {
+      "0": "open — float",
+      "1": "close — float",
+      "2": "high — float",
+      "3": "low — float",
+      "4": "timestamp_iso — 'YYYY-MM-DDTHH:MM:SS-OFFSET'",
+      "5": "volume — int"
+    }
+  },
+  "OHLC_daily": {
+    "description": "Cada bar del OHLC daily (c2u4wc:daily args=[..., 3]). Output: data[0][3][0][1] es array de bars",
+    "bar_fields": {
+      "0": "timestamp — [YYYY, MM, DD, HH, MM, ..., [offset]]",
+      "1": "close_change — [close, change_abs, change_pct, prec1, prec2, prec3]",
+      "2": "volume — int"
+    },
+    "nota": "Solo close + change, sin OHL. Para OHL diario usar otro endpoint o derivar de 5-min."
+  },
+  "ratings_gXxkFd": {
+    "description": "Ratings tecnicos. Output: data[2] = ['TKR', 'EX'], unknowns, scores...]",
+    "fields_after_ticker": {
+      "0": "unknown_flag",
+      "1": "unknown_flag",
+      "2": "unknown_flag",
+      "3": "unknown_flag",
+      "4": "bull_score — 0-1 (probable: % bullish indicators)",
+      "5": "bear_score — 0-1",
+      "6": "neutral_score — 0-1",
+      "7": "rsi_value — 0-100",
+      "8": "unknown_float",
+      "9": "unknown_flag",
+      "10": "volume_score — 0-1"
+    },
+    "warning": "Los names de los fields son INFERIDOS — Google no documenta. Validar con la UI antes de exponer al usuario."
+  },
+  "news_item": {
+    "description": "Cada item de news (kA4MVd)",
+    "fields": {
+      "0": "url — link al articulo original",
+      "1": "title",
+      "2": "source — 'Reuters', 'Dow Jones', etc.",
+      "3": "thumbnail_url — encrypted-tbn*.gstatic.com",
+      "4": "published_unix_seconds",
+      "5": "is_premium — bool",
+      "6": "unknown_flag — bool",
+      "7": "favicon_url — encrypted-tbn*.gstatic.com",
+      "8": "related_symbols_quote_arrays — Array de quote_array (solo en news GLOBALES)",
+      "9": "related_freebase_ids — ['/m/0clbgbw', ...]",
+      "10": "news_internal_id",
+      "11": "unknown — null",
+      "12": "thumbnail_width",
+      "13": "thumbnail_height",
+      "14": "second_timestamp_unix"
+    }
+  },
+  "analyst_summary_YTM9q": {
+    "description": "Summary header de analyst recommendations (YTM9q response[0])",
+    "fields": {
+      "0": "company_name",
+      "1": "currency",
+      "2": "price_target_average",
+      "3": "price_target_high",
+      "4": "price_target_low",
+      "5": "upside_pct_estimate",
+      "6": "num_analyst_opinions",
+      "7": "consensus_rating — 'Buy' | 'Hold' | 'Sell' | 'Strong Buy' | 'Strong Sell'",
+      "8": "strong_buy_count",
+      "9": "buy_count",
+      "10": "hold_count",
+      "11": "sell_count_or_null",
+      "12": "strong_sell_count"
+    }
+  },
+  "analyst_opinion": {
+    "description": "Cada opinion individual (YTM9q response[1])",
+    "fields": {
+      "0": "opinion_id",
+      "1": "analyst_name",
+      "2": "firm_name — 'Goldman Sachs', etc.",
+      "3": "rating — 'Buy', 'Hold', 'Sell'",
+      "4": "rating_date — 'DD/MM/YYYY'",
+      "5": "source_url",
+      "6": "source_image",
+      "7": "analyst_5y_return_pct",
+      "8": "analyst_5y_avg_return_pct",
+      "9": "analyst_success_rate_pct",
+      "17": "title_news — titulo del comunicado original",
+      "18": "author_name",
+      "21": "price_target",
+      "22": "price_target_change",
+      "23": "currency"
+    }
+  }
+}

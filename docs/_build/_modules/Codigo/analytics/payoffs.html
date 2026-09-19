@@ -1,0 +1,668 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Codigo.analytics.payoffs &mdash; finanzasCuantitativas 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            finanzasCuantitativas
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/pricing.html">Módulo Pricing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/analytics.html">Módulo Analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Módulo Utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">finanzasCuantitativas</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">Codigo.analytics.payoffs</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Codigo.analytics.payoffs</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Payoffs de opciones y estrategias.</span>
+
+<span class="sd">Incluye:</span>
+<span class="sd">- Vanilla y estrategias (spreads, straddles, butterflies, etc.)</span>
+<span class="sd">- Digitales (cash-or-nothing, asset-or-nothing)</span>
+<span class="sd">- Asian (media aritmética, path-dependent)</span>
+<span class="sd">- Barrier (up/down, in/out, call/put; path-dependent)</span>
+
+<span class="sd">Todas las funciones aceptan escalares o arrays de NumPy.</span>
+<span class="sd">S: precio del subyacente al vencimiento (o S_avg para Asian).</span>
+<span class="sd">K, K1, K2, B: strikes y barreras.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="c1"># Tipo para precios y strikes (escalar o array)</span>
+<span class="n">_Num</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="payoff_call">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_call">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de una opción call europea.</span>
+
+<span class="sd">    max(S - K, 0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">S</span> <span class="o">-</span> <span class="n">K</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_put">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_put">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de una opción put europea.</span>
+
+<span class="sd">    max(K - S, 0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">K</span> <span class="o">-</span> <span class="n">S</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_forwardSintetico">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_forwardSintetico">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_forwardSintetico</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un forward sintético (long): Call(K) - Put(K).</span>
+
+<span class="sd">    Equivale a S - K (posición larga en forward).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_combo">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_combo">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_combo</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un combo / risk reversal: Call(K2) - Put(K1).</span>
+
+<span class="sd">    Convención típica: K1 &lt; K2 (call OTM arriba, put OTM abajo).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_BullCS">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_BullCS">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_BullCS</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un Bull Call Spread: Call(K1) - Call(K2).</span>
+
+<span class="sd">    Long call en K1, short call en K2. Convención: K1 &lt; K2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En Bull Call Spread se espera K1 &lt; K2.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_BearCS">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_BearCS">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_BearCS</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un Bear Call Spread: Call(K2) - Call(K1).</span>
+
+<span class="sd">    Short call en K1, long call en K2. Convención: K1 &lt; K2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En Bear Call Spread se espera K1 &lt; K2.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_BullPS">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_BullPS">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_BullPS</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un Bull Put Spread: Put(K1) - Put(K2).</span>
+
+<span class="sd">    Long put en K1, short put en K2. Convención: K1 &lt; K2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En Bull Put Spread se espera K1 &lt; K2.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_BearPS">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_BearPS">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_BearPS</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un Bear Put Spread: Put(K2) - Put(K1).</span>
+
+<span class="sd">    Short put en K1, long put en K2. Convención: K1 &lt; K2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En Bear Put Spread se espera K1 &lt; K2.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_CButterflyS">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_CButterflyS">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_CButterflyS</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K3</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un Call Butterfly: Call(K1) - 2*Call(K2) + Call(K3).</span>
+
+<span class="sd">    Convención: K1 &lt; K2 &lt; K3 (K2 suele ser ATM).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K2</span> <span class="o">&gt;=</span> <span class="n">K3</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En Call Butterfly se espera K1 &lt; K2 &lt; K3.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span> <span class="o">+</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K3</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_PButterflyS">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_PButterflyS">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_PButterflyS</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K3</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un Put Butterfly: Put(K1) - 2*Put(K2) + Put(K3).</span>
+
+<span class="sd">    Convención: K1 &lt; K2 &lt; K3 (K2 suele ser ATM).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K2</span> <span class="o">&gt;=</span> <span class="n">K3</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En Put Butterfly se espera K1 &lt; K2 &lt; K3.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span> <span class="o">+</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K3</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_straddle">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_straddle">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_straddle</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un straddle (long): Call(K) + Put(K).</span>
+
+<span class="sd">    Beneficio cuando el subyacente se mueve fuerte en cualquier dirección.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span> <span class="o">+</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_strangle">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_strangle">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_strangle</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un strangle (long): Call(K1) + Put(K2).</span>
+
+<span class="sd">    Convención típica OTM: K1 &gt; K2 (call strike arriba, put strike abajo).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span> <span class="o">+</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_iron_condor">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_iron_condor">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_iron_condor</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K3</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K4</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un Iron Condor: Put(K1) - Put(K2) - Call(K3) + Call(K4).</span>
+
+<span class="sd">    Long put spread (K1&lt;K2) + long call spread (K3&lt;K4).</span>
+<span class="sd">    Convención: K1 &lt; K2 &lt; K3 &lt; K4.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K2</span> <span class="o">&gt;=</span> <span class="n">K3</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K3</span> <span class="o">&gt;=</span> <span class="n">K4</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En Iron Condor se espera K1 &lt; K2 &lt; K3 &lt; K4.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K3</span><span class="p">)</span> <span class="o">+</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K4</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_iron_butterfly">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_iron_butterfly">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_iron_butterfly</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K3</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un Iron Butterfly: Put(K1) - Put(K2) + Call(K3) - Call(K2).</span>
+
+<span class="sd">    Short straddle en K2 + long strangle (put K1, call K3).</span>
+<span class="sd">    Convención: K1 &lt; K2 &lt; K3 (K2 suele ser ATM).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K2</span> <span class="o">&gt;=</span> <span class="n">K3</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En Iron Butterfly se espera K1 &lt; K2 &lt; K3.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span> <span class="o">+</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K3</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_condor">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_condor">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_condor</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K3</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K4</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un Condor (long): Call(K1) - Call(K2) - Call(K3) + Call(K4).</span>
+
+<span class="sd">    Long call spread bajo + long call spread alto.</span>
+<span class="sd">    Convención: K1 &lt; K2 &lt; K3 &lt; K4.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K2</span> <span class="o">&gt;=</span> <span class="n">K3</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K3</span> <span class="o">&gt;=</span> <span class="n">K4</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En Condor se espera K1 &lt; K2 &lt; K3 &lt; K4.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K3</span><span class="p">)</span> <span class="o">+</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K4</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_short_straddle">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_short_straddle">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_short_straddle</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un short straddle: -(Call(K) + Put(K)).</span>
+
+<span class="sd">    Beneficio cuando S se mantiene cerca de K.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span> <span class="o">+</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_short_strangle">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_short_strangle">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_short_strangle</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un short strangle: -(Call(K1) + Put(K2)).</span>
+
+<span class="sd">    Convención típica OTM: K1 &gt; K2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span> <span class="o">+</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_covered_call">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_covered_call">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_covered_call</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de covered call: S - Call(K).</span>
+
+<span class="sd">    Long subyacente + short call. Cede upside a cambio de prima.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">S</span> <span class="o">-</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_covered_put">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_covered_put">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_covered_put</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de covered put: Put(K) - S.</span>
+
+<span class="sd">    Short subyacente + long put. Protege la posición corta.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span> <span class="o">-</span> <span class="n">S</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_protective_put">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_protective_put">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_protective_put</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de protective put: S + Put(K).</span>
+
+<span class="sd">    Long subyacente + long put. Protección a la baja (floor en K).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">S</span> <span class="o">+</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_ratio_spread">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_ratio_spread">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_ratio_spread</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">n1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un ratio spread: n1*Call(K1) - n2*Call(K2).</span>
+
+<span class="sd">    Convención: K1 &lt; K2. Típico 1:2 (comprar 1 call, vender 2 calls).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En ratio spread se espera K1 &lt; K2.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">n1</span> <span class="o">*</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span> <span class="o">-</span> <span class="n">n2</span> <span class="o">*</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_collar">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_collar">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_collar</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un collar: S + Put(K1) - Call(K2).</span>
+
+<span class="sd">    Long subyacente + long put (floor) + short call (cap).</span>
+<span class="sd">    Convención: K1 &lt; K2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En collar se espera K1 &lt; K2.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">S</span> <span class="o">+</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K1</span><span class="p">)</span> <span class="o">-</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_box">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_box">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_box</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K1</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K2</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de un box spread: Call(K1) - Put(K1) - Call(K2) + Put(K2).</span>
+
+<span class="sd">    Equivale a K2 - K1 (constante, sin riesgo de mercado).</span>
+<span class="sd">    Convención: K1 &lt; K2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">K1</span> <span class="o">&gt;=</span> <span class="n">K2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;En box spread se espera K1 &lt; K2.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">K2</span> <span class="o">-</span> <span class="n">K1</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># DIGITALES (BINARIAS)</span>
+<span class="c1"># =============================================================================</span>
+
+
+<div class="viewcode-block" id="payoff_digital_call">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_digital_call">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_digital_call</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="n">_Num</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de una opción digital call (cash-or-nothing).</span>
+
+<span class="sd">    Q si S &gt; K, 0 en caso contrario.</span>
+<span class="sd">    Q: monto fijo pagado si la opción termina in-the-money.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">S</span> <span class="o">&gt;</span> <span class="n">K</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_digital_put">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_digital_put">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_digital_put</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="n">_Num</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de una opción digital put (cash-or-nothing).</span>
+
+<span class="sd">    Q si S &lt; K, 0 en caso contrario.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">S</span> <span class="o">&lt;</span> <span class="n">K</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_asset_or_nothing_call">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_asset_or_nothing_call">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_asset_or_nothing_call</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de una opción asset-or-nothing call.</span>
+
+<span class="sd">    S si S &gt; K, 0 en caso contrario.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">S</span> <span class="o">&gt;</span> <span class="n">K</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_asset_or_nothing_put">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_asset_or_nothing_put">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_asset_or_nothing_put</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de una opción asset-or-nothing put.</span>
+
+<span class="sd">    S si S &lt; K, 0 en caso contrario.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">S</span> <span class="o">&lt;</span> <span class="n">K</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># ASIAN (ARITHMETIC AVERAGE)</span>
+<span class="c1"># =============================================================================</span>
+
+
+<div class="viewcode-block" id="payoff_asian_call">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_asian_call">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_asian_call</span><span class="p">(</span><span class="n">S_avg</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de una opción Asian call (media aritmética).</span>
+
+<span class="sd">    max(S_avg - K, 0). S_avg es el precio promedio del subyacente durante la vida.</span>
+<span class="sd">    Path-dependent: requiere S_avg calculado del camino.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">S_avg</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">K</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_asian_put">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_asian_put">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_asian_put</span><span class="p">(</span><span class="n">S_avg</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff de una opción Asian put (media aritmética).</span>
+
+<span class="sd">    max(K - S_avg, 0). Path-dependent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">K</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">S_avg</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># BARRIER (8 COMBINACIONES: Up/Down x In/Out x Call/Put)</span>
+<span class="c1"># =============================================================================</span>
+
+<span class="n">_BoolLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="payoff_barrier_up_in_call">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_barrier_up_in_call">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_barrier_up_in_call</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">barrier_hit</span><span class="p">:</span> <span class="n">_BoolLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff Up-and-In Call: activa si el precio alcanza B (B &gt; S_0).</span>
+
+<span class="sd">    Vanilla call payoff si barrier_hit, 0 si no.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">barrier_hit</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">hit</span><span class="p">,</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_barrier_up_in_put">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_barrier_up_in_put">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_barrier_up_in_put</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">barrier_hit</span><span class="p">:</span> <span class="n">_BoolLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Payoff Up-and-In Put: activa si el precio alcanza B (B &gt; S_0).&quot;&quot;&quot;</span>
+    <span class="n">hit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">barrier_hit</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">hit</span><span class="p">,</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_barrier_up_out_call">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_barrier_up_out_call">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_barrier_up_out_call</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">barrier_hit</span><span class="p">:</span> <span class="n">_BoolLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff Up-and-Out Call: se anula si el precio alcanza B (B &gt; S_0).</span>
+
+<span class="sd">    Vanilla call payoff si NO barrier_hit, 0 si sí.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">barrier_hit</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">hit</span><span class="p">,</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_barrier_up_out_put">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_barrier_up_out_put">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_barrier_up_out_put</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">barrier_hit</span><span class="p">:</span> <span class="n">_BoolLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Payoff Up-and-Out Put: se anula si el precio alcanza B (B &gt; S_0).&quot;&quot;&quot;</span>
+    <span class="n">hit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">barrier_hit</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">hit</span><span class="p">,</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_barrier_down_in_call">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_barrier_down_in_call">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_barrier_down_in_call</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">barrier_hit</span><span class="p">:</span> <span class="n">_BoolLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff Down-and-In Call: activa si el precio alcanza B (B &lt; S_0).</span>
+
+<span class="sd">    Vanilla call payoff si barrier_hit, 0 si no.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">barrier_hit</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">hit</span><span class="p">,</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_barrier_down_in_put">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_barrier_down_in_put">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_barrier_down_in_put</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">barrier_hit</span><span class="p">:</span> <span class="n">_BoolLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Payoff Down-and-In Put: activa si el precio alcanza B (B &lt; S_0).&quot;&quot;&quot;</span>
+    <span class="n">hit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">barrier_hit</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">hit</span><span class="p">,</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_barrier_down_out_call">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_barrier_down_out_call">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_barrier_down_out_call</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">barrier_hit</span><span class="p">:</span> <span class="n">_BoolLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Payoff Down-and-Out Call: se anula si el precio alcanza B (B &lt; S_0).</span>
+
+<span class="sd">    Vanilla call payoff si NO barrier_hit, 0 si sí.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">barrier_hit</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">hit</span><span class="p">,</span> <span class="n">payoff_call</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="payoff_barrier_down_out_put">
+<a class="viewcode-back" href="../../../api/analytics.html#Codigo.analytics.payoffs.payoff_barrier_down_out_put">[docs]</a>
+<span class="k">def</span> <span class="nf">payoff_barrier_down_out_put</span><span class="p">(</span><span class="n">S</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">_Num</span><span class="p">,</span> <span class="n">barrier_hit</span><span class="p">:</span> <span class="n">_BoolLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Num</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Payoff Down-and-Out Put: se anula si el precio alcanza B (B &lt; S_0).&quot;&quot;&quot;</span>
+    <span class="n">hit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">barrier_hit</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">hit</span><span class="p">,</span> <span class="n">payoff_put</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Aliases con nombres PEP8 (compatibilidad hacia adelante)</span>
+<span class="n">payoff_forward_sintetico</span> <span class="o">=</span> <span class="n">payoff_forwardSintetico</span>
+<span class="n">payoff_bull_call_spread</span> <span class="o">=</span> <span class="n">payoff_BullCS</span>
+<span class="n">payoff_bear_call_spread</span> <span class="o">=</span> <span class="n">payoff_BearCS</span>
+<span class="n">payoff_bull_put_spread</span> <span class="o">=</span> <span class="n">payoff_BullPS</span>
+<span class="n">payoff_bear_put_spread</span> <span class="o">=</span> <span class="n">payoff_BearPS</span>
+<span class="n">payoff_call_butterfly</span> <span class="o">=</span> <span class="n">payoff_CButterflyS</span>
+<span class="n">payoff_put_butterfly</span> <span class="o">=</span> <span class="n">payoff_PButterflyS</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;payoff_call&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_put&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_forwardSintetico&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_forward_sintetico&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_combo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_BullCS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_bull_call_spread&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_BearCS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_bear_call_spread&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_BullPS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_bull_put_spread&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_BearPS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_bear_put_spread&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_CButterflyS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_call_butterfly&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_PButterflyS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_put_butterfly&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_straddle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_strangle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_iron_condor&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_iron_butterfly&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_condor&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_short_straddle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_short_strangle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_covered_call&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_covered_put&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_protective_put&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_ratio_spread&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_collar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_box&quot;</span><span class="p">,</span>
+    <span class="c1"># Digitales</span>
+    <span class="s2">&quot;payoff_digital_call&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_digital_put&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_asset_or_nothing_call&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_asset_or_nothing_put&quot;</span><span class="p">,</span>
+    <span class="c1"># Asian</span>
+    <span class="s2">&quot;payoff_asian_call&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_asian_put&quot;</span><span class="p">,</span>
+    <span class="c1"># Barrier</span>
+    <span class="s2">&quot;payoff_barrier_up_in_call&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_barrier_up_in_put&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_barrier_up_out_call&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_barrier_up_out_put&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_barrier_down_in_call&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_barrier_down_in_put&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_barrier_down_out_call&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;payoff_barrier_down_out_put&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, QUANt UCEMA.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

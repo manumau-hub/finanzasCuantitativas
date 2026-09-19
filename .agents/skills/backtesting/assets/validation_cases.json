@@ -1,0 +1,45 @@
+{
+  "constant_1pct": {
+    "description": "Constant +1% daily return, 252 obs. CAGR=(1.01^252)-1, Vol=0, MDD=0.",
+    "n": 252,
+    "value": 0.01,
+    "expected": {
+      "max_drawdown": 0.0,
+      "annualized_vol": 0.0,
+      "tolerance": 0.001
+    }
+  },
+  "normal_001_002": {
+    "description": "Normal returns mu=0.001 sigma=0.02 n=1000 (seed 42, sample varies)",
+    "mu": 0.001,
+    "sigma": 0.02,
+    "n": 1000,
+    "seed": 42,
+    "expected": {
+      "sharpe_ratio": 0.79,
+      "var_normal_95": 0.032,
+      "annualized_vol": 0.317,
+      "tolerance": 0.5
+    }
+  },
+  "drawdown_known": {
+    "description": "Prices with known MDD: 100, 110, 120, 130, 80, 90, 100",
+    "prices": [100, 110, 120, 130, 80, 90, 100],
+    "expected": {
+      "max_drawdown": -0.3846,
+      "tolerance": 0.005
+    }
+  },
+  "binomial_50_50": {
+    "description": "50% days +1%, 50% days -0.5%. 1000 obs.",
+    "values": [0.01, -0.005],
+    "n": 1000,
+    "seed": 42,
+    "expected": {
+      "payoff_ratio": 2.0,
+      "profit_factor": 2.0,
+      "win_loss_ratio": 1.0,
+      "tolerance": 0.1
+    }
+  }
+}

@@ -1,1 +1,11 @@
 __pycache__/
+.pycache/
+*.pyc
+.pytest_cache/
+pytest-cache-files-*/
+.ipynb_checkpoints/
+.env
+.cursor/
+legacy/webapp/webappenv/
+_launch_jupyter.bat
+webapp/ibkr_positions.json

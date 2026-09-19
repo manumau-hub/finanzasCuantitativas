@@ -1,0 +1,79 @@
+{
+  "_meta": {
+    "description": "Agregaciones temporales (collapse) que soporta la API series-tiempo-ar. Permiten convertir una serie de mayor frecuencia a una de menor frecuencia (ej: daily → monthly, monthly → annual) ANTES de devolver, sin procesar cliente-side. El parametro collapse_aggregation indica como agregar (avg/sum/end_of_period/min/max).",
+    "params": ["collapse", "collapse_aggregation"],
+    "endpoint": "https://apis.datos.gob.ar/series/api/series?collapse={FREQ}&collapse_aggregation={AGG}"
+  },
+
+  "collapse_values": {
+    "day": "Agrega a diaria. Solo relevante para series sub-diarias (no comunes).",
+    "week": "Agrega a semanal. Ej: dolar diario → dolar semanal.",
+    "month": "Agrega a mensual. Ej: dolar diario → dolar mensual promedio.",
+    "quarter": "Agrega a trimestral. Ej: IPC mensual → IPC trimestral.",
+    "semester": "Agrega a semestral. Ej: PIB trimestral → PIB semestral.",
+    "year": "Agrega a anual. Ej: IPC mensual → IPC anual."
+  },
+
+  "collapse_aggregation_values": {
+    "avg": {
+      "label": "Promedio",
+      "descripcion": "Promedia los valores del periodo. Default si no se especifica.",
+      "cuando_usar": "Tipo de cambio, tasas de interes, indices, ratios."
+    },
+    "sum": {
+      "label": "Suma",
+      "descripcion": "Suma los valores del periodo.",
+      "cuando_usar": "Volumenes, montos, exportaciones, transacciones."
+    },
+    "end_of_period": {
+      "label": "Valor de fin de periodo",
+      "descripcion": "Toma el valor del ultimo periodo de menor frecuencia dentro del periodo de mayor frecuencia.",
+      "cuando_usar": "Stocks (deuda total, reservas BCRA), donde lo importante es el cierre del periodo, no el promedio."
+    },
+    "min": {
+      "label": "Minimo",
+      "descripcion": "Valor minimo del periodo.",
+      "cuando_usar": "Analisis de volatilidad o rangos (raro)."
+    },
+    "max": {
+      "label": "Maximo",
+      "descripcion": "Valor maximo del periodo.",
+      "cuando_usar": "Picos, maximos historicos del periodo."
+    }
+  },
+
+  "ejemplos_uso": {
+    "dolar_diario_a_promedio_mensual": {
+      "ids": "168.1_T_CAMBIOR_D_0_0_26",
+      "collapse": "month",
+      "collapse_aggregation": "avg",
+      "nota": "Convierte el tipo de cambio diario BNA al promedio mensual."
+    },
+    "dolar_diario_a_cierre_mensual": {
+      "ids": "168.1_T_CAMBIOR_D_0_0_26",
+      "collapse": "month",
+      "collapse_aggregation": "end_of_period",
+      "nota": "Tipo de cambio al ultimo dia habil del mes (relevante para reportes contables)."
+    },
+    "exportaciones_mensuales_a_anuales": {
+      "ids": "75.3_IETG_0_M_31",
+      "collapse": "year",
+      "collapse_aggregation": "sum",
+      "nota": "Total exportado en USD por año."
+    },
+    "ipc_mensual_a_trimestral_promedio": {
+      "ids": "<ID IPC indice mensual>",
+      "collapse": "quarter",
+      "collapse_aggregation": "avg",
+      "nota": "IPC promedio del trimestre."
+    }
+  },
+
+  "combinaciones_validas": {
+    "descripcion": "No todas las combinaciones tienen sentido. Reglas generales:",
+    "regla_1": "collapse SOLO puede agregar de menor a mayor frecuencia (no podes 'desagregar' mensual a diario).",
+    "regla_2": "Si la serie es mensual y pasas collapse=day, retorna error 400.",
+    "regla_3": "Sin especificar collapse_aggregation, default es 'avg'.",
+    "regla_4": "collapse_aggregation funciona solo cuando hay collapse activo."
+  }
+}

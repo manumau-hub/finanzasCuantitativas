@@ -1,0 +1,6 @@
+Disabled,Type,Set,Position,Sign,Weight
+False,Assets,,TEO,>=,0.05
+False,Assets,,SQQQ,<=,0.03
+False,All Assets,,,<=,0.15
+False,Each asset in a class,Industry,Cryptos,>=,0.02
+False,Each asset in a class,Industry,ADR Bancos,<=,0.06

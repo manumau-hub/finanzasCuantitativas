@@ -1,0 +1,15 @@
+{
+  "_comment": "Parametros default para el CLI. Todos los flags CLI sobreescriben estos valores.",
+  "S": 100.0,
+  "K": 100.0,
+  "T": 0.25,
+  "r": 0.05,
+  "q": 0.0,
+  "sigma": 0.20,
+  "type": "call",
+  "style": "european",
+  "steps": 500,
+  "paths": 100000,
+  "seed": 42,
+  "antithetic": true
+}

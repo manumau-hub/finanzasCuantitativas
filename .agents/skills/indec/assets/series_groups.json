@@ -1,0 +1,90 @@
+{
+  "_meta": {
+    "description": "Bundles pre-armados de series IDs para casos de uso comunes. El script fetch_indec.py usa estos como atajos (modos `ipc`, `emae`, etc) sin pedir IDs explicitos.",
+    "uso": "Al invocar un modo atajo, el script combina todos los IDs del grupo en una sola request multi-serie."
+  },
+
+  "ipc_basico": {
+    "descripcion": "IPC Nacional — datos esenciales para reporting de inflacion",
+    "ids": [
+      "145.3_INGNACUAL_DICI_M_38"
+    ],
+    "nota": "Esta serie ya viene como variacion % mensual. Para nivel general indice ver SERIES_CATALOG.md."
+  },
+
+  "ipc_completo": {
+    "descripcion": "IPC Nacional completo: nivel general + nucleo + regulados + categorias principales",
+    "ids": [
+      "145.3_INGNACUAL_DICI_M_38",
+      "148.3_INUCLEONAL_DICI_M_19",
+      "148.3_IREGULANAL_DICI_M_22",
+      "146.3_ITRANSPNAL_DICI_M_23",
+      "146.3_IEDUCACNAL_DICI_M_22"
+    ]
+  },
+
+  "emae_basico": {
+    "descripcion": "EMAE nivel general — actividad economica",
+    "ids": [
+      "143.3_NO_PR_2004_A_21",
+      "143.3_NO_PR_2004_A_31"
+    ],
+    "nota": "Incluye serie original + desestacionalizada para comparar."
+  },
+
+  "salarios": {
+    "descripcion": "Indicadores salariales: RIPTE + SMVM + haber jubilatorio",
+    "ids": [
+      "158.1_REPTE_0_0_5",
+      "57.1_SMVMM_0_M_34",
+      "57.1_SMVMD_0_M_33",
+      "57.1_SMVMH_0_M_31",
+      "58.1_MP_0_M_13"
+    ]
+  },
+
+  "comercio_exterior": {
+    "descripcion": "Comercio exterior: exportaciones totales en distintas frecuencias",
+    "ids": [
+      "75.3_IETG_0_M_31",
+      "75.2_IETG_0_T_31",
+      "75.1_IETG_0_A_31"
+    ]
+  },
+
+  "construccion": {
+    "descripcion": "ISAC nivel general + variacion interanual",
+    "ids": [
+      "33.2_ISAC_NIVELRAL_0_M_18_63",
+      "33.2_I_2004_M_4"
+    ]
+  },
+
+  "tipo_cambio_bcra": {
+    "descripcion": "Tipo de cambio BNA vendedor (diario)",
+    "ids": [
+      "168.1_T_CAMBIOR_D_0_0_26"
+    ]
+  },
+
+  "reservas": {
+    "descripcion": "Reservas internacionales del BCRA",
+    "ids": [
+      "174.1_RRVAS_IDOS_0_0_36",
+      "174.1_RRVAS_IIOS_0_0_60",
+      "92.1_RID_0_0_32",
+      "182.1_VARIACION_LES_0_M_43"
+    ]
+  },
+
+  "snapshot_basico": {
+    "descripcion": "Snapshot rapido de la economia argentina: IPC + EMAE + RIPTE + dolar + reservas",
+    "ids": [
+      "145.3_INGNACUAL_DICI_M_38",
+      "143.3_NO_PR_2004_A_31",
+      "158.1_REPTE_0_0_5",
+      "168.1_T_CAMBIOR_D_0_0_26",
+      "92.1_RID_0_0_32"
+    ]
+  }
+}

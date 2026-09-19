@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "description": "Cookies para bypassear el consent screen de Google. Las URLs /finance/quote/{SYM} redirigen a consent.google.com sin estas cookies.",
+    "verified_at": "2026-06",
+    "warning": "Las cookies pueden ser rotadas por Google. Si el bypass deja de funcionar, capturar cookies frescas con un browser real."
+  },
+  "consent_bypass": {
+    "CONSENT": "PENDING+999",
+    "SOCS": "CAESHAgBEhJnd3NfMjAyNTAxMjMtMF9SQzMaAmVuIAEaBgiAvLW8Bg"
+  },
+  "alternativas_sin_cookies": {
+    "description": "Si no queres pasar cookies, usar directo la URL /finance/beta/ que no tiene consent gate.",
+    "examples": [
+      "https://www.google.com/finance/beta/quote/GGAL:NASDAQ",
+      "https://www.google.com/finance/beta/quote/GGAL:BCBA",
+      "https://www.google.com/finance/beta/_/FinHubUi/data/batchexecute"
+    ]
+  }
+}

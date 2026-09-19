@@ -1,0 +1,8 @@
+{
+  "rf": 0.045,
+  "tau": 0.05,
+  "n_portfolios": 10000,
+  "linkage": "ward",
+  "n_clusters": 4,
+  "var_confidence": 0.95
+}

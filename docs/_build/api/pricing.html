@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Módulo Pricing &mdash; finanzasCuantitativas 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Módulo Analytics" href="analytics.html" />
+    <link rel="prev" title="finanzasCuantitativas" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            finanzasCuantitativas
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Módulo Pricing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-Codigo.pricing.european_bs">Opciones europeas</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.european_bs.opcion_europea_bs"><code class="docutils literal notranslate"><span class="pre">opcion_europea_bs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.european_binomial.opcion_europea_bin"><code class="docutils literal notranslate"><span class="pre">opcion_europea_bin()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.european_binomial_closed.ncr"><code class="docutils literal notranslate"><span class="pre">ncr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.european_binomial_closed.opcion_europea_bin_c"><code class="docutils literal notranslate"><span class="pre">opcion_europea_bin_c()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.european_mc.opcion_europea_mc"><code class="docutils literal notranslate"><span class="pre">opcion_europea_mc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.european_mc.opcion_europea_mc_fv"><code class="docutils literal notranslate"><span class="pre">opcion_europea_mc_fv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.european_fd.opcion_europea_fd"><code class="docutils literal notranslate"><span class="pre">opcion_europea_fd()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Codigo.pricing.american_binomial">Opciones americanas</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.american_binomial.opcion_americana_bin"><code class="docutils literal notranslate"><span class="pre">opcion_americana_bin()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.american_fd.opcion_americana_fd"><code class="docutils literal notranslate"><span class="pre">opcion_americana_fd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.american_bs.opcion_americana_bs"><code class="docutils literal notranslate"><span class="pre">opcion_americana_bs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.american_mc.opcion_americana_mc"><code class="docutils literal notranslate"><span class="pre">opcion_americana_mc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Codigo.pricing.strategy_pricer">Estrategias</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.strategy_pricer.precio_estrategia"><code class="docutils literal notranslate"><span class="pre">precio_estrategia()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Codigo.pricing.strategy_pricer.precio_estrategia_nombre"><code class="docutils literal notranslate"><span class="pre">precio_estrategia_nombre()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="analytics.html">Módulo Analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Módulo Utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">finanzasCuantitativas</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Módulo Pricing</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/pricing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="modulo-pricing">
+<span id="pricing"></span><h1>Módulo Pricing<a class="headerlink" href="#modulo-pricing" title="Link to this heading"></a></h1>
+<p>Modelos de pricing de opciones europeas y americanas.</p>
+<section id="module-Codigo.pricing.european_bs">
+<span id="opciones-europeas"></span><h2>Opciones europeas<a class="headerlink" href="#module-Codigo.pricing.european_bs" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="Codigo.pricing.european_bs.opcion_europea_bs">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.european_bs.</span></span><span class="sig-name descname"><span class="pre">opcion_europea_bs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tipo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/european_bs.html#opcion_europea_bs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.european_bs.opcion_europea_bs" title="Link to this definition"></a></dt>
+<dd><p>Calcula el precio de una opción europea (call o put) usando la fórmula de Black-Scholes.</p>
+<dl class="simple">
+<dt>Parámetros:</dt><dd><p>tipo (str): Tipo de opción, “C” para call o “P” para put.
+S (float): Precio actual del activo subyacente.
+K (float): Precio de ejercicio de la opción.
+T (float): Tiempo hasta el vencimiento en años.
+r (float): Tasa de interés libre de riesgo (anualizada).
+sigma (float): Volatilidad del activo subyacente (desviación estándar anualizada).
+div (float): Tasa de dividendos continuos (anualizada).</p>
+</dd>
+<dt>Retorna:</dt><dd><p>float: Precio teórico de la opción europea.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function" id="module-Codigo.pricing.european_binomial">
+<dt class="sig sig-object py" id="Codigo.pricing.european_binomial.opcion_europea_bin">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.european_binomial.</span></span><span class="sig-name descname"><span class="pre">opcion_europea_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tipo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pasos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/european_binomial.html#opcion_europea_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.european_binomial.opcion_europea_bin" title="Link to this definition"></a></dt>
+<dd><p>Calcula el precio de una opción europea (call o put) utilizando el modelo binomial de Cox-Ross-Rubinstein (CRR).</p>
+</dd></dl>
+
+<dl class="py function" id="module-Codigo.pricing.european_binomial_closed">
+<dt class="sig sig-object py" id="Codigo.pricing.european_binomial_closed.ncr">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.european_binomial_closed.</span></span><span class="sig-name descname"><span class="pre">ncr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/european_binomial_closed.html#ncr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.european_binomial_closed.ncr" title="Link to this definition"></a></dt>
+<dd><p>Coeficiente binomial C(n,r). Usa math.comb (Python 3.8+).
+Fallback manual para versiones anteriores.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Codigo.pricing.european_binomial_closed.opcion_europea_bin_c">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.european_binomial_closed.</span></span><span class="sig-name descname"><span class="pre">opcion_europea_bin_c</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tipo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pasos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/european_binomial_closed.html#opcion_europea_bin_c"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.european_binomial_closed.opcion_europea_bin_c" title="Link to this definition"></a></dt>
+<dd><p>Precio de opción europea binomial en forma cerrada.
+Suma explícita: sum_{k=0}^{n} C(n,k) * q^k * (1-q)^(n-k) * payoff(k) * exp(-r*T)</p>
+</dd></dl>
+
+<dl class="py function" id="module-Codigo.pricing.european_mc">
+<dt class="sig sig-object py" id="Codigo.pricing.european_mc.opcion_europea_mc">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.european_mc.</span></span><span class="sig-name descname"><span class="pre">opcion_europea_mc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tipo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pasos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/european_mc.html#opcion_europea_mc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.european_mc.opcion_europea_mc" title="Link to this definition"></a></dt>
+<dd><p>Calcula el precio de una opción europea usando Monte Carlo.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Codigo.pricing.european_mc.opcion_europea_mc_fv">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.european_mc.</span></span><span class="sig-name descname"><span class="pre">opcion_europea_mc_fv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tipo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pasos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/european_mc.html#opcion_europea_mc_fv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.european_mc.opcion_europea_mc_fv" title="Link to this definition"></a></dt>
+<dd><p>Monte Carlo con reducción de varianza (antithetic variates).
+Usa pares (z, -z) para reducir la varianza del estimador.</p>
+</dd></dl>
+
+<dl class="py function" id="module-Codigo.pricing.european_fd">
+<dt class="sig sig-object py" id="Codigo.pricing.european_fd.opcion_europea_fd">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.european_fd.</span></span><span class="sig-name descname"><span class="pre">opcion_europea_fd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tipo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">150</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/european_fd.html#opcion_europea_fd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.european_fd.opcion_europea_fd" title="Link to this definition"></a></dt>
+<dd><p>Calcula el precio de una opción europea usando diferencias finitas implícitas.
+Esquema implícito: resuelve A &#64; V_{t} = V_{t+dt} hacia atrás en el tiempo.</p>
+</dd></dl>
+
+</section>
+<section id="module-Codigo.pricing.american_binomial">
+<span id="opciones-americanas"></span><h2>Opciones americanas<a class="headerlink" href="#module-Codigo.pricing.american_binomial" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="Codigo.pricing.american_binomial.opcion_americana_bin">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.american_binomial.</span></span><span class="sig-name descname"><span class="pre">opcion_americana_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tipo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pasos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/american_binomial.html#opcion_americana_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.american_binomial.opcion_americana_bin" title="Link to this definition"></a></dt>
+<dd><p>Calcula el precio de una opción americana con el modelo binomial CRR.
+En cada nodo se toma el máximo entre el valor europeo (hold) y el payoff de ejercicio temprano.</p>
+</dd></dl>
+
+<dl class="py function" id="module-Codigo.pricing.american_fd">
+<dt class="sig sig-object py" id="Codigo.pricing.american_fd.opcion_americana_fd">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.american_fd.</span></span><span class="sig-name descname"><span class="pre">opcion_americana_fd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tipo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">150</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/american_fd.html#opcion_americana_fd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.american_fd.opcion_americana_fd" title="Link to this definition"></a></dt>
+<dd><p>Calcula el precio de una opción americana con diferencias finitas implícitas.
+En cada paso temporal se aplica max(valor_implícito, payoff_ejercicio) para el ejercicio temprano.</p>
+</dd></dl>
+
+<p id="module-Codigo.pricing.american_bs">Precio de opción americana con aproximación Barone-Adesi-Whaley (BAW).</p>
+<p>Aproximación analítica estándar para americanas. No es Black-Scholes exacto
+(no existe fórmula cerrada para americanas), sino la corrección BAW sobre el
+precio europeo. Implementación casera sin QuantLib.</p>
+<p>Misma firma que opcion_europea_bs (sin pasos).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="Codigo.pricing.american_bs.opcion_americana_bs">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.american_bs.</span></span><span class="sig-name descname"><span class="pre">opcion_americana_bs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tipo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/american_bs.html#opcion_americana_bs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.american_bs.opcion_americana_bs" title="Link to this definition"></a></dt>
+<dd><p>Calcula el precio de una opción americana con aproximación Barone-Adesi-Whaley.</p>
+<dl class="simple">
+<dt>Parámetros:</dt><dd><p>tipo (str): “C” (call) o “P” (put).
+S, K, T, r, sigma, div: estándar.</p>
+</dd>
+<dt>Retorna:</dt><dd><p>float: Precio de la opción.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p id="module-Codigo.pricing.american_mc">Precio de opción americana con Monte Carlo Longstaff-Schwartz (LSM).</p>
+<p>Método de regresión por mínimos cuadrados para estimar la frontera de ejercicio
+óptimo. Implementación casera sin QuantLib, en el espíritu de los códigos nativos.</p>
+<p>Misma firma que opcion_americana_bin (pasos = número de caminos MC).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="Codigo.pricing.american_mc.opcion_americana_mc">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.american_mc.</span></span><span class="sig-name descname"><span class="pre">opcion_americana_mc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tipo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pasos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/american_mc.html#opcion_americana_mc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.american_mc.opcion_americana_mc" title="Link to this definition"></a></dt>
+<dd><p>Calcula el precio de una opción americana con Monte Carlo Longstaff-Schwartz.</p>
+<dl class="simple">
+<dt>Parámetros:</dt><dd><p>tipo (str): “C” (call) o “P” (put).
+S, K, T, r, sigma, div: estándar.
+pasos (int): Número de caminos de Monte Carlo.
+n_steps (int): Número de pasos temporales para la simulación (default 20).</p>
+</dd>
+<dt>Retorna:</dt><dd><p>float: Precio de la opción.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-Codigo.pricing.strategy_pricer">
+<span id="estrategias"></span><h2>Estrategias<a class="headerlink" href="#module-Codigo.pricing.strategy_pricer" title="Link to this heading"></a></h2>
+<p>Pricing de estrategias por composición de opciones vanilla.</p>
+<p>Cada estrategia se descompone en piernas (tipo, K, coef). El precio total
+es la suma de coef * precio_vanilla(tipo, K) para cada pierna.</p>
+<p>Las piernas se definen en ESTRATEGIA_PIERNAS; el pricer vanilla es inyectable
+(BS, binomial, MC, FD) para máxima flexibilidad.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="Codigo.pricing.strategy_pricer.precio_estrategia">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.strategy_pricer.</span></span><span class="sig-name descname"><span class="pre">precio_estrategia</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">piernas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pricer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">pricer_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/strategy_pricer.html#precio_estrategia"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.strategy_pricer.precio_estrategia" title="Link to this definition"></a></dt>
+<dd><p>Precio de una estrategia por composición de opciones vanilla.</p>
+<section id="parametros">
+<h3>Parámetros<a class="headerlink" href="#parametros" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>piernas<span class="classifier">list</span></dt><dd><p>Lista de (tipo, K, coef). tipo in (“C”,”P”), K strike, coef multiplicador.</p>
+</dd>
+<dt>S, T, r, sigma, div<span class="classifier">float</span></dt><dd><p>Parámetros estándar del modelo.</p>
+</dd>
+<dt>pricer<span class="classifier">callable, optional</span></dt><dd><p>Función (tipo, S, K, T, r, sigma, div, …) -&gt; precio. Default: opcion_europea_bs.</p>
+</dd>
+<dt>pricer_kwargs</dt><dd><p>Argumentos extra para el pricer (ej. pasos para binomial/MC).</p>
+</dd>
+</dl>
+</section>
+<section id="retorna">
+<h3>Retorna<a class="headerlink" href="#retorna" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>Precio total de la estrategia.</p>
+</dd>
+</dl>
+</section>
+<section id="ejemplo">
+<h3>Ejemplo<a class="headerlink" href="#ejemplo" title="Link to this heading"></a></h3>
+<p>piernas = [(“C”, 90, 1), (“C”, 110, -1)]  # Bull Call Spread
+precio = precio_estrategia(piernas, 100, 1, 0.05, 0.25, 0)</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Codigo.pricing.strategy_pricer.precio_estrategia_nombre">
+<span class="sig-prename descclassname"><span class="pre">Codigo.pricing.strategy_pricer.</span></span><span class="sig-name descname"><span class="pre">precio_estrategia_nombre</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nombre</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">div</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pricer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Codigo/pricing/strategy_pricer.html#precio_estrategia_nombre"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Codigo.pricing.strategy_pricer.precio_estrategia_nombre" title="Link to this definition"></a></dt>
+<dd><p>Precio de una estrategia por nombre y parámetros.</p>
+<section id="id1">
+<h3>Parámetros<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>nombre<span class="classifier">str</span></dt><dd><p>Clave de ESTRATEGIA_PIERNAS (ej. “bull_call_spread”, “straddle”).</p>
+</dd>
+<dt>S, T, r, sigma, div<span class="classifier">float</span></dt><dd><p>Parámetros estándar.</p>
+</dd>
+<dt>pricer<span class="classifier">callable, optional</span></dt><dd><p>Función vanilla (default opcion_europea_bs).</p>
+</dd>
+<dt>kwargs</dt><dd><p>Argumentos para la estrategia (K, K1, K2, K3, K4, n1, n2)
+y para el pricer (pasos, M, n_steps).</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Retorna<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>Precio de la estrategia.</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Ejemplo<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>precio_estrategia_nombre(“bull_call_spread”, 100, 1, 0.05, 0.25, 0, K1=90, K2=110)</p>
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="finanzasCuantitativas" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="analytics.html" class="btn btn-neutral float-right" title="Módulo Analytics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, QUANt UCEMA.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

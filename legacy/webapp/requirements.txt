@@ -1,0 +1,7 @@
+fastapi
+pydantic
+uvicorn
+yfinance==0.1.74
+numpy==1.23.3
+pandas==1.4.4
+scipy

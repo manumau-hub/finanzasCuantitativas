@@ -1,0 +1,69 @@
+{
+  "_meta": {
+    "description": "Los 6 modos de representacion (representation_mode) que soporta la API series-tiempo-ar. Permiten transformar los valores raw de la serie ANTES de devolverlos, sin necesidad de procesar cliente-side. Util por ejemplo para obtener inflacion YoY a partir del IPC indice nivel general en una sola llamada.",
+    "param": "representation_mode",
+    "default": "value",
+    "endpoint": "https://apis.datos.gob.ar/series/api/series?representation_mode={MODE}"
+  },
+  "modes": {
+    "value": {
+      "label": "Valor original",
+      "descripcion": "Valores raw de la serie tal cual estan publicados. Es el default si no se especifica.",
+      "ejemplo": "Para IPC Indice (base dic 2016 = 100), devuelve [100.0, 102.4, 104.7, ...] mes a mes.",
+      "cuando_usar": "Cuando necesitas el dato original sin transformacion."
+    },
+    "change": {
+      "label": "Cambio (diferencia absoluta)",
+      "descripcion": "Diferencia absoluta entre el valor actual y el periodo anterior (mes/trim/año segun la frecuencia de la serie).",
+      "ejemplo": "Para IPC mensual: si valor[T-1]=102.4 y valor[T]=104.7, devuelve 2.3.",
+      "cuando_usar": "Cuando necesitas cambios netos en unidades originales."
+    },
+    "percent_change": {
+      "label": "Variacion porcentual periodo a periodo",
+      "descripcion": "Cambio % entre el valor actual y el periodo anterior. La unidad pasa a ser porcentaje (0.024 = 2.4%).",
+      "ejemplo": "Para IPC mensual: devuelve la inflacion mensual % en formato decimal (0.024 = 2.4%).",
+      "cuando_usar": "Inflacion mensual, variacion intermensual de cualquier indice."
+    },
+    "change_a_year_ago": {
+      "label": "Cambio interanual (12 meses)",
+      "descripcion": "Diferencia absoluta entre el valor actual y el valor de hace 12 meses (o el periodo equivalente segun frecuencia).",
+      "ejemplo": "Para IPC: devuelve la diferencia absoluta entre IPC[hoy] e IPC[hoy - 1 año].",
+      "cuando_usar": "Cambios netos interanuales en unidades originales."
+    },
+    "percent_change_a_year_ago": {
+      "label": "Variacion interanual % (YoY)",
+      "descripcion": "Variacion porcentual respecto al mismo periodo del año anterior. Es el equivalente a la inflacion interanual.",
+      "ejemplo": "Para IPC nivel general: devuelve la INFLACION ANUAL ya calculada (ej: 0.31 = 31% YoY).",
+      "cuando_usar": "**Inflacion interanual**, crecimiento del PIB YoY, etc. Es el mas util para reporting."
+    },
+    "change_since_beginning_of_year": {
+      "label": "Cambio acumulado desde inicio de año",
+      "descripcion": "Diferencia absoluta acumulada desde el inicio del año actual hasta el periodo en cuestion.",
+      "ejemplo": "Para IPC: en mayo devuelve IPC[mayo] - IPC[dic año anterior].",
+      "cuando_usar": "YTD changes en unidades originales."
+    },
+    "percent_change_since_beginning_of_year": {
+      "label": "Variacion % acumulada desde inicio de año (YTD)",
+      "descripcion": "Variacion porcentual acumulada desde el inicio del año actual hasta el periodo en cuestion.",
+      "ejemplo": "Para IPC: devuelve la **inflacion acumulada YTD** (ej: en mayo, 0.15 = 15% acumulado en 5 meses).",
+      "cuando_usar": "**Inflacion acumulada del año** (la metrica mas pedida cuando se habla de inflacion en Argentina)."
+    }
+  },
+  "ejemplos_uso": {
+    "inflacion_mensual": {
+      "ids": "145.3_INGNACUAL_DICI_M_38",
+      "representation_mode": "value",
+      "nota": "Esta serie YA es la variacion % mensual del nivel general — no hay que aplicar representation_mode."
+    },
+    "inflacion_interanual_desde_indice": {
+      "ids": "<ID del indice IPC nivel general>",
+      "representation_mode": "percent_change_a_year_ago",
+      "nota": "Para series de tipo INDICE, este mode calcula inflacion YoY automaticamente."
+    },
+    "inflacion_acumulada_ytd_desde_indice": {
+      "ids": "<ID del indice IPC nivel general>",
+      "representation_mode": "percent_change_since_beginning_of_year",
+      "nota": "Inflacion acumulada del año actual a la fecha del ultimo dato."
+    }
+  }
+}

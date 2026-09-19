@@ -1,0 +1,61 @@
+
+
+import pandas as pd
+import numpy as np
+
+df = pd.read_excel('testing_xml.xlsx', sheet_name='Sheet1')
+spotPrice = df.Spot.values[0]
+
+vendor_rawIV = df.loc[:, ['TTM', 'YearFraction', 'CallPut', 'Strike', 'IvyDB', 'OptionPrice']]
+model_vendorIV = df.loc[:, ['TTM', 'YearFraction', 'CallPut', 'Strike', 'Model_Vendor', 'OptionPrice']]
+model_pandoraIV = df.loc[:, ['TTM', 'YearFraction', 'CallPut', 'Strike', 'Model_Pandora', 'OptionPrice']]
+
+model_vendorIV['MN']= (np.log(spotPrice/model_vendorIV['Strike'].values))/model_vendorIV['YearFraction'].values
+vendor_rawIV['MN'] = (np.log(spotPrice/vendor_rawIV['Strike'].values))/vendor_rawIV['YearFraction'].values
+model_pandoraIV['MN'] = (np.log(spotPrice/model_pandoraIV['Strike'].values))/model_pandoraIV['YearFraction'].values
+
+model_vendorIV['MN2'] = model_vendorIV['MN'].values * model_vendorIV['MN'].values
+vendor_rawIV['MN2']= vendor_rawIV['MN'].values * vendor_rawIV['MN'].values
+model_pandoraIV['MN2']=model_pandoraIV['MN'].values * model_pandoraIV['MN'].values
+
+model_vendorIV['T'] = model_vendorIV['YearFraction']
+vendor_rawIV['T'] = vendor_rawIV['YearFraction']
+model_pandoraIV['T'] = model_pandoraIV['YearFraction']
+
+model_vendorIV['TMN'] = model_vendorIV['MN'].values * model_vendorIV['T'].values
+vendor_rawIV['TMN']= vendor_rawIV['MN'].values * vendor_rawIV['T'].values
+model_pandoraIV['TMN']=model_pandoraIV['MN'].values * model_pandoraIV['T'].values
+
+#RATE + DIVIDEND!!!
+
+import statsmodels.formula.api as sm
+
+#one TTM, one "model", this time... the raw data
+example_1 = vendor_rawIV#[vendor_rawIV.TTM==8]
+
+model = sm.ols(formula = "IvyDB ~ MN + MN2 + T + TMN", data = example_1).fit()
+
+print(model.params)
+
+availableTTMs=set(vendor_rawIV['TTM'].values)
+availablePutCall=['C','P']
+
+for ttm in availableTTMs:
+#    for putCall in availablePutCall:
+#        vendor_rawSmiles[(putCall,ttm)]=vendor_rawIV[(vendor_rawIV["CallPut"]==putCall) & (vendor_rawIV["TTM"]==ttm)].loc[:,['MN','MN2','T','TMN','IvyDB']]
+#        model_vendorSmiles[(putCall,ttm)]=model_vendorIV[(model_vendorIV["CallPut"]==putCall) & (model_vendorIV["TTM"]==ttm)].loc[:,['MN','MN2','T','TMN','IvyDB']]
+#        model_pandoraSmiles[(putCall,ttm)]=model_pandoraIV[(model_pandoraIV["CallPut"]==putCall) & (model_pandoraIV["TTM"]==ttm)].loc[:,['MN','MN2','T','TMN','IvyDB']]
+
+    vendor_rawSmiles[(ttm)]=vendor_rawIV[(vendor_rawIV["TTM"]==ttm)].loc[:,['MN','MN2','T','TMN','IvyDB']]
+    model_vendorSmiles[(ttm)]=model_vendorIV[(model_vendorIV["TTM"]==ttm)].loc[:,['MN','MN2','T','TMN','IvyDB']]
+    model_pandoraSmiles[(ttm)]=model_pandoraIV[(model_pandoraIV["TTM"]==ttm)].loc[:,['MN','MN2','T','TMN','IvyDB']]
+
+
+print(1)
+        #model = sm.OLS(localSmiles[(putCall,ttm)]['ImpliedVol'].values, polynomial).fit()
+        #model = sm.OLS(localSmiles[(putCall, ttm)]['ImpliedVol'].values, vendorSmiles[(putCall, ttm)]['ImpliedVol'].values).fit()
+        #print(model.params)
+
+
+#vendorIV.loc[vendorIV.ImpliedVol==-99,'ImpliedVol'] = 0.0
+

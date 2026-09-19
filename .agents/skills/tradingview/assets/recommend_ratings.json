@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "description": "Mapeo de Recommend.All (y Recommend.MA / Recommend.Other) a etiquetas humanas. La API del Scanner devuelve un float en [-1, 1]; este mapeo lo discretiza en 5 buckets como hace la UI de TradingView.",
+    "field": "Recommend.All | Recommend.MA | Recommend.Other",
+    "range": [-1.0, 1.0],
+    "source": "TradingView technicals widget"
+  },
+  "buckets": [
+    {"label": "STRONG_SELL",  "label_es": "Venta fuerte",       "min": -1.00, "max": -0.50},
+    {"label": "SELL",         "label_es": "Venta",              "min": -0.50, "max": -0.10},
+    {"label": "NEUTRAL",      "label_es": "Neutral",            "min": -0.10, "max":  0.10},
+    {"label": "BUY",          "label_es": "Compra",             "min":  0.10, "max":  0.50},
+    {"label": "STRONG_BUY",   "label_es": "Compra fuerte",      "min":  0.50, "max":  1.00}
+  ],
+  "interpretacion_subfields": {
+    "Recommend.All":   "Promedio agregado de todos los indicadores tecnicos (MA + osciladores + pivots).",
+    "Recommend.MA":    "Promedio de las medias moviles (SMA/EMA 10/20/30/50/100/200, VWMA, Ichimoku, HullMA).",
+    "Recommend.Other": "Promedio de los osciladores (RSI, Stoch, MACD, ADX, CCI, BBP, UO, Williams, Awesome)."
+  }
+}

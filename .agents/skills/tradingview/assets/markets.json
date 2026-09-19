@@ -1,0 +1,80 @@
+{
+  "_meta": {
+    "description": "Mercados validos para POST /{market}/scan en scanner.tradingview.com. Cada market es un universo de simbolos con su propia cobertura.",
+    "endpoint": "https://scanner.tradingview.com/{market}/scan",
+    "verified_at": "2026-06"
+  },
+  "global": {
+    "url_segment": "global",
+    "description": "Universo global combinado (todos los mercados mundiales)",
+    "tipico_total": "100000+"
+  },
+  "america": {
+    "url_segment": "america",
+    "description": "Acciones US (NYSE, NASDAQ, AMEX, OTC)",
+    "tipico_total": "15000+",
+    "ejemplos_tickers": ["NYSE:JPM", "NASDAQ:AAPL", "NASDAQ:GGAL", "AMEX:SPY"]
+  },
+  "argentina": {
+    "url_segment": "argentina",
+    "description": "BYMA / BCBA — acciones argentinas locales",
+    "tipico_total": "300+",
+    "ejemplos_tickers": ["BCBA:GGAL", "BCBA:YPF", "BCBA:PAMP"],
+    "nota": "Tickers locales argentinos. NO usar NASDAQ:GGAL aqui (no matchea)."
+  },
+  "brazil": {
+    "url_segment": "brazil",
+    "description": "B3 (Bovespa) — acciones brasileras",
+    "tipico_total": "500+",
+    "ejemplos_tickers": ["BMFBOVESPA:PETR4", "BMFBOVESPA:VALE3"]
+  },
+  "spain": {
+    "url_segment": "spain",
+    "description": "BME — acciones españolas",
+    "tipico_total": "200+",
+    "ejemplos_tickers": ["BME:SAN", "BME:TEF", "BME:IBE"]
+  },
+  "italy": {
+    "url_segment": "italy",
+    "description": "Borsa Italiana",
+    "tipico_total": "400+"
+  },
+  "germany": {
+    "url_segment": "germany",
+    "description": "Xetra / Frankfurt",
+    "tipico_total": "1000+",
+    "ejemplos_tickers": ["XETR:SAP", "XETR:VOW3"]
+  },
+  "uk": {
+    "url_segment": "uk",
+    "description": "LSE — London Stock Exchange",
+    "tipico_total": "2000+"
+  },
+  "france": {
+    "url_segment": "france",
+    "description": "Euronext Paris",
+    "tipico_total": "800+"
+  },
+  "russia": {
+    "url_segment": "russia",
+    "description": "MOEX — Moscow Exchange",
+    "tipico_total": "200+"
+  },
+  "crypto": {
+    "url_segment": "crypto",
+    "description": "Cryptocurrencies (BTC, ETH, etc.)",
+    "tipico_total": "50000+",
+    "ejemplos_tickers": ["BINANCE:BTCUSDT", "COINBASE:ETHUSD"]
+  },
+  "forex": {
+    "url_segment": "forex",
+    "description": "Forex pairs",
+    "ejemplos_tickers": ["FX:EURUSD", "OANDA:GBPUSD"]
+  },
+  "bonds": {
+    "url_segment": "bonds",
+    "description": "Bonds globales (treasuries, corporate, sovereign)",
+    "ejemplos_tickers": ["TVC:US10Y", "TVC:DE10Y", "TVC:AR10Y"]
+  },
+  "_invalid": ["asia", "world"]
+}

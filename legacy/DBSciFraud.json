@@ -1,0 +1,444 @@
+{
+    "object": "list",
+    "results": [
+        {
+            "object": "page",
+            "id": "1368747c-98b1-80ef-a921-cef68cc67369",
+            "created_time": "2024-11-06T13:10:00.000Z",
+            "last_edited_time": "2024-11-06T13:20:00.000Z",
+            "created_by": {
+                "object": "user",
+                "id": "1f81c3a1-7629-4285-aca4-b032482a9782"
+            },
+            "last_edited_by": {
+                "object": "user",
+                "id": "1f81c3a1-7629-4285-aca4-b032482a9782"
+            },
+            "cover": null,
+            "icon": {
+                "type": "external",
+                "external": {
+                    "url": "https://www.notion.so/icons/clipping_lightgray.svg"
+                }
+            },
+            "parent": {
+                "type": "database_id",
+                "database_id": "1348747c-98b1-80e3-a851-c0665c42bd5f"
+            },
+            "archived": false,
+            "in_trash": false,
+            "properties": {
+                "Sprint": {
+                    "id": "U%3D%60f",
+                    "type": "rich_text",
+                    "rich_text": []
+                },
+                "ID": {
+                    "id": "qU%60k",
+                    "type": "unique_id",
+                    "unique_id": {
+                        "prefix": "EHA",
+                        "number": 4
+                    }
+                },
+                "Task name": {
+                    "id": "title",
+                    "type": "title",
+                    "title": [
+                        {
+                            "type": "text",
+                            "text": {
+                                "content": "Detalles de exploracion de datos",
+                                "link": null
+                            },
+                            "annotations": {
+                                "bold": false,
+                                "italic": false,
+                                "strikethrough": false,
+                                "underline": false,
+                                "code": false,
+                                "color": "default"
+                            },
+                            "plain_text": "Detalles de exploracion de datos",
+                            "href": null
+                        }
+                    ]
+                },
+                "Tags": {
+                    "id": "notion%3A%2F%2Ftasks%2Ftags_property",
+                    "type": "multi_select",
+                    "multi_select": [
+                        {
+                            "id": "7898cd39-2a04-47ad-83a3-27eb9332213f",
+                            "name": "Data",
+                            "color": "green"
+                        }
+                    ]
+                },
+                "Assignee": {
+                    "id": "notion%3A%2F%2Ftasks%2Fassign_property",
+                    "type": "people",
+                    "people": [
+                        {
+                            "object": "user",
+                            "id": "5cd24a5d-404f-4f6e-ba96-ee61af0fcc17",
+                            "name": "Carla de Erausquin",
+                            "avatar_url": null,
+                            "type": "person",
+                            "person": {}
+                        }
+                    ]
+                },
+                "Status": {
+                    "id": "notion%3A%2F%2Ftasks%2Fstatus_property",
+                    "type": "status",
+                    "status": {
+                        "id": "MA<}",
+                        "name": "Planned",
+                        "color": "yellow"
+                    }
+                },
+                "Due": {
+                    "id": "notion%3A%2F%2Ftasks%2Fdue_date_property",
+                    "type": "date",
+                    "date": null
+                },
+                "Priority": {
+                    "id": "notion%3A%2F%2Ftasks%2Fpriority_property",
+                    "type": "select",
+                    "select": {
+                        "id": "priority_medium",
+                        "name": "Medium",
+                        "color": "yellow"
+                    }
+                },
+                "Sub-tasks": {
+                    "id": "notion%3A%2F%2Ftasks%2Fsub_task_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                },
+                "Summary": {
+                    "id": "notion%3A%2F%2Ftasks%2Fai_summary_property",
+                    "type": "rich_text",
+                    "rich_text": []
+                },
+                "Parent-task": {
+                    "id": "notion%3A%2F%2Ftasks%2Fparent_task_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                },
+                "Project": {
+                    "id": "notion%3A%2F%2Ftasks%2Ftask_to_project_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                },
+                "GitHub Pull Requests": {
+                    "id": "notion%3A%2F%2Ftasks%2Ftask_to_github_prs_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                }
+            },
+            "url": "https://www.notion.so/Detalles-de-exploracion-de-datos-1368747c98b180efa921cef68cc67369",
+            "public_url": null
+        },
+        {
+            "object": "page",
+            "id": "1348747c-98b1-808a-b4bb-e5bdc9af5cb5",
+            "created_time": "2024-11-04T14:55:00.000Z",
+            "last_edited_time": "2024-11-06T13:09:00.000Z",
+            "created_by": {
+                "object": "user",
+                "id": "1f81c3a1-7629-4285-aca4-b032482a9782"
+            },
+            "last_edited_by": {
+                "object": "user",
+                "id": "1f81c3a1-7629-4285-aca4-b032482a9782"
+            },
+            "cover": null,
+            "icon": {
+                "type": "external",
+                "external": {
+                    "url": "https://www.notion.so/icons/clipping_lightgray.svg"
+                }
+            },
+            "parent": {
+                "type": "database_id",
+                "database_id": "1348747c-98b1-80e3-a851-c0665c42bd5f"
+            },
+            "archived": false,
+            "in_trash": false,
+            "properties": {
+                "Sprint": {
+                    "id": "U%3D%60f",
+                    "type": "rich_text",
+                    "rich_text": []
+                },
+                "ID": {
+                    "id": "qU%60k",
+                    "type": "unique_id",
+                    "unique_id": {
+                        "prefix": "EHA",
+                        "number": 3
+                    }
+                },
+                "Task name": {
+                    "id": "title",
+                    "type": "title",
+                    "title": [
+                        {
+                            "type": "text",
+                            "text": {
+                                "content": "Initial data exploration",
+                                "link": null
+                            },
+                            "annotations": {
+                                "bold": false,
+                                "italic": false,
+                                "strikethrough": false,
+                                "underline": false,
+                                "code": false,
+                                "color": "default"
+                            },
+                            "plain_text": "Initial data exploration",
+                            "href": null
+                        }
+                    ]
+                },
+                "Tags": {
+                    "id": "notion%3A%2F%2Ftasks%2Ftags_property",
+                    "type": "multi_select",
+                    "multi_select": [
+                        {
+                            "id": "7898cd39-2a04-47ad-83a3-27eb9332213f",
+                            "name": "Data",
+                            "color": "green"
+                        }
+                    ]
+                },
+                "Assignee": {
+                    "id": "notion%3A%2F%2Ftasks%2Fassign_property",
+                    "type": "people",
+                    "people": [
+                        {
+                            "object": "user",
+                            "id": "1f81c3a1-7629-4285-aca4-b032482a9782",
+                            "name": "Diogo de Moura Pedroso",
+                            "avatar_url": null,
+                            "type": "person",
+                            "person": {}
+                        },
+                        {
+                            "object": "user",
+                            "id": "5cd24a5d-404f-4f6e-ba96-ee61af0fcc17",
+                            "name": "Carla de Erausquin",
+                            "avatar_url": null,
+                            "type": "person",
+                            "person": {}
+                        }
+                    ]
+                },
+                "Status": {
+                    "id": "notion%3A%2F%2Ftasks%2Fstatus_property",
+                    "type": "status",
+                    "status": {
+                        "id": "archived",
+                        "name": "Archived",
+                        "color": "gray"
+                    }
+                },
+                "Due": {
+                    "id": "notion%3A%2F%2Ftasks%2Fdue_date_property",
+                    "type": "date",
+                    "date": null
+                },
+                "Priority": {
+                    "id": "notion%3A%2F%2Ftasks%2Fpriority_property",
+                    "type": "select",
+                    "select": {
+                        "id": "priority_high",
+                        "name": "High",
+                        "color": "red"
+                    }
+                },
+                "Sub-tasks": {
+                    "id": "notion%3A%2F%2Ftasks%2Fsub_task_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                },
+                "Summary": {
+                    "id": "notion%3A%2F%2Ftasks%2Fai_summary_property",
+                    "type": "rich_text",
+                    "rich_text": []
+                },
+                "Parent-task": {
+                    "id": "notion%3A%2F%2Ftasks%2Fparent_task_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                },
+                "Project": {
+                    "id": "notion%3A%2F%2Ftasks%2Ftask_to_project_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                },
+                "GitHub Pull Requests": {
+                    "id": "notion%3A%2F%2Ftasks%2Ftask_to_github_prs_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                }
+            },
+            "url": "https://www.notion.so/Initial-data-exploration-1348747c98b1808ab4bbe5bdc9af5cb5",
+            "public_url": null
+        },
+        {
+            "object": "page",
+            "id": "1348747c-98b1-803e-9cf0-c84c8dbbb109",
+            "created_time": "2024-11-04T14:52:00.000Z",
+            "last_edited_time": "2024-11-04T14:55:00.000Z",
+            "created_by": {
+                "object": "user",
+                "id": "1f81c3a1-7629-4285-aca4-b032482a9782"
+            },
+            "last_edited_by": {
+                "object": "user",
+                "id": "1f81c3a1-7629-4285-aca4-b032482a9782"
+            },
+            "cover": null,
+            "icon": {
+                "type": "external",
+                "external": {
+                    "url": "https://www.notion.so/icons/clipping_lightgray.svg"
+                }
+            },
+            "parent": {
+                "type": "database_id",
+                "database_id": "1348747c-98b1-80e3-a851-c0665c42bd5f"
+            },
+            "archived": false,
+            "in_trash": false,
+            "properties": {
+                "Sprint": {
+                    "id": "U%3D%60f",
+                    "type": "rich_text",
+                    "rich_text": []
+                },
+                "ID": {
+                    "id": "qU%60k",
+                    "type": "unique_id",
+                    "unique_id": {
+                        "prefix": "EHA",
+                        "number": 2
+                    }
+                },
+                "Task name": {
+                    "id": "title",
+                    "type": "title",
+                    "title": [
+                        {
+                            "type": "text",
+                            "text": {
+                                "content": "Task to test slack integration",
+                                "link": null
+                            },
+                            "annotations": {
+                                "bold": false,
+                                "italic": false,
+                                "strikethrough": false,
+                                "underline": false,
+                                "code": false,
+                                "color": "default"
+                            },
+                            "plain_text": "Task to test slack integration",
+                            "href": null
+                        }
+                    ]
+                },
+                "Tags": {
+                    "id": "notion%3A%2F%2Ftasks%2Ftags_property",
+                    "type": "multi_select",
+                    "multi_select": []
+                },
+                "Assignee": {
+                    "id": "notion%3A%2F%2Ftasks%2Fassign_property",
+                    "type": "people",
+                    "people": [
+                        {
+                            "object": "user",
+                            "id": "1f81c3a1-7629-4285-aca4-b032482a9782",
+                            "name": "Diogo de Moura Pedroso",
+                            "avatar_url": null,
+                            "type": "person",
+                            "person": {}
+                        }
+                    ]
+                },
+                "Status": {
+                    "id": "notion%3A%2F%2Ftasks%2Fstatus_property",
+                    "type": "status",
+                    "status": {
+                        "id": "archived",
+                        "name": "Archived",
+                        "color": "gray"
+                    }
+                },
+                "Due": {
+                    "id": "notion%3A%2F%2Ftasks%2Fdue_date_property",
+                    "type": "date",
+                    "date": null
+                },
+                "Priority": {
+                    "id": "notion%3A%2F%2Ftasks%2Fpriority_property",
+                    "type": "select",
+                    "select": {
+                        "id": "priority_high",
+                        "name": "High",
+                        "color": "red"
+                    }
+                },
+                "Sub-tasks": {
+                    "id": "notion%3A%2F%2Ftasks%2Fsub_task_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                },
+                "Summary": {
+                    "id": "notion%3A%2F%2Ftasks%2Fai_summary_property",
+                    "type": "rich_text",
+                    "rich_text": []
+                },
+                "Parent-task": {
+                    "id": "notion%3A%2F%2Ftasks%2Fparent_task_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                },
+                "Project": {
+                    "id": "notion%3A%2F%2Ftasks%2Ftask_to_project_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                },
+                "GitHub Pull Requests": {
+                    "id": "notion%3A%2F%2Ftasks%2Ftask_to_github_prs_relation",
+                    "type": "relation",
+                    "relation": [],
+                    "has_more": false
+                }
+            },
+            "url": "https://www.notion.so/Task-to-test-slack-integration-1348747c98b1803e9cf0c84c8dbbb109",
+            "public_url": null
+        }
+    ],
+    "next_cursor": null,
+    "has_more": false,
+    "type": "page_or_database",
+    "page_or_database": {},
+    "request_id": "55ac271c-42cf-4a9d-951f-b9936d859921"
+}

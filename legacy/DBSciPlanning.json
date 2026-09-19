@@ -1,0 +1,7 @@
+{
+    "object": "error",
+    "status": 400,
+    "code": "validation_error",
+    "message": "body failed validation: body.page_size should be a number or `undefined`, instead was `\"c1888af11efb4883a9df65b787ce8e2d\"`.",
+    "request_id": "37ff42c3-96d2-4788-880c-bc5c2f2ac266"
+}

@@ -1,0 +1,16 @@
+{
+  "risk_free": 0.0,
+  "window_ttm": 252,
+  "var_confidence": 0.95,
+  "cvar_confidence": 0.99,
+  "rachev_alpha": 0.05,
+  "ror_capital": 1.0,
+  "d_copula": 4,
+  "kelly_rf": 0.0,
+  "outlier_alpha": 0.01,
+  "sweep_n": 1000,
+  "walkforward_splits": 5,
+  "walkforward_gap": 21,
+  "sortino_method": "from_mean",
+  "benchmark_default": "sp500_returns.csv"
+}
