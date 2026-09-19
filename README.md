@@ -48,14 +48,13 @@ El menú lateral tiene las páginas del curso (Propiedades, Payoffs, Market Data
 
 ## WebApp — páginas
 
-- **Propiedades de opciones** — Clase 1 y 2 — Sensibilidad precio vs S, K, T, r, sigma, div
-- **Payoffs y Estrategias** — Clase 1 y 2 — Vanilla, estrategias, payoffs (digitales, Asian, barrier)
-- **Market Data** — Clase 1 y 2 — Ticker, spot, options chain (NYSE)
-- **Griegas** — Clases 3 y 4 — Delta, Gamma, Vega, Rho, Theta, etc. vs Spot
-- **Market Data Pricing** — Clases 3 y 4 — Estrategias con precios de mercado, escenarios S×T
-- **Notebooks** — JupyterLab para el curso
-
-Branch **`main`**: versión pública UCEMA. Features privadas (Superficie IV, IBKR) viven solo en branch local **`mia`** — no mergear `mia` → `main`.
+- **Propiedades de opciones** — Clase 1–2 · Eje 2 — Sensibilidad Call/Put (BS / BAW)
+- **Payoffs y Estrategias** — Clase 1–2 · Ejes 1 y 3 — Vanilla, estrategias, payoffs
+- **Market Data** — Clase 1–2 · Eje 4 — Ticker, spot, options chain
+- **Modelos de Pricing** — Comparar BS, binomial, MC, FD, BAW…
+- **Griegas** — Clases 3–4 — Delta, Gamma, Vega, Rho, Theta, etc. vs Spot
+- **Market Data Pricing** — Clases 3–4 · Ejes 3 y 4 — Estrategias con precios de mercado, escenarios S×T
+- **Notebooks** — JupyterLab · `Notebooks/ejes/`
 
 ## Documentación API
 

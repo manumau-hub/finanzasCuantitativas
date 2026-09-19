@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 project = "finanzasCuantitativas"
-copyright = "2024, QUANt UCEMA"
+copyright = "2026, QUANt UCEMA"
 author = "QUANt UCEMA"
 release = "0.1"
 

@@ -65,6 +65,10 @@ with st.expander(f"📖 {_('griegas.how_to_use')}", expanded=False):
     4. {_("griegas.help_4")}
     5. {_("griegas.help_5")}
     """)
+st.info(
+    "📚 Las definiciones de cada griega están en los expanders de abajo. "
+    "Más adelante: `Notebooks/ejes/07_griegas`."
+)
 
 # ── Session state ─────────────────────────────────────────────────────────────
 if "griegas_legs" not in st.session_state:

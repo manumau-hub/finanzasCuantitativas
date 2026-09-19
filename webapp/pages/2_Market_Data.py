@@ -40,6 +40,10 @@ with st.expander(f"📖 {_('md.how_to_use')}", expanded=False):
     5. {_("md.help_5")}
     6. {_("md.help_6")}
     """)
+st.info(
+    "📚 **Lab (Eje 4):** `Notebooks/ejes/04_market_data_i/` — "
+    "**04a_spot_quote_cadena** y **04b_panel_iv_descriptivo**."
+)
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def _fetch_company_info(ticker: str) -> dict:

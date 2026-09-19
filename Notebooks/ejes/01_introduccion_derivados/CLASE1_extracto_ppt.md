@@ -7,7 +7,7 @@ Texto extraído slide por slide para usar como base del notebook.
 ## Slide 1
 Manu Maurette
 Clase 1: Introducciones varias, opciones
-Derivados Financieros 1 — 2022
+Derivados Financieros 1 — 2026
 
 ---
 

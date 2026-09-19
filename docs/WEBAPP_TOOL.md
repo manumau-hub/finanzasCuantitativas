@@ -10,11 +10,12 @@ Documento de referencia para la webapp UCEMA QUANT: Propiedades de opciones, Pay
 
 | Página | Descripción |
 |--------|-------------|
-| **Propiedades de opciones** | Clase 1 y 2 — Sensibilidad del precio ante variación de S, K, T, r, sigma o div (BS, Binomial, MC, FD) |
-| **Payoffs y Estrategias** | Clase 1 y 2 — Precios vanilla y estrategias; Payoff Explorer (vanilla, estrategias, digitales, Asian, barrier) |
+| **Propiedades de opciones** | Clase 1 y 2 — Sensibilidad Call/Put con BS (eur) / BAW (ame) |
+| **Payoffs y Estrategias** | Clase 1 y 2 — Precios vanilla y estrategias; Payoff Explorer |
 | **Market Data** | Clase 1 y 2 — Ticker, precio spot, variación 1d, options chain (NYSE) |
-| **Griegas** | Clases 3 y 4 — Delta, Gamma, Vega, Rho, Theta, DividendRho, StrikeSensitivity, Elasticity vs Spot; definiciones howto |
-| **Market Data Pricing** | Clases 3 y 4 — Construir estrategias con precios de mercado; escenarios S×T; r, sigma, div desde mercado |
+| **Modelos de Pricing** | Comparación de modelos (BS, Binomial, MC, FD, BAW) vs un parámetro |
+| **Griegas** | Clases 3 y 4 — Delta, Gamma, Vega, Rho, Theta, … vs Spot |
+| **Market Data Pricing** | Clases 3 y 4 — Estrategias con precios de mercado; escenarios S×T |
 | **Notebooks** | Acceso a JupyterLab para notebooks del curso |
 
 **Arranque:**
@@ -39,9 +40,10 @@ finanzasCuantitativas/
 │       ├── 0_Propiedades_Opciones.py
 │       ├── 1_Payoffs_y_Estrategias.py
 │       ├── 2_Market_Data.py
-│       ├── 3_Griegas.py
-│       ├── 4_Market_Data_Pricing.py
-│       └── 5_Notebooks.py
+│       ├── 3_Modelos_de_Pricing.py
+│       ├── 4_Griegas.py
+│       ├── 5_Market_Data_Pricing.py
+│       └── 6_Notebooks.py
 ├── Codigo/
 │   ├── pricing/
 │   ├── analytics/            # Vol implícita, payoffs, gregas_bs
@@ -58,15 +60,9 @@ finanzasCuantitativas/
 
 ### 3.1 Propiedades de opciones (`0_Propiedades_Opciones.py`) — Clase 1 y 2
 
-**Sensibilidad del precio** ante variación de un parámetro (S, K, T, r, sigma, div). Solo opciones europeas vanilla.
+**Sensibilidad del precio** ante variación de un parámetro (S, K, T, r, sigma, div).
 
-**Parámetros:** S, K, T, r, sigma, div, Tipo (C/P).
-
-**Modelo:** Black-Scholes, Binomial, Monte Carlo, Diferencias finitas + Pasos (bin/MC/FD).
-
-**Parámetro a variar:** Spot, Strike, Time to maturity, r, sigma, div, con rango (desde / a) y número de puntos.
-
-**Gráfico:** Precio de la opción vs parámetro variable.
+**Parámetros:** S, K, T, r, sigma, div, Tipo (C/P), Ejercicio (Europeo → Black-Scholes / Americano → BAW). Sin menú de modelos.
 
 ---
 
@@ -101,7 +97,13 @@ finanzasCuantitativas/
 
 ---
 
-### 3.4 Griegas (`3_Griegas.py`) — Clases 3 y 4
+### 3.4 Modelos de Pricing (`3_Modelos_de_Pricing.py`)
+
+Comparación de modelos (BS, Binomial, MC, FD, BAW, LSM) eligiendo curvas Eur/Ame × modelo × Call/Put y barriendo un parámetro.
+
+---
+
+### 3.5 Griegas (`4_Griegas.py`) — Clases 3 y 4
 
 **Griegas vs Spot** para opciones europeas vanilla (Black-Scholes analítico).
 
@@ -113,7 +115,7 @@ finanzasCuantitativas/
 
 ---
 
-### 3.5 Market Data Pricing (`4_Market_Data_Pricing.py`) — Clases 3 y 4
+### 3.6 Market Data Pricing (`5_Market_Data_Pricing.py`) — Clases 3 y 4
 
 **Módulo independiente** (no asume datos de Market Data).
 
@@ -138,7 +140,7 @@ finanzasCuantitativas/
 
 ---
 
-### 3.6 Notebooks (`5_Notebooks.py`)
+### 3.7 Notebooks (`6_Notebooks.py`)
 
 Abre o lanza JupyterLab (puerto 8888) para notebooks del curso. Requiere `jupyterlab` instalado.
 
@@ -275,12 +277,13 @@ En `american_fd.py` se limita N a 5000 para evitar que la grilla cuelgue con T m
 | Archivo | Rol |
 |---------|-----|
 | `webapp/UCEMA_QUANT.py` | Entry point (Home) |
-| `webapp/pages/0_Propiedades_Opciones.py` | Sensibilidad precio vs parámetros |
+| `webapp/pages/0_Propiedades_Opciones.py` | Sensibilidad BS/BAW |
 | `webapp/pages/1_Payoffs_y_Estrategias.py` | Payoffs y Estrategias + Payoff Explorer |
 | `webapp/pages/2_Market_Data.py` | Market Data |
-| `webapp/pages/3_Griegas.py` | Griegas vs Spot (BS europeas) |
-| `webapp/pages/4_Market_Data_Pricing.py` | Market Data Pricing |
-| `webapp/pages/5_Notebooks.py` | JupyterLab |
+| `webapp/pages/3_Modelos_de_Pricing.py` | Comparación de modelos |
+| `webapp/pages/4_Griegas.py` | Griegas vs Spot (BS europeas) |
+| `webapp/pages/5_Market_Data_Pricing.py` | Market Data Pricing |
+| `webapp/pages/6_Notebooks.py` | JupyterLab |
 | `webapp/_fetch_r.py` | Subprocess para r |
 | `Codigo/pricing/` | Modelos de pricing |
 | `Codigo/analytics/vol_implicita.py` | impvolfunc_bs |

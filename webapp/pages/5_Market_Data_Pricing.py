@@ -48,6 +48,10 @@ with st.expander(f"📖 {_('mdp.how_to_use')}", expanded=False):
     7. {_("mdp.help_7")}
     8. {_("mdp.help_8")}
     """)
+st.info(
+    "📚 **Teoría:** `Notebooks/ejes/03_estrategias/` + "
+    "`Notebooks/ejes/04_market_data_i/`. Esta página combina ambos con precios reales."
+)
 
 # ════════════════════════════════════════════════════════════════════════════
 # HELPERS

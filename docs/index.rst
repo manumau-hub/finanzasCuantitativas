@@ -3,7 +3,7 @@
 finanzasCuantitativas
 =====================
 
-Derivados Financieros - QUANt 2024 - UCEMA
+Derivados Financieros - QUANt 2026 - UCEMA
 
 Modelos de pricing de opciones (Black-Scholes, binomial, Monte Carlo, diferencias finitas),
 payoffs (vanilla, estrategias, digitales, Asian, barrier), volatilidad implícita y utilidades.

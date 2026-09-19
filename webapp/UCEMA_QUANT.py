@@ -30,10 +30,16 @@ st.markdown(f"""
 - **{_('home.nav.propiedades')}** — {_('home.nav.propiedades.desc')}
 - **{_('home.nav.modelos')}** — {_('home.nav.modelos.desc')}
 - **{_('home.nav.market_data')}** — {_('home.nav.market_data.desc')}
+- **{_('home.nav.modelos_pricing')}** — {_('home.nav.modelos_pricing.desc')}
 - **{_('home.nav.griegas')}** — {_('home.nav.griegas.desc')}
 - **{_('home.nav.pricing')}** — {_('home.nav.pricing.desc')}
 - **{_('home.nav.notebooks')}** — {_('home.nav.notebooks.desc')}
 """)
+
+st.info(
+    "📚 **Notebooks del curso:** carpeta `Notebooks/ejes/` "
+    "(Eje 1 intro → Eje 4 market data). Abrí la página **Notebooks** del menú para lanzar JupyterLab."
+)
 
 st.divider()
 

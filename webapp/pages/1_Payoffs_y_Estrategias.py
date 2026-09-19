@@ -170,6 +170,11 @@ with st.expander(f"📖 {_('me.how_to_use')}", expanded=False):
     3. {_("me.help_3")}
     4. {_("me.help_4")}
     """)
+st.info(
+    "📚 **Teoría:** `Notebooks/ejes/01_introduccion_derivados/01c_opciones_payoffs_pnl` "
+    "(payoffs y P&L) y `Notebooks/ejes/03_estrategias/` "
+    "(**03a_spreads_y_butterflies**, **03b_volatilidad_y_coberturas**)."
+)
 
 st.subheader(_("me.params"))
 row1 = st.columns(4)
@@ -325,6 +330,9 @@ else:
 st.divider()
 with st.expander(f"📖 {_('me.payoff_how_to')}", expanded=False):
     st.markdown(_("me.payoff_help"))
+st.caption(
+    "📚 Complementá con **01c_opciones_payoffs_pnl** y **03a/03b** en `Notebooks/ejes/`."
+)
 
 st.subheader(_("me.payoff_strategies"))
 

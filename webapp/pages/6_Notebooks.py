@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-"""Notebooks - JupyterLab en nueva pestaña."""
+"""Notebooks - JupyterLab + índice de ejes del curso."""
 import socket
 import subprocess
 import sys
@@ -11,6 +11,13 @@ if str(_webapp) not in sys.path:
 
 import streamlit as st
 
+_EJES = [
+    ("1 · Introducción", "Notebooks/ejes/01_introduccion_derivados/", "01a fundamentos · 01b forwards/opciones · 01c payoffs/PnL · 01d paneles"),
+    ("2 · Propiedades vanilla", "Notebooks/ejes/02_propiedades_opciones_vanilla/", "02a sensibilidades · 02b paridad / intrínseco / moneyness"),
+    ("3 · Estrategias", "Notebooks/ejes/03_estrategias/", "03a spreads y butterflies · 03b volatilidad y coberturas"),
+    ("4 · Market data", "Notebooks/ejes/04_market_data_i/", "04a spot y cadena · 04b lectura del panel (mismos módulos que la app)"),
+]
+
 
 def _is_port_in_use(port: int) -> bool:
     try:
@@ -19,11 +26,13 @@ def _is_port_in_use(port: int) -> bool:
     except Exception:
         return False
 
+
 def _find_jupyter_port() -> int | None:
     for port in (8888, 8889, 8890):
         if _is_port_in_use(port):
             return port
     return None
+
 
 def _launch_jupyter_in_new_terminal():
     config_path = Path(__file__).resolve().parent.parent / "jupyter_server_config.py"
@@ -50,16 +59,28 @@ def _launch_jupyter_in_new_terminal():
     except Exception as e:
         return False, str(e)
 
+
 st.markdown("""
 <style>[data-testid="stSidebar"] { min-width: 12rem !important; max-width: 12rem !important; }</style>
 """, unsafe_allow_html=True)
+
+st.title("Notebooks del curso")
 
 with st.expander("📖 Cómo usar", expanded=True):
     st.markdown("""
     1. Hacé clic en **Abrir terminal con JupyterLab** (o ejecutá el comando manualmente).
     2. Se abrirá una ventana de terminal y JupyterLab se abrirá **automáticamente en una nueva pestaña del navegador**.
-    3. Usá esa pestaña para trabajar con los notebooks. Si la cerraste, usá el enlace de abajo.
+    3. Navegá a la carpeta del eje (tabla de abajo) y abrí el `.ipynb`.
+    4. Ejecutá Jupyter **desde la raíz del repo** para que `from Codigo.…` funcione.
     """)
+
+st.subheader("Índice de ejes")
+for titulo, ruta, detalle in _EJES:
+    st.markdown(f"- **{titulo}** — `{ruta}`  \n  {detalle}")
+
+st.caption("Las páginas de la app (Propiedades, Payoffs, Market Data, Modelos de Pricing, …) apuntan a estos notebooks.")
+
+st.divider()
 
 jupyter_port = _find_jupyter_port()
 port = jupyter_port if jupyter_port is not None else 8888
@@ -79,12 +100,10 @@ if st.button("Abrir terminal con JupyterLab", type="primary"):
     ok, msg = _launch_jupyter_in_new_terminal()
     if ok:
         st.success(msg)
+        st.info("Cuando JupyterLab abra, andá a `Notebooks/ejes/`.")
     else:
-        st.error(f"No se pudo abrir: {msg}")
-
-st.markdown("""
-**Comando manual** (desde la carpeta del proyecto):
-```bash
-python -m jupyterlab --config=webapp/jupyter_server_config.py
-```
-""")
+        st.error(f"No se pudo abrir la terminal: {msg}")
+        st.code(
+            "python -m jupyterlab --config=webapp/jupyter_server_config.py",
+            language="bash",
+        )
