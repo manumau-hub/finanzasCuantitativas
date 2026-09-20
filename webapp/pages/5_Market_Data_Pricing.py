@@ -50,7 +50,7 @@ with st.expander(f"📖 {_('mdp.how_to_use')}", expanded=False):
     """)
 st.info(
     "📚 **Teoría:** `Notebooks/ejes/03_estrategias/` + "
-    "`Notebooks/ejes/04_market_data_i/`. Esta página combina ambos con precios reales."
+    "`Notebooks/ejes/04_market_data_i/` (04a US · 04b IV · 04c BYMA). Esta página combina market data con precios reales."
 )
 
 # ════════════════════════════════════════════════════════════════════════════

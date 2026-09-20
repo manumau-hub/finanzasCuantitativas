@@ -1,6 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
-"""Market Data - Precios de activos y opciones NYSE."""
+"""Market Data - Precios de activos y opciones (NYSE / BYMA)."""
 import io
+import importlib
 import os
 import re
 import subprocess
@@ -29,44 +30,28 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title(_("md.title"))
 
-with st.expander(f"📖 {_('md.how_to_use')}", expanded=False):
-    st.markdown(f"""
-    1. {_("md.help_1")}
-    2. {_("md.help_2")}
-    3. {_("md.help_3")}
-    4. {_("md.help_4")}
-    5. {_("md.help_5")}
-    6. {_("md.help_6")}
-    """)
-st.info(
-    "📚 **Lab (Eje 4):** `Notebooks/ejes/04_market_data_i/` — "
-    "**04a_spot_quote_cadena** y **04b_panel_iv_descriptivo**."
-)
-
-# ── Helpers ───────────────────────────────────────────────────────────────────
 def _fetch_company_info(ticker: str) -> dict:
     """Intenta obtener info extendida vía yfinance. Devuelve dict, nunca lanza excepción."""
     try:
         import yfinance as yf
         info = yf.Ticker(ticker).info or {}
         return {
-            "sector":      info.get("sector") or info.get("category"),
-            "industry":    info.get("industry"),
-            "market_cap":  info.get("marketCap"),
-            "volume":      info.get("regularMarketVolume") or info.get("volume"),
-            "avg_volume":  info.get("averageVolume"),
-            "high_52w":    info.get("fiftyTwoWeekHigh"),
-            "low_52w":     info.get("fiftyTwoWeekLow"),
-            "pe":          info.get("trailingPE"),
+            "sector": info.get("sector") or info.get("category"),
+            "industry": info.get("industry"),
+            "market_cap": info.get("marketCap"),
+            "volume": info.get("regularMarketVolume") or info.get("volume"),
+            "avg_volume": info.get("averageVolume"),
+            "high_52w": info.get("fiftyTwoWeekHigh"),
+            "low_52w": info.get("fiftyTwoWeekLow"),
+            "pe": info.get("trailingPE"),
             "description": info.get("longBusinessSummary"),
         }
     except Exception:
         return {}
 
 
-def _fetch_history(ticker: str) -> "pd.DataFrame | None":
+def _fetch_history(ticker: str):
     """Histórico de 1 año de precios de cierre. Devuelve DataFrame o None."""
     try:
         import yfinance as yf
@@ -107,12 +92,50 @@ def _fetch_r_subprocess() -> float:
     return 0.05
 
 
+st.title(_("md.title"))
+
+with st.expander(f"📖 {_('md.how_to_use')}", expanded=False):
+    st.markdown(f"""
+    1. {_("md.help_1")}
+    2. {_("md.help_2")}
+    3. {_("md.help_3")}
+    4. {_("md.help_4")}
+    5. {_("md.help_5")}
+    6. {_("md.help_6")}
+    """)
+st.info(
+    "📚 **Lab (Eje 4):** `Notebooks/ejes/04_market_data_i/` — "
+    "**04a** US spot/cadena · **04b** IV descriptivo · **04c** BYMA paneles.  \n"
+    "BYMA: spot/opciones vía **data912** (`/live/arg_stocks`, `/live/arg_options`) "
+    "con fallback a `open.bymadata.com.ar` (delayed)."
+)
+
 # ════════════════════════════════════════════════════════════════════════════
-# INPUT
+# MERCADO + INPUT
 # ════════════════════════════════════════════════════════════════════════════
+mercado = st.radio(
+    _("md.market"),
+    options=["NYSE", "BYMA"],
+    horizontal=True,
+    format_func=lambda x: _("md.market_nyse") if x == "NYSE" else _("md.market_byma"),
+    key="md_mercado",
+)
+if st.session_state.get("md_mercado_prev") != mercado:
+    if "md_mercado_prev" in st.session_state:
+        for k in list(st.session_state.keys()):
+            if k.startswith("md_") and k not in ("md_mercado", "md_mercado_prev"):
+                st.session_state.pop(k, None)
+    st.session_state["md_mercado_prev"] = mercado
+
+_default_ticker = "AAPL" if mercado == "NYSE" else "GGAL"
 col_ticker, col_btn = st.columns([4, 1])
 with col_ticker:
-    ticker = st.text_input(_("md.ticker"), value="AAPL").strip().upper()
+    ticker = st.text_input(
+        _("md.ticker"),
+        value=_default_ticker,
+        key=f"md_ticker_in_{mercado}",
+        help=_("md.ticker_help_byma") if mercado == "BYMA" else None,
+    ).strip().upper()
 with col_btn:
     st.write(""); st.write("")
     cargar = st.button(_("md.load"), type="primary")
@@ -122,17 +145,10 @@ if not ticker:
 
 if cargar:
     for k in ["md_spot", "md_quote", "md_exps", "md_error", "md_error_tb",
-              "md_info", "md_history", "md_chain"]:
+              "md_info", "md_history", "md_chain", "md_exps_error", "md_opts_source"]:
         st.session_state.pop(k, None)
     st.session_state["md_ticker"] = ticker
-
-    try:
-        from Codigo.data.market_data import get_spot, get_quote, get_expirations
-    except Exception as e:
-        st.session_state["md_error"] = str(e)
-        if "numpy.dtype" in str(e) or "binary incompatibility" in str(e):
-            st.session_state["md_error"] += "\n\n" + _("md.error_numpy")
-        st.rerun()
+    st.session_state["md_mercado_loaded"] = mercado
 
     _orig_stderr = sys.stderr
     try:
@@ -141,22 +157,61 @@ if cargar:
         pass
     try:
         with st.spinner(_("md.loading_data", ticker=ticker)):
-            try:
-                st.session_state["md_spot"]   = get_spot(ticker)
-                st.session_state["md_source"] = get_spot.last_source or "—"
-            except Exception as e:
-                st.session_state["md_error"]    = str(e)
-                st.session_state["md_error_tb"] = traceback.format_exc()
-            try:
-                st.session_state["md_quote"] = get_quote(ticker)
-            except Exception:
-                st.session_state["md_quote"] = {}
-            try:
-                st.session_state["md_exps"] = fmt_expiries(get_expirations(ticker))
-            except Exception:
-                st.session_state["md_exps"] = []
-            st.session_state["md_info"]    = _fetch_company_info(ticker)
-            st.session_state["md_history"] = _fetch_history(ticker)
+            if mercado == "BYMA":
+                try:
+                    import Codigo.data.byma_market as bm
+                    importlib.reload(bm)
+                    st.session_state["md_spot"] = bm.get_spot(ticker)
+                    st.session_state["md_source"] = getattr(bm.get_spot, "last_source", None) or "BYMA"
+                    st.session_state["md_quote"] = bm.get_quote(ticker)
+                    try:
+                        _exps_raw = bm.get_expirations(ticker)
+                        st.session_state["md_exps"] = fmt_expiries(_exps_raw)
+                        st.session_state["md_opts_source"] = bm.get_options_source()
+                        if not st.session_state["md_exps"]:
+                            st.session_state["md_exps_error"] = (
+                                f"data912/BYMA no devolvió vencimientos para {ticker} "
+                                f"(fuente opciones: {bm.get_options_source() or 'ninguna'})."
+                            )
+                        else:
+                            st.session_state.pop("md_exps_error", None)
+                    except Exception as e_exp:
+                        st.session_state["md_exps"] = []
+                        st.session_state["md_exps_error"] = str(e_exp)
+                        st.session_state["md_error_tb"] = traceback.format_exc()
+                    st.session_state["md_info"] = {
+                        "volume": (st.session_state["md_quote"] or {}).get("volume"),
+                    }
+                    st.session_state["md_history"] = bm.get_history(ticker)
+                except Exception as e:
+                    st.session_state["md_error"] = str(e)
+                    st.session_state["md_error_tb"] = traceback.format_exc()
+            else:
+                st.session_state.pop("md_exps_error", None)
+                st.session_state.pop("md_opts_source", None)
+                try:
+                    from Codigo.data.market_data import get_spot, get_quote, get_expirations
+                except Exception as e:
+                    st.session_state["md_error"] = str(e)
+                    if "numpy.dtype" in str(e) or "binary incompatibility" in str(e):
+                        st.session_state["md_error"] += "\n\n" + _("md.error_numpy")
+                    st.rerun()
+                try:
+                    st.session_state["md_spot"] = get_spot(ticker)
+                    st.session_state["md_source"] = get_spot.last_source or "—"
+                except Exception as e:
+                    st.session_state["md_error"] = str(e)
+                    st.session_state["md_error_tb"] = traceback.format_exc()
+                try:
+                    st.session_state["md_quote"] = get_quote(ticker)
+                except Exception:
+                    st.session_state["md_quote"] = {}
+                try:
+                    st.session_state["md_exps"] = fmt_expiries(get_expirations(ticker))
+                except Exception:
+                    st.session_state["md_exps"] = []
+                st.session_state["md_info"] = _fetch_company_info(ticker)
+                st.session_state["md_history"] = _fetch_history(ticker)
     finally:
         try:
             if sys.stderr != _orig_stderr:
@@ -184,7 +239,19 @@ exps          = fmt_expiries(st.session_state.get("md_exps", []))
 info          = st.session_state.get("md_info", {})
 history_df    = st.session_state.get("md_history")
 loaded_ticker = st.session_state.get("md_ticker", ticker)
+loaded_mkt    = st.session_state.get("md_mercado_loaded", mercado)
 name          = quote.get("name") or loaded_ticker
+
+_mkt_label = _("md.market_byma") if loaded_mkt == "BYMA" else _("md.market_nyse")
+st.caption(
+    _("md.loaded_as", market=_mkt_label, source=st.session_state.get("md_source", "—"))
+)
+if loaded_mkt != mercado:
+    st.warning(
+        _("md.market_mismatch",
+          current=_("md.market_byma") if mercado == "BYMA" else _("md.market_nyse"),
+          loaded=_mkt_label)
+    )
 
 # ════════════════════════════════════════════════════════════════════════════
 # PANEL DE COTIZACIÓN
@@ -232,7 +299,10 @@ if history_df is not None and not history_df.empty:
         ax_h.axhline(spot, color="#d62728", linewidth=0.9, linestyle="--", alpha=0.7)
         ax_h.fill_between(history_df.index, history_df["Precio"],
                           history_df["Precio"].min(), alpha=0.07, color="#1f77b4")
-        ax_h.set_ylabel(_("md.price_usd"), fontsize=9)
+        ax_h.set_ylabel(
+            _("md.price_ars") if st.session_state.get("md_mercado_loaded") == "BYMA" else _("md.price_usd"),
+            fontsize=9,
+        )
         ax_h.set_title(_("md.chart_title", ticker=loaded_ticker), fontsize=10)
         ax_h.grid(True, alpha=0.2)
         ax_h.tick_params(labelsize=8)
@@ -245,9 +315,33 @@ st.divider()
 # ════════════════════════════════════════════════════════════════════════════
 # OPTIONS CHAIN
 # ════════════════════════════════════════════════════════════════════════════
+# Si el radio está en BYMA pero no hay vencimientos, reintentar en vivo
+if not exps and loaded_mkt == "BYMA":
+    try:
+        import Codigo.data.byma_market as bm
+        importlib.reload(bm)
+        exps = fmt_expiries(bm.get_expirations(loaded_ticker))
+        if exps:
+            st.session_state["md_exps"] = exps
+            st.session_state["md_opts_source"] = bm.get_options_source()
+            st.session_state.pop("md_exps_error", None)
+    except Exception as e_retry:
+        st.session_state["md_exps_error"] = str(e_retry)
+
 if not exps:
-    st.warning(_("md.no_options", ticker=loaded_ticker))
+    if loaded_mkt == "BYMA":
+        st.warning(_("md.no_options_byma", ticker=loaded_ticker))
+        if st.session_state.get("md_exps_error"):
+            st.code(st.session_state["md_exps_error"], language=None)
+    else:
+        st.warning(_("md.no_options_nyse", ticker=loaded_ticker))
+        _AR_HINT = {"GGAL", "YPFD", "PAMP", "ALUA", "CEPU", "BMA", "SUPV", "BBAR", "COME", "TRAN"}
+        if loaded_ticker in _AR_HINT or loaded_ticker.endswith("D"):
+            st.info("Este ticker parece del mercado argentino: seleccioná **BYMA** arriba y hacé **Cargar**.")
     st.stop()
+
+if loaded_mkt == "BYMA" and st.session_state.get("md_opts_source"):
+    st.caption(f"Panel de opciones: **{st.session_state['md_opts_source']}**")
 
 col_exp, col_btn2 = st.columns([3, 1])
 with col_exp:
@@ -264,10 +358,19 @@ with col_btn2:
 expiration = fmt_expiry(expiration)
 
 if cargar_opts:
-    from Codigo.data.market_data import get_options_chain
     with st.spinner(_("md.loading_chain")):
         try:
-            st.session_state["md_chain"] = get_options_chain(loaded_ticker, expiration)
+            # Usar mercado con el que se cargó el spot (no el radio suelto)
+            if loaded_mkt == "BYMA":
+                import Codigo.data.byma_market as bm
+                importlib.reload(bm)
+                st.session_state["md_chain"] = bm.get_options_chain(loaded_ticker, expiration)
+                st.session_state["md_opts_source"] = (
+                    getattr(bm.get_options_chain, "last_source", None) or bm.get_options_source()
+                )
+            else:
+                from Codigo.data.market_data import get_options_chain
+                st.session_state["md_chain"] = get_options_chain(loaded_ticker, expiration)
             st.session_state["md_exp_loaded"] = expiration
         except Exception as e:
             st.error(_("md.error_chain"))

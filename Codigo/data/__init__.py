@@ -42,18 +42,22 @@ _SENTINEL = object()
 
 
 def __getattr__(name):
-    """Lazy import: byma y homebroker se cargan solo cuando se piden."""
+    """Lazy import: byma_market, byma legacy y homebroker se cargan bajo demanda."""
+    if name == "byma_market":
+        from . import byma_market as mod
+        globals()[name] = mod
+        return mod
     try:
-        from . import byma
-        val = getattr(byma, name, _SENTINEL)
+        from . import byma as _byma_mod
+        val = getattr(_byma_mod, name, _SENTINEL)
         if val is not _SENTINEL:
             globals()[name] = val
             return val
     except ImportError:
         pass
     try:
-        from . import homebroker
-        val = getattr(homebroker, name, _SENTINEL)
+        from . import homebroker as _hb_mod
+        val = getattr(_hb_mod, name, _SENTINEL)
         if val is not _SENTINEL:
             globals()[name] = val
             return val

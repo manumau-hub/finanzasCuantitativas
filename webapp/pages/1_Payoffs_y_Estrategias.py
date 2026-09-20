@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-"""Payoffs y Estrategias - Calcula precios de opciones y visualiza payoffs."""
+"""Payoffs y Estrategias - Calcula precios y visualiza payoffs (BS / BAW)."""
 import sys
 from pathlib import Path
 
@@ -21,17 +21,11 @@ def _me_label(key: str, default: str) -> str:
     """Traduce key; si no existe, devuelve default (evita meta-nombres en UI)."""
     t = _(key)
     return default if t == key else t
+
 from Codigo.pricing import (
     opcion_europea_bs,
-    opcion_europea_bin,
-    opcion_europea_mc,
-    opcion_europea_fd,
-    opcion_americana_bin,
-    opcion_americana_fd,
     opcion_americana_bs,
-    opcion_americana_mc,
     precio_estrategia,
-    precio_estrategia_nombre,
     ESTRATEGIA_PIERNAS,
 )
 from Codigo.analytics.payoffs import (
@@ -113,26 +107,45 @@ PAYOFF_TO_EXPLICACION = {
     "Condor":           "condor",
 }
 
-_NEEDS_STEPS = {"Binomial", "Monte Carlo", "Diferencias finitas"}
-_ALL_MODELS  = ["Black-Scholes", "Binomial", "Monte Carlo", "Diferencias finitas"]
+# Clave interna → nombre legible (mismo criterio que la sección Payoff)
+ESTRATEGIA_LABELS = {
+    "bull_call_spread": "Bull Call Spread",
+    "bear_call_spread": "Bear Call Spread",
+    "bull_put_spread":  "Bull Put Spread",
+    "bear_put_spread":  "Bear Put Spread",
+    "straddle":         "Straddle",
+    "short_straddle":   "Short Straddle",
+    "strangle":         "Strangle",
+    "short_strangle":   "Short Strangle",
+    "combo":            "Combo (risk reversal)",
+    "collar":           "Collar",
+    "box":              "Box",
+    "covered_call":     "Covered Call",
+    "protective_put":   "Protective Put",
+    "ratio_spread":     "Ratio Spread",
+    "call_butterfly":   "Call Butterfly",
+    "put_butterfly":    "Put Butterfly",
+    "iron_butterfly":   "Iron Butterfly",
+    "iron_condor":      "Iron Condor",
+    "condor":           "Condor",
+}
 
-_PRICERS_EUR = {
-    "Black-Scholes":       lambda tp, s, k, t, rv, sg, dv, ps: opcion_europea_bs(tp, s, k, t, rv, sg, dv),
-    "Binomial":            lambda tp, s, k, t, rv, sg, dv, ps: opcion_europea_bin(tp, s, k, t, rv, sg, dv, int(ps)),
-    "Monte Carlo":         lambda tp, s, k, t, rv, sg, dv, ps: opcion_europea_mc(tp, s, k, t, rv, sg, dv, int(ps)),
-    "Diferencias finitas": lambda tp, s, k, t, rv, sg, dv, ps: opcion_europea_fd(tp, s, k, t, rv, sg, dv, M=max(50, min(300, int(ps)))),
-}
-_PRICERS_AME = {
-    "Black-Scholes":       lambda tp, s, k, t, rv, sg, dv, ps: opcion_americana_bs(tp, s, k, t, rv, sg, dv),
-    "Binomial":            lambda tp, s, k, t, rv, sg, dv, ps: opcion_americana_bin(tp, s, k, t, rv, sg, dv, int(ps)),
-    "Monte Carlo":         lambda tp, s, k, t, rv, sg, dv, ps: opcion_americana_mc(tp, s, k, t, rv, sg, dv, int(ps)),
-    "Diferencias finitas": lambda tp, s, k, t, rv, sg, dv, ps: opcion_americana_fd(tp, s, k, t, rv, sg, dv, M=max(50, min(300, int(ps)))),
-}
+
+def _estrategia_label(key: str) -> str:
+    return ESTRATEGIA_LABELS.get(key, key.replace("_", " ").title())
+
+def _vanilla_pricer(ejercicio: str):
+    """Europea → Black-Scholes; Americana → BAW."""
+    return opcion_europea_bs if ejercicio == "Europea" else opcion_americana_bs
+
+
+def _modelo_label(ejercicio: str) -> str:
+    return "Black-Scholes" if ejercicio == "Europea" else "Barone-Adesi-Whaley (BAW)"
+
 
 # ── Session state ─────────────────────────────────────────────────────────────
 for k, v in {
     "me_precio_vanilla": None,
-    "me_tabla_comp":     None,
     "me_precio_estr":    None,
     "me_modelo_usado":   None,
     "me_ejercicio_usado": None,
@@ -153,9 +166,9 @@ def _find_breakevens(S_range, payoff_vals):
     return bes
 
 
-def _call_pricer(pricers_dict, modelo, tipo, S, K, T, r, sigma, div, pasos):
+def _call_pricer(ejercicio, tipo, S, K, T, r, sigma, div):
     try:
-        return float(pricers_dict[modelo](tipo, S, K, T, r, sigma, div, pasos))
+        return float(_vanilla_pricer(ejercicio)(tipo, S, K, T, r, sigma, div))
     except Exception as exc:
         return str(exc)
 
@@ -165,15 +178,15 @@ def _call_pricer(pricers_dict, modelo, tipo, S, K, T, r, sigma, div, pasos):
 # ════════════════════════════════════════════════════════════════════════════
 with st.expander(f"📖 {_('me.how_to_use')}", expanded=False):
     st.markdown(f"""
-    1. {_("me.help_1")}
-    2. {_("me.help_2")}
-    3. {_("me.help_3")}
-    4. {_("me.help_4")}
+    1. {_("me.help_1_simple")}
+    2. {_("me.help_2_simple")}
+    3. {_("me.help_3_simple")}
+    4. {_("me.help_4_simple")}
     """)
 st.info(
     "📚 **Teoría:** `Notebooks/ejes/01_introduccion_derivados/01c_opciones_payoffs_pnl` "
-    "(payoffs y P&L) y `Notebooks/ejes/03_estrategias/` "
-    "(**03a_spreads_y_butterflies**, **03b_volatilidad_y_coberturas**)."
+    "y `Notebooks/ejes/03_estrategias/`. "
+    "Comparación entre modelos numéricos → página **Modelos de Pricing**."
 )
 
 st.subheader(_("me.params"))
@@ -192,7 +205,8 @@ with row2[3]:
     ejercicio = st.radio(_("me.exercise"), options=["Europea", "Americana"],
                          format_func=lambda x: _(_ej_opts[x]), horizontal=True)
 
-pricers = _PRICERS_EUR if ejercicio == "Europea" else _PRICERS_AME
+modelo_fijo = _modelo_label(ejercicio)
+st.caption(f"Motor de precio: **{modelo_fijo}** (fijo según el ejercicio).")
 
 # ════════════════════════════════════════════════════════════════════════════
 # MODO: Vanilla o Estrategia
@@ -203,41 +217,14 @@ modo = st.radio(_("me.mode"), options=["Vanilla", "Estrategia"],
 
 # ── VANILLA ──────────────────────────────────────────────────────────────────
 if modo == "Vanilla":
-    col_mod, col_pasos, col_btn, col_cmp = st.columns([3, 2, 1, 2])
-    with col_mod:
-        modelo = st.selectbox(_("me.model"), _ALL_MODELS)
-    with col_pasos:
-        if modelo in _NEEDS_STEPS:
-            pasos = st.number_input(_("me.steps"), value=1000, min_value=10, step=100)
-        else:
-            pasos = 1000
-            st.caption(_("me.steps_na"))
-    with col_btn:
-        st.write("")
-        calc_v = st.button(_("me.calculate"), type="primary", use_container_width=True)
-    with col_cmp:
-        st.write("")
-        comp_v = st.button(_("me.compare_all"), use_container_width=True)
+    calc_v = st.button(_("me.calculate"), type="primary", use_container_width=True)
 
     if calc_v:
-        res = _call_pricer(pricers, modelo, tipo, S, K, T, r, sigma, div, pasos)
+        res = _call_pricer(ejercicio, tipo, S, K, T, r, sigma, div)
         st.session_state.me_precio_vanilla  = res
-        st.session_state.me_modelo_usado    = modelo
-        st.session_state.me_ejercicio_usado = ejercicio
-        st.session_state.me_tabla_comp      = None
-
-    if comp_v:
-        rows = []
-        with st.spinner(_("me.calculating_all")):
-            for m in _ALL_MODELS:
-                ps = pasos if m in _NEEDS_STEPS else 1000
-                precio = _call_pricer(pricers, m, tipo, S, K, T, r, sigma, div, ps)
-                rows.append({"Modelo": m, "Precio": precio})
-        st.session_state.me_tabla_comp      = rows
-        st.session_state.me_precio_vanilla  = None
+        st.session_state.me_modelo_usado    = modelo_fijo
         st.session_state.me_ejercicio_usado = ejercicio
 
-    # Mostrar resultado individual
     if st.session_state.me_precio_vanilla is not None:
         res   = st.session_state.me_precio_vanilla
         mod_u = st.session_state.me_modelo_usado
@@ -250,26 +237,15 @@ if modo == "Vanilla":
         else:
             st.error(f"{_('me.error')} ({mod_u}): {res}")
 
-    # Tabla comparativa
-    if st.session_state.me_tabla_comp is not None:
-        ej_u = st.session_state.me_ejercicio_usado
-        tipo_label = "Call" if tipo == "C" else "Put"
-        _ej_disp = _("me.european") if ej_u == "Europea" else _("me.american")
-        st.markdown(f"**{_('me.compare_title', exercise=_ej_disp, type=tipo_label)}**  (S={S}, K={K}, T={T}, r={r}, σ={sigma}, div={div})")
-        comp_rows = []
-        _col_model, _col_price = _("me.model"), _("me.price")
-        for row in st.session_state.me_tabla_comp:
-            r_copy = {_col_model: row.get("Modelo"), _col_price: row.get("Precio")}
-            p = r_copy[_col_price]
-            r_copy[_col_price] = f"{p:.4f}" if isinstance(p, float) else f"⚠ {p}"
-            comp_rows.append(r_copy)
-        st.dataframe(comp_rows, use_container_width=True, hide_index=True)
-
 # ── ESTRATEGIA ────────────────────────────────────────────────────────────────
 else:
     col_estr, col_btn_e = st.columns([5, 1])
     with col_estr:
-        estrategia = st.selectbox(_("me.strategy"), list(ESTRATEGIA_PIERNAS.keys()))
+        estrategia = st.selectbox(
+            _("me.strategy"),
+            list(ESTRATEGIA_PIERNAS.keys()),
+            format_func=_estrategia_label,
+        )
     with col_btn_e:
         st.write("")
         calc_e = st.button(_("me.calc_strategy"), type="primary", use_container_width=True)
@@ -311,16 +287,24 @@ else:
 
     if calc_e:
         try:
-            precio_e = precio_estrategia_nombre(estrategia, S, T, r, sigma, div, **kwargs)
+            piernas_e = ESTRATEGIA_PIERNAS[estrategia](**kwargs)
+
+            def _pricer_e(tp, s, k, t, rv, sg, dv, **kw):
+                return float(_vanilla_pricer(ejercicio)(tp, s, k, t, rv, sg, dv))
+
+            precio_e = precio_estrategia(piernas_e, S, T, r, sigma, div, pricer=_pricer_e)
             st.session_state.me_precio_estr = float(precio_e)
+            st.session_state.me_modelo_usado = modelo_fijo
         except Exception as exc:
             st.session_state.me_precio_estr = str(exc)
 
     if st.session_state.me_precio_estr is not None:
         res_e = st.session_state.me_precio_estr
-        nombre_label = estrategia.replace("_", " ").title()
+        nombre_label = _estrategia_label(estrategia)
         if isinstance(res_e, float):
-            st.success(f"**{nombre_label}** → **{_('me.price')}: {res_e:.4f}**")
+            st.success(
+                f"**{modelo_fijo}** · {nombre_label} → **{_('me.price')}: {res_e:.4f}**"
+            )
         else:
             st.error(f"{_('me.error')}: {res_e}")
 
@@ -420,10 +404,17 @@ _prima_auto = 0.0
 try:
     if categoria_payoff == "Vanilla":
         _tp = "C" if payoff_name == "Call" else "P"
-        _prima_auto = float(opcion_europea_bs(_tp, S, K_plot, T, r, sigma, div))
+        _prima_auto = float(_vanilla_pricer(ejercicio)(_tp, S, K_plot, T, r, sigma, div))
     elif categoria_payoff == "Estrategias" and payoff_name in PAYOFF_TO_EXPLICACION:
         _key = PAYOFF_TO_EXPLICACION[payoff_name]
-        _prima_auto = float(precio_estrategia_nombre(_key, S, T, r, sigma, div, **plot_kwargs))
+        _piernas_p = ESTRATEGIA_PIERNAS[_key](**plot_kwargs)
+
+        def _pricer_prima(tp, s, k, t, rv, sg, dv, **kw):
+            return float(_vanilla_pricer(ejercicio)(tp, s, k, t, rv, sg, dv))
+
+        _prima_auto = float(
+            precio_estrategia(_piernas_p, S, T, r, sigma, div, pricer=_pricer_prima)
+        )
 except Exception:
     _prima_auto = 0.0
 
@@ -586,11 +577,20 @@ else:
 # ESCENARIOS (Valor / P&L en S × tiempo)
 # ════════════════════════════════════════════════════════════════════════════
 st.divider()
-st.subheader(_me_label("me.scenarios", "Escenarios"))
+st.subheader(_me_label("me.scenarios", "Escenarios desde ahora a vencimiento"))
+with st.expander(f"📖 {_me_label('me.scenarios_how_to', 'Cómo usar')}", expanded=False):
+    st.markdown(_me_label(
+        "me.scenarios_help",
+        """
+1. **Qué muestra**: valuación teórica en una grilla de **precio del subyacente (S)** × **tiempo hasta el vencimiento**, desde **hoy (T actual)** hasta **vencimiento (T = 0)**.
+2. **Columnas**: fechas/momentos entre ahora y el vencimiento. La última columna es T = 0 (payoff).
+3. **Filas**: niveles de S (ajustá *S desde* / *S hasta*).
+4. **Vista**: Valor de la posición, P&L (valor − prima pagada) o %PnL.
+5. Usá **Calcular escenarios** (mismo motor BS/BAW que arriba).
+""",
+    ))
 
-# Variables para escenarios (modo Estrategia no tiene modelo/pasos del bloque principal)
-_modelo_init = modelo if modo == "Vanilla" else "Black-Scholes"
-_pasos_init = pasos if modo == "Vanilla" else 1000
+# Variables para escenarios
 if modo == "Estrategia":
     estrategia_esc = estrategia
     kwargs_esc = kwargs
@@ -614,34 +614,30 @@ with me_eg4:
     S_a_me = st.number_input("S hasta", value=round(S_hi_me, 1), min_value=0.1, step=1.0,
                              format="%.1f", key="me_esc_s_a")
 
-# Modelo (para escenarios)
-me_em1, me_em2, me_em3 = st.columns(3)
-with me_em1:
-    modelo_esc = st.selectbox(_("me.model"), _ALL_MODELS, key="me_esc_modelo",
-                              index=_ALL_MODELS.index(_modelo_init) if _modelo_init in _ALL_MODELS else 0)
-with me_em2:
-    pasos_esc = st.number_input(_("me.steps"), value=_pasos_init, min_value=10, max_value=5000, step=100,
-                                key="me_esc_pasos", disabled=(modelo_esc not in _NEEDS_STEPS))
-with me_em3:
-    M_me = st.number_input("M (FD)", value=150, min_value=20, max_value=500, step=10,
-                           key="me_esc_M", disabled=(modelo_esc != "Diferencias finitas"))
+st.caption(f"Escenarios valuados con **{modelo_fijo}**.")
 
-# Pagado (costo teórico) — usa modelo/pasos seleccionados en escenarios
-_pasos_pagado = int(M_me) if modelo_esc == "Diferencias finitas" else int(pasos_esc)
+# Pagado (costo teórico)
 try:
     if modo == "Vanilla":
         pagado_me = float(st.session_state.get("me_precio_vanilla") or 0)
         if pagado_me == 0:
-            res_p = _call_pricer(pricers, modelo_esc, tipo, S, K, T, r, sigma, div, _pasos_pagado)
+            res_p = _call_pricer(ejercicio, tipo, S, K, T, r, sigma, div)
             pagado_me = float(res_p) if isinstance(res_p, (int, float)) else 0.0
     else:
         pagado_me = float(st.session_state.get("me_precio_estr") or 0)
         if pagado_me == 0:
-            pagado_me = float(precio_estrategia_nombre(estrategia_esc, S, T, r, sigma, div, **kwargs_esc))
+            piernas_p = ESTRATEGIA_PIERNAS[estrategia_esc](**kwargs_esc)
+
+            def _pricer_p(tp, s, k, t, rv, sg, dv, **kw):
+                return float(_vanilla_pricer(ejercicio)(tp, s, k, t, rv, sg, dv))
+
+            pagado_me = float(
+                precio_estrategia(piernas_p, S, T, r, sigma, div, pricer=_pricer_p)
+            )
 except Exception:
     pagado_me = 0.0
 
-_me_esc_params = (n_rows_me, n_cols_me, S_desde_me, S_a_me, modelo_esc, pasos_esc, M_me, r, div,
+_me_esc_params = (n_rows_me, n_cols_me, S_desde_me, S_a_me, modelo_fijo, r, div,
                   modo, tipo if modo == "Vanilla" else estrategia_esc,
                   K if modo == "Vanilla" else tuple(sorted(kwargs_esc.items())))
 _me_stored = st.session_state.get("me_esc_params")
@@ -697,14 +693,13 @@ if mat_me is None:
         d = today_me + timedelta(days=int(T_max_me * 365 * (1 - frac)))
         date_cols_me.append(d.strftime("%d/%m/%y"))
 
-    _pasos_arg = int(M_me) if modelo_esc == "Diferencias finitas" else int(pasos_esc)
     def _price_me(S_val, T_eff):
         if modo == "Vanilla":
-            res = _call_pricer(pricers, modelo_esc, tipo, S_val, K, T_eff, r, sigma, div, _pasos_arg)
+            res = _call_pricer(ejercicio, tipo, S_val, K, T_eff, r, sigma, div)
             return float(res) if isinstance(res, (int, float)) else 0.0
         piernas_me = ESTRATEGIA_PIERNAS[estrategia_esc](**kwargs_esc)
         def _pricer_me(tp, s, k, t, rv, sg, dv, **kw):
-            res = _call_pricer(pricers, modelo_esc, tp, s, k, t, rv, sg, dv, _pasos_arg)
+            res = _call_pricer(ejercicio, tp, s, k, t, rv, sg, dv)
             return float(res) if isinstance(res, (int, float)) else 0.0
         return float(precio_estrategia(piernas_me, S_val, T_eff, r, sigma, div, pricer=_pricer_me))
 
@@ -806,7 +801,7 @@ ax_me.axvline(K, color="#ff7f0e", linewidth=0.8, linestyle=":", alpha=0.6, label
 ax_me.set_xlabel(_("me.xlabel_underlying"), fontsize=10)
 ax_me.set_ylabel(_("me.ylabel_pnl"), fontsize=10)
 titulo_me = (f"{'Call' if tipo == 'C' else 'Put'} K={K}" if modo == "Vanilla"
-             else f"{estrategia_esc.replace('_', ' ').title()}")
+             else _estrategia_label(estrategia_esc))
 ax_me.set_title(f"P&L en distintos momentos — {titulo_me}", fontsize=11)
 ax_me.legend(fontsize=8, loc="best")
 ax_me.grid(True, alpha=0.2)

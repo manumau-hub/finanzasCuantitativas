@@ -7,6 +7,7 @@ Sensibilidad del precio ante un parámetro, eligiendo una o más curvas
 """
 import io
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
@@ -47,12 +48,13 @@ with st.expander(f"📖 {_('mod.how_to_use')}", expanded=False):
     6. {_("mod.help_6")}
     """)
 st.info(
-    "📚 Acá se **comparan modelos** (BS, binomial, Monte Carlo, diferencias finitas, BAW…). "
-    "Para propiedades económicas básicas (sin menú de modelos) usá **Propiedades de opciones** "
+    "📚 Acá se **comparan modelos** (BS, binomial, Monte Carlo, diferencias finitas, BAW…): "
+    "precio en un punto y curvas de sensibilidad. "
+    "Para valuación educativa simple (solo BS/BAW) usá **Propiedades de opciones** o **Payoffs y Estrategias** "
     "y los notebooks en `Notebooks/ejes/02_propiedades_opciones_vanilla/`."
 )
 
-for k, v in {"mod_result": None}.items():
+for k, v in {"mod_result": None, "mod_tabla_comp": None, "mod_punto_meta": None}.items():
     if k not in st.session_state:
         st.session_state[k] = v
 
@@ -74,11 +76,108 @@ with row2[0]:
 with row2[1]:
     div = st.number_input(_("prop.div_dividends"), value=0.0, min_value=0.0, max_value=1.0, format="%.3f", key="mod_div")
 
-st.subheader(_("mod.curves_compare"))
+# ── Precio puntual: comparar todos los modelos ────────────────────────────────
+st.divider()
+st.subheader(_("mod.point_compare"))
+st.caption(_("mod.point_help"))
 
 _MODELS_EUR = ["Black-Scholes", "Binomial", "Monte Carlo", "Diferencias finitas"]
 _MODELS_AME = ["Barone-Adesi-Whaley (BAW)", "Binomial", "Monte Carlo (LSM)", "Diferencias finitas"]
 _NEEDS_STEPS = {"Binomial", "Monte Carlo", "Diferencias finitas", "Monte Carlo (LSM)"}
+
+pt1, pt2, pt3, pt4 = st.columns([2, 2, 1, 2])
+with pt1:
+    _ej_opts_pt = {"Europeo": "me.european", "Americano": "me.american"}
+    ejercicio_pt = st.radio(
+        _("me.exercise"), options=["Europeo", "Americano"],
+        format_func=lambda x: _(_ej_opts_pt[x]), horizontal=True, key="mod_ej_pt",
+    )
+with pt2:
+    tipo_pt = st.radio(_("me.type"), ["C", "P"], horizontal=True, key="mod_tipo_pt",
+                       format_func=lambda x: "Call" if x == "C" else "Put")
+with pt3:
+    pasos_pt = st.number_input(_("prop.steps"), value=500, min_value=10, step=100, key="mod_pasos_pt")
+with pt4:
+    st.write("")
+    comp_pt = st.button(_("mod.compare_all"), type="primary", use_container_width=True, key="mod_comp_pt")
+
+_PRICERS_EUR_PT = {
+    "Black-Scholes": lambda tp, s, k, t, rv, sig, dv, ps: opcion_europea_bs(tp, s, k, t, rv, sig, dv),
+    "Binomial": lambda tp, s, k, t, rv, sig, dv, ps: opcion_europea_bin(tp, s, k, t, rv, sig, dv, int(ps)),
+    "Monte Carlo": lambda tp, s, k, t, rv, sig, dv, ps: opcion_europea_mc(tp, s, k, t, rv, sig, dv, int(ps)),
+    "Diferencias finitas": lambda tp, s, k, t, rv, sig, dv, ps: opcion_europea_fd(
+        tp, s, k, t, rv, sig, dv, M=max(50, min(300, int(ps)))
+    ),
+}
+_PRICERS_AME_PT = {
+    "Barone-Adesi-Whaley (BAW)": lambda tp, s, k, t, rv, sig, dv, ps: opcion_americana_bs(tp, s, k, t, rv, sig, dv),
+    "Binomial": lambda tp, s, k, t, rv, sig, dv, ps: opcion_americana_bin(tp, s, k, t, rv, sig, dv, int(ps)),
+    "Monte Carlo (LSM)": lambda tp, s, k, t, rv, sig, dv, ps: opcion_americana_mc(tp, s, k, t, rv, sig, dv, int(ps)),
+    "Diferencias finitas": lambda tp, s, k, t, rv, sig, dv, ps: opcion_americana_fd(
+        tp, s, k, t, rv, sig, dv, M=max(50, min(300, int(ps)))
+    ),
+}
+
+
+def _precio_punto(modelo, tipo, pasos):
+    table = _PRICERS_EUR_PT if ejercicio_pt == "Europeo" else _PRICERS_AME_PT
+    try:
+        return float(table[modelo](tipo, S, K, T, r, sigma, div, pasos))
+    except Exception as exc:
+        return str(exc)
+
+
+if comp_pt:
+    modelos_pt = _MODELS_EUR if ejercicio_pt == "Europeo" else _MODELS_AME
+    rows_pt = []
+    with st.spinner(_("mod.calculating_all")):
+        for m in modelos_pt:
+            ps = int(pasos_pt) if m in _NEEDS_STEPS else 500
+            t0 = time.perf_counter()
+            precio = _precio_punto(m, tipo_pt, ps)
+            ms = (time.perf_counter() - t0) * 1000.0
+            rows_pt.append({"Modelo": m, "Precio": precio, "Tiempo_ms": ms})
+    st.session_state.mod_tabla_comp = rows_pt
+    st.session_state.mod_punto_meta = {
+        "ejercicio": ejercicio_pt,
+        "tipo": tipo_pt,
+        "S": S, "K": K, "T": T, "r": r, "sigma": sigma, "div": div,
+        "pasos": int(pasos_pt),
+    }
+
+if st.session_state.mod_tabla_comp is not None:
+    meta = st.session_state.mod_punto_meta or {}
+    ej_u = meta.get("ejercicio", ejercicio_pt)
+    tp_u = meta.get("tipo", tipo_pt)
+    tipo_label = "Call" if tp_u == "C" else "Put"
+    _ej_disp = _("me.european") if ej_u == "Europeo" else _("me.american")
+    st.markdown(
+        f"**{_('mod.compare_title', exercise=_ej_disp, type=tipo_label)}**  "
+        f"(S={meta.get('S', S)}, K={meta.get('K', K)}, T={meta.get('T', T)}, "
+        f"r={meta.get('r', r)}, σ={meta.get('sigma', sigma)}, div={meta.get('div', div)}, "
+        f"pasos={meta.get('pasos', pasos_pt)})"
+    )
+    _col_model = _("me.model")
+    _col_price = _("me.price")
+    _col_time = _("mod.time_ms")
+    comp_rows = []
+    for row in st.session_state.mod_tabla_comp:
+        p = row.get("Precio")
+        t_ms = row.get("Tiempo_ms")
+        out = {
+            _col_model: row.get("Modelo"),
+            _col_price: f"{p:.4f}" if isinstance(p, float) else f"⚠ {p}",
+        }
+        if isinstance(t_ms, (int, float)):
+            out[_col_time] = f"{t_ms:.2f}"
+        else:
+            out[_col_time] = "—"
+        comp_rows.append(out)
+    st.dataframe(comp_rows, use_container_width=True, hide_index=True)
+    st.caption(_("mod.time_caption"))
+
+st.divider()
+st.subheader(_("mod.curves_compare"))
 
 _CURVAS_OPTS = []
 _EJ_SHORT = {"Europeo": "Eur", "Americano": "Ame"}

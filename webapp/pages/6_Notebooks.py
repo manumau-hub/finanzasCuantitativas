@@ -15,7 +15,7 @@ _EJES = [
     ("1 · Introducción", "Notebooks/ejes/01_introduccion_derivados/", "01a fundamentos · 01b forwards/opciones · 01c payoffs/PnL · 01d paneles"),
     ("2 · Propiedades vanilla", "Notebooks/ejes/02_propiedades_opciones_vanilla/", "02a sensibilidades · 02b paridad / intrínseco / moneyness"),
     ("3 · Estrategias", "Notebooks/ejes/03_estrategias/", "03a spreads y butterflies · 03b volatilidad y coberturas"),
-    ("4 · Market data", "Notebooks/ejes/04_market_data_i/", "04a spot y cadena · 04b lectura del panel (mismos módulos que la app)"),
+    ("4 · Market data", "Notebooks/ejes/04_market_data_i/", "04a US spot/cadena · 04b IV · 04c BYMA paneles"),
 ]
 
 
