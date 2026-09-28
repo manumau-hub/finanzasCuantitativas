@@ -17,4 +17,16 @@ Notebooks/legacy/
 
 # Runtime / local
 _launch_jupyter.bat
+_borrar_ejes_viejos.bat
 webapp/ibkr_positions.json
+
+# Ejes viejos tras reorganización (07 pricing avanzado … 10 market data II)
+Notebooks/ejes/07_griegas/
+Notebooks/ejes/07_monte_carlo/
+Notebooks/ejes/08_diferencias_finitas/
+Notebooks/ejes/08_volatilidad/
+Notebooks/ejes/09_quantlib/
+Notebooks/ejes/10_comparacion_modelos/
+Notebooks/ejes/11_griegas/
+Notebooks/ejes/12_volatilidad_implicita/
+Notebooks/ejes/13_pnl_explanation/

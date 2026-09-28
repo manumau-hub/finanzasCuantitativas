@@ -15,7 +15,13 @@ _EJES = [
     ("1 · Introducción", "Notebooks/ejes/01_introduccion_derivados/", "01a fundamentos · 01b forwards/opciones · 01c payoffs/PnL · 01d paneles"),
     ("2 · Propiedades vanilla", "Notebooks/ejes/02_propiedades_opciones_vanilla/", "02a sensibilidades · 02b paridad / intrínseco / moneyness"),
     ("3 · Estrategias", "Notebooks/ejes/03_estrategias/", "03a spreads y butterflies · 03b volatilidad y coberturas"),
-    ("4 · Market data", "Notebooks/ejes/04_market_data_i/", "04a US spot/cadena · 04b IV · 04c BYMA paneles"),
+    ("4 · Market data I", "Notebooks/ejes/04_market_data_i/", "04a US spot/cadena · 04b IV · 04c BYMA paneles"),
+    ("5 · Modelo binomial", "Notebooks/ejes/05_modelo_binomial/", "05a árbol CRR paso a paso · 05b americanas y convergencia"),
+    ("6 · Black–Scholes", "Notebooks/ejes/06_modelo_black_scholes/", "06a fórmula BS · 06b binomial vs BS y mercado"),
+    ("7 · Pricing avanzado", "Notebooks/ejes/07_pricing_avanzado/", "07a Monte Carlo · 07b FD (+3D) · 07c QuantLib · 07d comparación"),
+    ("8 · Griegas", "Notebooks/ejes/08_griegas/", "08a griegas BS · 08b PnL explanation"),
+    ("9 · Volatilidad implícita", "Notebooks/ejes/09_volatilidad_implicita/", "09a IV por bisección + smile"),
+    ("10 · Market data II", "Notebooks/ejes/10_market_data_ii/", "10a IV · estrategias · paridad put–call"),
 ]
 
 
